@@ -50,7 +50,7 @@ map.on('load', () => {
             //console.log(data.data.stations[step].lon)
             let longitude=data.data.stations[step].lon
             let latitude=data.data.stations[step].lat
-            test.push(`{"type": "Feature", "geometry": {"type": "Point", "coordinates": [${longitude},${latitude}]}}`);
+            test.push(JSON.parse(`{"type": "Feature", "geometry": {"coordinates": [${longitude},${latitude}], "type": "Point"}}`));
         };  
         map.addSource('bikeways', {
             type: 'geojson',
