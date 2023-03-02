@@ -1,7 +1,7 @@
 .map {
     position: absolute;
-    top: 830px; /* place maps below the text and images on the page */
+    top: 0; /* place maps below the text and images on the page */
     bottom: 0;
-    width: 30%; /* ensure each of the 3 maps takes up 30% width */
-    height: 500px /* manually specify the 3 maps' heights */
+    width: 100%; /* ensure each of the 3 maps takes up 30% width */
+
 }
