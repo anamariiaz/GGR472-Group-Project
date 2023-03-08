@@ -37,12 +37,12 @@ document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
 
 //Add event listener which returns map view to full screen on button click
 document.getElementById('returnbutton').addEventListener('click', () => {
-    map.flyTo({
-        center: [-79.3, 38.765],
-        zoom: 8.65,
-        bearing: -17.7,
-        essential: true
-    });
+  map.flyTo({
+    center: [-79.3, 38.765],
+    zoom: 8.65,
+    bearing: -17.7,
+    essential: true
+  });
 });
 
 //Add data sources and draw map layers
@@ -338,6 +338,109 @@ map.on('load', () => {
     }
   });
 
+  //add a geojson file source "burlington_cycling_networkk" for Burlington bikeways
+  map.addSource('burlington_cycling_network', {
+    type: 'geojson',
+    data: 'https://ireo00.github.io/472-Resources/burlington_cycling_network.geojson', 'generateId': true
+  });
+  map.addLayer({
+    'id': 'burlington_bikeways',
+    'type': 'line',
+    'source': 'burlington_cycling_network',
+    'paint': {
+      'line-width': 3,
+      'line-color': 'black',
+      'line-opacity': 0.7
+    }
+  });
+
+
+  //add a geojson file source "milton_cycling_network" for Milton bikeways
+  map.addSource('milton_cycling_network', {
+    type: 'geojson',
+    data: 'https://ireo00.github.io/472-Resources/milton_cycling_network.geojson', 'generateId': true
+  });
+
+  //add and style a layer of lines "milton_bikeways" from the defined "milton_cycling_network" source
+  map.addLayer({
+    'id': 'milton_bikeways',
+    'type': 'line',
+    'source': 'milton_cycling_network',
+    'paint': {
+      'line-width': 3,
+      //specify the color of the lines based on the text contained within the "Type" data field (i.e. based on the bikeway type)
+      //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
+      'line-color': [
+        'case',
+        //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
+        ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        'red',
+        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        'green',
+        ['in', 'multi', ['downcase', ['get', 'type']]],
+        'blue',
+        ['in', 'sharrows', ['downcase', ['get', 'type']]],
+        'orange',
+        //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
+        ['any', ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        'purple',
+        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        '#5C4033',
+        ['in', 'shared pathway', ['downcase', ['get', 'type']]],
+        '#ff69b4',
+        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        '#0492C2',
+        'black' //default color if none of the above apply
+      ],
+      'line-opacity': 0.7
+    }
+  });
+
+  
+  //add a geojson file source "oakville_cycling_network" for Oakville bikeways
+  map.addSource('oakville_cycling_network', {
+    type: 'geojson',
+    data: 'https://ireo00.github.io/472-Resources/oakville_cycling_network.geojson', 'generateId': true
+  });
+
+  //add and style a layer of lines "oakville_bikeways" from the defined "oakville_cycling_network" source
+  map.addLayer({
+    'id': 'oakvill_bikeways',
+    'type': 'line',
+    'source': 'oakville_cycling_network',
+    'paint': {
+      'line-width': 3,
+      //specify the color of the lines based on the text contained within the "Type" data field (i.e. based on the bikeway type)
+      //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
+      'line-color': [
+        'case',
+        //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
+        ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        'red',
+        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        'green',
+        ['in', 'multi', ['downcase', ['get', 'type']]],
+        'blue',
+        ['in', 'sharrows', ['downcase', ['get', 'type']]],
+        'orange',
+        //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
+        ['any', ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        'purple',
+        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        '#5C4033',
+        ['in', 'shared pathway', ['downcase', ['get', 'type']]],
+        '#ff69b4',
+        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        '#0492C2',
+        'black' //default color if none of the above apply
+      ],
+      'line-opacity': 0.7
+    }
+  });
+
+
   //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
   map.addSource('toronto_bicycle_parking', {
     type: 'geojson',
@@ -496,4 +599,6 @@ map.on('load', () => {
       'icon-ignore-placement': true
     }
   });
+
+
 });
