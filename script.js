@@ -349,8 +349,34 @@ map.on('load', () => {
     'source': 'burlington_cycling_network',
     'paint': {
       'line-width': 3,
-      'line-color': 'black',
-      'line-opacity': 0.7
+        //specify the color of the lines based on the text contained within the "Type" data field (i.e. based on the bikeway type)
+        //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
+        'line-color': [
+          'case',
+          //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
+          ['in', 'bl', ['downcase', ['get', 'type']]], //'bike lane', Bike lane (BL)
+          'red',
+          ['in', 'cycle track', ['downcase', ['get', 'type']]],
+          'green',
+          ['any', ['in', 'mupoff', ['downcase', ['get', 'type']]], ['in', 'mupadj', ['downcase', ['get', 'type']]]], //'multi', Multiuse path off road (MUPOFF) OR Multiuse path adjacent to road	(MUPADJ)
+          'blue',
+          ['in', 'shared', ['downcase', ['get', 'type']]], //'sharrows', Shared use - Sharrows painted on pavement (SHARED)
+          'orange',
+          //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
+          ['any', ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+          'purple',
+          //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+          ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+          '#5C4033',
+          ['in', 'bl-shared', ['downcase', ['get', 'type']]], // 'shared pathway', Mixed use - Bike lane and sharrows (BL-SHARED) 
+          '#ff69b4',
+          ['in', 'ps', ['downcase', ['get', 'type']]], //'paved shoulder', Paved shoulder (PS)
+          '#0492C2',
+          'black' //default color if none of the above apply
+        ],
+        'line-opacity': 0.7
+      
+     
     }
   });
 
@@ -600,5 +626,91 @@ map.on('load', () => {
     }
   });
 
+  map.addSource('ajax_cycling_network', {
+    type: 'geojson',
+    data: 'https://janicewg.github.io/GGR472-Data-Group-Project/Active_Transportation.geojson',
+    'generateId': true,
+  });
+  
+  map.addLayer({
+    'id': 'ajax_bikeways',
+    'type': 'line',
+    'source': 'ajax_cycling_network',
+    'paint': {
+      'line-width': 3,
+      //specify the color of the lines based on the text contained within the "Type" data field (i.e. based on the bikeway type)
+      //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
+      'line-color': [
+        'case',
+        //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
+        ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        'red',
+        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        'green',
+        ['in', 'multi', ['downcase', ['get', 'type']]],
+        'blue',
+        ['in', 'sharrows', ['downcase', ['get', 'type']]],
+        'orange',
+        //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
+        ['any', ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        'purple',
+        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        '#5C4033',
+        ['in', 'shared pathway', ['downcase', ['get', 'type']]],
+        '#ff69b4',
+        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        '#0492C2',
+        'black' //default color if none of the above apply
+      ],
+      'line-opacity': 0.7
+    }
+  });
+  map.addSource('whitby_cycling_network', {
+    type: 'geojson',
+    data: 'https://janicewg.github.io/GGR472-Data-Group-Project/Whitby_cycling_routes.geojson',
+    'generateId': true,
+  });
+
+  map.addLayer({
+    'id': 'whitby_bikeways',
+    'type': 'line',
+    'source': 'whitby_cycling_network',
+    'paint': {
+      'line-width': 3,
+      //specify the color of the lines based on the text contained within the "Type" data field (i.e. based on the bikeway type)
+      //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
+      'line-color': [
+        'case',
+        //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
+        ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        'red',
+        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        'green',
+        ['in', 'multi', ['downcase', ['get', 'type']]],
+        'blue',
+        ['in', 'sharrows', ['downcase', ['get', 'type']]],
+        'orange',
+        //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
+        ['any', ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        'purple',
+        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        '#5C4033',
+        ['in', 'shared pathway', ['downcase', ['get', 'type']]],
+        '#ff69b4',
+        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        '#0492C2',
+        'black' //default color if none of the above apply
+      ],
+      'line-opacity': 0.7
+    }
+  });
+
+
+
+
 
 });
+
+
