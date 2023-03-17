@@ -45,6 +45,21 @@ document.getElementById('returnbutton').addEventListener('click', () => {
   });
 });
 
+
+// Create empty GeoJSON objects to hold point features
+let geojson = {
+  'type': 'FeatureCollection',
+  'features': []
+};
+
+buffresult = {
+  "type": "FeatureCollection",
+  "features": []
+};
+
+var divs_lons=[]
+var divs_lats=[]
+
 //Add data sources and draw map layers
 map.on('load', () => {
   //'getJSON' function for reading an external JSON file
@@ -575,7 +590,7 @@ map.on('load', () => {
     //only show circles when there is more than 1 bike shop within radius
     filter: ['has', 'point_count'],
     'paint': {
-      'circle-color': '#11b4da',
+      'circle-color': 'red',
       //specify the radius of the circles based on whether the number of bike shops within radius is <10, 10-20, 20-50, 50-100 or >100
       'circle-radius': [
         'step',
@@ -707,10 +722,261 @@ map.on('load', () => {
     }
   });
 
+  fetch('https://ireo00.github.io/472-Resources/all_centroids.geojson')
+    .then(response => response.json())
+    .then(response => {
+        //console.log(response); //Check response in console
+        all_centroids = response; // Store geojson as variable using URL from fetch response
+        all_centroids.features.forEach((feature) => {
+          var lat=feature.geometry.coordinates[1];
+          var lon=feature.geometry.coordinates[0];
+          fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&start_date=2023-03-08&end_date=2023-03-09`)
+          .then(response => response.json())
+          .then(response => {
+              console.log(response); //Check response in console
+              weather = response; // Store geojson as variable using URL from fetch response
+          });
+      }); 
+    });
 
 
 
+      //Add datasource using GeoJSON variable
+      map.addSource('inputgeojson', {
+          type: 'geojson',
+          data: geojson
+      });
+
+      //Set style for when new points are added to the data source
+      map.addLayer({
+          'id': 'input-pnts',
+          'type': 'circle',
+          'source': 'inputgeojson',
+          'paint': {
+              'circle-radius': 5,
+              'circle-color': 'blue'
+          }
+      });    
+
+      map.addSource('buffgeojson', {
+        "type": "geojson",
+        "data": buffresult  //use buffer geojson variable as data source
+    });
+
+    //Show buffers on map using styling
+    map.addLayer({
+        "id": "inputpointbuff",
+        "type": "fill",
+        "source": "buffgeojson",
+        "paint": {
+            'fill-color': "blue",
+            'fill-opacity': 0.5,
+            'fill-outline-color': "black"
+        }
+    });
 
 });
 
+//When 'Plan Your Trip!' is clicked...
+document.getElementById('collapsible').addEventListener('click', () => {
+  //retrieve the div containing its content
+  var content = document.getElementById('content');
+  //if this content was already open...
+  if (content.style.display === "block") {
+    //close it
+    content.style.display = "none";
+    //get rid of all points and buffers
+    geojson.features=[]
+    map.getSource('inputgeojson').setData(geojson);  
+    buffresult.features=[]
+    map.getSource('buffgeojson').setData(buffresult);
+    //get rif of any nearby features
+    document.getElementById('nearby').innerHTML = ''
+    //change the buffer button back to 'GO' in case it was already clicked
+    document.getElementById('bufferbutton').textContent="GO"
+    //reinitialize longitude/latitude list of nearby features
+    divs_lons=[]
+    divs_lats=[]
+    //fly back to original view
+    map.flyTo({
+      center: [-79.3, 38.765],
+      zoom: 8.65,
+      bearing: -17.7,
+      essential: true
+    });
+    //change the instructions back to the default
+    const instructions = document.getElementById('instructions');
+    instructions.innerHTML='Click anywhere on map';
+  } 
+  //if the content was closed///
+  else {
+  //open it (i.e. display it)
+  content.style.display = "block";
+  //but don't display the slider yet
+  slider_div= document.getElementById('slider_div');
+  slider_div.style.display='none';
+  }
+});
 
+
+let lastExecution = 0
+//when the map is clicked...
+map.on('click', (e) => {
+  //if the 'Plan your Trip!' meny is open and no buffer has been triggered yet...
+  if (content.style.display === "block" && document.getElementById('bufferbutton').textContent==="GO" && ((lastExecution + 500) < Date.now())){
+    lastExecution = Date.now() //this is to stop rebound?
+    //Store clicked point on map as geojson feature
+    const clickedpoint = {
+        'type': 'Feature',
+        'geometry': {
+            'type': 'Point',
+            'coordinates': [e.lngLat.lng, e.lngLat.lat]
+        }
+    };
+    //reinitialize list of points to be empty
+    geojson.features=[]
+    //Add clicked point to previously empty geojson FeatureCollection variable
+    geojson.features.push(clickedpoint);
+    //change instructions 
+    const instructions = document.getElementById('instructions');
+    instructions.innerHTML='Click GO';
+    //Update the datasource to include clicked points
+    map.getSource('inputgeojson').setData(geojson);
+    //show slider
+    slider_div= document.getElementById('slider_div');
+    slider_div.style.display='block'
+  } 
+});
+
+//when the 'GO' button is clicked in the 'Plan your trip!'...
+document.getElementById('bufferbutton').addEventListener('click', () => {
+  
+  if (document.getElementById('bufferbutton').textContent==="GO" && geojson.features.length>0) {
+    document.getElementById('bufferbutton').innerHTML="CLOSE"
+    document.getElementById('slider').addEventListener('input', (e) => {
+      const radius = e.target.value;
+      });
+    
+    //create the buffer for each point
+    buffresult.features=[]
+
+    geojson.features.forEach((feature) => {
+        let buffer = turf.buffer(feature, 0.5);
+        buffresult.features.push(buffer);
+    });
+    map.getSource('buffgeojson').setData(buffresult);
+    //change instructions
+    const instructions = document.getElementById('instructions');
+    instructions.innerHTML='Click on any features below to zoom in ';
+  
+    //get the bike shops
+    fetch('https://ireo00.github.io/472-Resources/toronto_bicycle_shops.geojson')
+    .then(response => response.json())
+    .then(response => {
+        shops = response; // Store geojson as variable using URL from fetch response
+        //retrieve div for nearby stores
+        const nearby = document.getElementById('nearby');
+        //create text within it that says 'Nearby Shops'
+        const text_div= document.createElement('div');
+        const text= document.createElement('span'); 
+        text.innerHTML='Nearby Shops';
+        text.style.fontWeight = 'bold';
+        //check whether any shops exist within the buffer - if they do, show the text 'Nearby Shops'
+        if (turf.pointsWithinPolygon(shops, buffresult.features[0]).features.length>0){
+          text_div.appendChild(text)
+          nearby.appendChild(text_div)
+        }
+        //check whether any shops exist within the buffer
+        turf.pointsWithinPolygon(shops, buffresult.features[0]).features.forEach((feature) => {
+        //create a div with their name if they do exist
+        const item = document.createElement('div');
+        item.className='divs' 
+        divs_lons.push(feature.geometry.coordinates[0])
+        divs_lats.push(feature.geometry.coordinates[1])
+        const value = document.createElement('span'); 
+        value.innerHTML = `${feature.properties.name}`; 
+        item.appendChild(value); 
+        nearby.appendChild(item); 
+        });
+        //trigger list_click
+        list_click()
+    });
+
+    //get the bike parking
+    fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/toronto_bicycle_parking.geojson')
+    .then(response => response.json())
+    .then(response => {
+        shops = response; // Store geojson as variable using URL from fetch response
+        //retrieve div for nearby parkings
+        const nearby = document.getElementById('nearby');
+        //create text within it that says 'Nearby Parking'
+        const text_div= document.createElement('div');
+        const text= document.createElement('span'); 
+        //create text within it that says 'Nearby Parking'
+        text.innerHTML='Nearby Parking'
+        text.style.fontWeight = 'bold';
+         //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
+        if (turf.pointsWithinPolygon(shops, buffresult.features[0]).features.length>0){
+          text_div.appendChild(text)
+          nearby.appendChild(text_div)
+        }
+         //check whether any shops exist within the buffer
+        turf.pointsWithinPolygon(shops, buffresult.features[0]).features.forEach((feature) => {
+        //create a div with their name if they do exist
+        const item = document.createElement('div');
+        item.className='divs' 
+        divs_lons.push(feature.geometry.coordinates[0])
+        divs_lats.push(feature.geometry.coordinates[1])
+        const value = document.createElement('span'); 
+        if (feature.properties.name!='None'){
+        value.innerHTML = `${feature.properties.name}`; 
+        } else {
+          value.innerHTML = `Bike Parking ${feature.properties.id}`; 
+        }
+        item.appendChild(value); 
+        nearby.appendChild(item); 
+        });
+        //trigger list_click
+        list_click()
+    });
+    
+  } 
+  else {
+    document.getElementById('bufferbutton').innerHTML="GO"
+    geojson.features=[]
+    map.getSource('inputgeojson').setData(geojson);  
+    buffresult.features=[]
+    map.getSource('buffgeojson').setData(buffresult);
+
+    document.getElementById('nearby').innerHTML = ''
+    divs_lons=[]
+    divs_lats=[]
+    map.flyTo({
+      center: [-79.3, 38.765],//[parseFloat(divs_lons[i]), divs_lats[i]],
+      zoom: 8.65,
+      bearing: -17.7,
+      essential: true
+    });
+  }
+
+});
+
+function list_click(){
+  var elements = document.getElementsByClassName("divs");
+    if (elements.length>0){
+    for (var i = 0; i < elements.length; i++) {
+          let lat1=divs_lats[i]
+          let lon1=divs_lons[i]
+        elements[i].addEventListener('click' , () => {
+          console.log(lon1, lat1)
+          map.flyTo({
+            center: [lon1, lat1],
+            zoom: 16,
+            bearing: -17.7,
+            essential: true
+          });
+
+        });
+    };
+  };
+}

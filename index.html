@@ -18,6 +18,8 @@
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
+    <!-- Turf -->
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
     <title>GTA Cycling Network</title>
 </head>
 <body>
@@ -31,6 +33,22 @@
         <button type="button" class="btn btn-primary btn-sm" id="returnbutton">Return to full view</button>
     </div>
 
+    <div class='map-overlay-planner'>
+        <button type="button" class="collapsible" id="collapsible">Plan Your Trip!</button>
+        <div class="content" id="content">
+        <p id="instructions">Click anywhere on the map</p>
+        <div class="slider_div" id="slider_div">
+            <label>buffer radius:</label>
+            <input id="slider" type="range" min="0" max="5" step="0.5" value="0">
+        </div>
+        <div id='nearby' class='nearby'>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="bufferbutton">GO</button>
+        </div>
+    </div>
+
+
+    
 <script src="script.js"></script>
 </body>
 </html>
