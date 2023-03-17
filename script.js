@@ -45,6 +45,15 @@ document.getElementById('returnbutton').addEventListener('click', () => {
   });
 });
 
+//Change map layer display based on check box using setlayoutproperty
+document.getElementById('layercheck').addEventListener('change', (e) => {
+  map.setLayoutProperty(
+      'toronto_bicycle_shops_clustered',
+      'visibility',
+      e.target.checked ? 'visible' : 'none'
+  );
+});
+
 
 // Create empty GeoJSON objects to hold point features
 let geojson = {
