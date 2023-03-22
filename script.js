@@ -198,6 +198,7 @@ map.on('load', () => {
       }
     });
 
+ 
 
   }
 
@@ -244,6 +245,24 @@ map.on('load', () => {
     }
   });
 
+  map.on('mouseenter', 'toronto_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'toronto_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'toronto_bikeways', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility 1: " + e.features[0].properties.type +
+      "<br>" + "Facility 2: " + "<br>" + e.features[0].properties.second_type) //if statement
+        .addTo(map);
+  });
+
+
   //add a geojson file source "york_region_cycling_network" for York Region bikeways
   map.addSource('york_region_cycling_network', {
     type: 'geojson',
@@ -287,6 +306,22 @@ map.on('load', () => {
     }
   });
 
+  map.on('mouseenter', 'peel_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'peel_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'peel_bikeways', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility: " + e.features[0].properties.type +
+      "<br>" + "City: " + "<br>" + e.features[0].properties.municipality) //if statement needed for "systems"
+        .addTo(map);
+  });
 
   //add a geojson file source "peel_region_cycling_network" for Peel Region bikeways
   map.addSource('peel_region_cycling_network', {
@@ -328,6 +363,23 @@ map.on('load', () => {
       ],
       'line-opacity': 0.7
     }
+  });
+
+  map.on('mouseenter', 'peel_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'peel_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'peel_bikeways', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility: " + e.features[0].properties.class +
+      "<br>" + "City: " + "<br>" + e.features[0].properties.MUN) //if statement needed
+        .addTo(map);
   });
 
   //add a geojson file source "durham_region_cycling_network" for Durham Region bikeways
@@ -372,6 +424,22 @@ map.on('load', () => {
     }
   });
 
+  map.on('mouseenter', 'durham_region_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'durham_region_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'durham_region_bikeways', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Name: " + "<br>" + e.features[0].properties.name)
+        .addTo(map);
+  });
+  
   //add a geojson file source "burlington_cycling_networkk" for Burlington bikeways
   map.addSource('burlington_cycling_network', {
     type: 'geojson',
@@ -414,6 +482,21 @@ map.on('load', () => {
     }
   });
 
+  map.on('mouseenter', 'burlington_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'burlington_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'burlington_bikeways', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Facility: " + "<br>" + e.features[0].properties.type)
+        .addTo(map);
+  });
 
   //add a geojson file source "milton_cycling_network" for Milton bikeways
   map.addSource('milton_cycling_network', {
@@ -457,6 +540,21 @@ map.on('load', () => {
     }
   });
 
+  map.on('mouseenter', 'milton_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'milton_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'milton_bikeways', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Facility: " + "<br>" + e.features[0].properties.type)
+        .addTo(map);
+  });
 
   //add a geojson file source "oakville_cycling_network" for Oakville bikeways
   map.addSource('oakville_cycling_network', {
@@ -500,6 +598,21 @@ map.on('load', () => {
     }
   });
 
+  map.on('mouseenter', 'oakvill_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'oakvill_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'oakvill_bikeways', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Status: " + "<br>" + e.features[0].properties.status)
+        .addTo(map);
+  });
 
   //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
   map.addSource('toronto_bicycle_parking', {
@@ -578,6 +691,24 @@ map.on('load', () => {
       'icon-allow-overlap': true,
       'icon-ignore-placement': true
     }
+  });
+
+  map.on('mouseenter', 'toronto_bike_parking_unclustered', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'toronto_bike_parking_unclustered', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'toronto_bike_parking_unclustered', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + "Address: " + "<br>" + e.features[0].properties.address + "<br>" + "Postal Code: "
+      + e.features[0].properties.postal_code + "<br>" + "City:  " + e.features[0].properties.city + "<br>" + "Parking:  " + e.features[0].properties.parking_type + "<br>" +       
+      "Capacity: " + e.features[0].properties.bike_capacity)
+        .addTo(map);
   });
 
   //add a geojson file source "toronto_bicycle_shops" for Toronto bike shops
@@ -660,6 +791,25 @@ map.on('load', () => {
     }
   });
 
+    //Hover and pop-up
+    map.on('mouseenter', 'toronto_bicycle_shop_unclustered', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+  
+    map.on('mouseleave', 'toronto_bicycle_shop_unclustered', () => {
+      map.getCanvas().style.cursor = '';
+    });
+  
+    map.on('click', 'toronto_bicycle_shop_unclustered', (e) => {
+      console.log(e)
+      new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + "Address: " + "<br>" + e.features[0].properties.address + "<br>" + "Postal Code: "
+        + e.features[0].properties.postal_code + "<br>" + "City:  " + e.features[0].properties.city + "<br>" + "Phone:  " + e.features[0].properties.phone + "<br>" +       
+        "Email: " + e.features[0].properties.email + "<br>" + "Rental: " + e.features[0].properties.rental)
+          .addTo(map);
+    });
+
   map.addSource('ajax_cycling_network', {
     type: 'geojson',
     data: 'https://janicewg.github.io/GGR472-Data-Group-Project/Active_Transportation.geojson',
@@ -699,6 +849,24 @@ map.on('load', () => {
       ],
       'line-opacity': 0.7
     }
+  });
+
+  //Hover and pop-up
+  map.on('mouseenter', 'ajax_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'ajax_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'ajax_bikeways', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Location: " + "<br>" + e.features[0].properties.location + "<br>" + "Status: "
+      + e.features[0].properties.status + "<br>" + "Facility: " + e.features[0].properties.type)
+        .addTo(map);
   });
   map.addSource('whitby_cycling_network', {
     type: 'geojson',
@@ -740,6 +908,25 @@ map.on('load', () => {
       'line-opacity': 0.7
     }
   });
+
+  //Hover and pop-up
+  map.on('mouseenter', 'whitby_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'whitby_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'whitby_bikeways', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Road name: " + "<br>" + e.features[0].properties['road name'] + "<br>" + "Length(m): "
+      + e.features[0].properties.length + "<br>" + "Facility: " + e.features[0].properties.type)
+        .addTo(map);
+  });
+
 
   fetch('https://ireo00.github.io/472-Resources/all_centroids.geojson')
     .then(response => response.json())
