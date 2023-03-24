@@ -46,7 +46,7 @@ document.getElementById('returnbutton').addEventListener('click', () => {
 });
 
 //Change map layer display based on check box using setlayoutproperty
-document.getElementById('layercheck').addEventListener('change', (e) => {
+document.getElementById('layercheck1').addEventListener('change', (e) => {
   map.setLayoutProperty(
     'toronto_bicycle_shop_clustered',
     'visibility',
@@ -62,6 +62,74 @@ document.getElementById('layercheck').addEventListener('change', (e) => {
     'visibility',
     e.target.checked ? 'visible' : 'none'
   );
+});
+
+document.getElementById('layercheck2').addEventListener('change', (e) => {
+  map.setLayoutProperty(
+    'toronto_bikeshare_stations',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'toronto_bikeshare_clustered',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'toronto_bikeshare_cluster_count',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'toronto_bikeshare_unclustered',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+});
+
+document.getElementById('layercheck3').addEventListener('change', (e) => {
+  map.setLayoutProperty(
+    'toronto_bicycle_parking',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'toronto_bike_parking_clustered',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'toronto_bike_parking_cluster_count',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'toronto_bike_parking_unclustered',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+});
+
+//Filter data layer to show selected bike lane type from dropdown selection
+let tobikelane;
+
+document.getElementById("tobikelanetype").addEventListener('change',(e) => {   
+    tobikelane = document.getElementById('bikelane').value;
+
+    console.log(tobikelane);
+
+    if (tobikelane == 'All') {
+        map.setFilter(
+            'toronto_bikeways',
+            ['has', 'type'] //returns all lines from layer that have a value in type field
+        );
+    } else {
+        map.setFilter(
+            'toronto_bikeways',
+            ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+        );
+    }
+
 });
 
 

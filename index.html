@@ -37,11 +37,43 @@
     <div class='map-overlay-data'>
         <label>Filter map view</label>
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="layercheck" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-                Toronto_bicycle_shops
+            <input class="form-check-input" type="checkbox" value="" id="layercheck1" checked>
+            <label id="label_shops" class="form-check-label" for="flexCheckChecked">
+                Toronto bicycle shops
             </label>
         </div>
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="layercheck2" checked>
+            <label id="label_bikeshare" class="form-check-label" for="flexCheckChecked">
+                Toronto bikeshare
+            </label>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="layercheck3" checked>
+            <label id="label_parking" class="form-check-label" for="flexCheckChecked">
+                Toronto bicycle parking
+            </label>
+        </div>
+    </div>
+
+    <!-- define a new section for the dropdown menu-->
+    <div class='map-overlay-dropdown'>
+    <form>
+        <fieldset id="tobikelanetype">
+            <label>Select Bike Lane Type</label>
+            <select id="bikelane" name="bikelane">
+                <option value="" disabled selected>bike lane types...</option>
+                <option value="Bike Lane">Bike Lane</option>
+                <option value="Multi-Use Trail">Multi-Use Trail</option>
+                <option value="Sharrows">Sharrows</option>
+                <option value="Cycle Track">Cycle Track</option>
+                <option value="All">Show all</option>
+            </select>
+        </fieldset>
+   </form>   
+    </div>
 
 
     <div class='map-overlay-planner'>

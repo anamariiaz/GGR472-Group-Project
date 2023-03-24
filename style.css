@@ -35,6 +35,20 @@
     overflow: visible;
 }
 
+/* specify formatting 'map-overlay-dropdown' */
+.map-overlay-dropdown {
+    position: relative;
+    font: 14px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    background: rgba(249, 249, 249, 0.8);
+    top: 18px;
+    left: 0;
+    width: 260px;
+    margin: 10px 0 0 10px;
+    padding: 10px;
+    /*around elements inside of overlay*/
+    overflow: visible;
+}
+
 /* specify formatting 'geocoder'*/
 .geocoder {
     position: relative;
@@ -83,3 +97,38 @@
     background-color:#FF0000;
  }
 
+/* specify formatting of the legend's key (i.e. circle)*/
+.legend-key {
+    display: inline-block;
+    border-radius: 50%; /*curve border to make a circle*/
+    height: 12px; /*size of circle*/
+    width: 12px;
+    margin-right: 5px; /*position of circle*/
+}
+
+/* specify formatting of the 'key' associated with the toggle menu's Toronto bicycle shops "label-key-shops" */
+.label-key-shops {
+    display: inline-block;
+    border-radius: 50%; /* curve border to make circles */
+    height: 10px; /* specify height of circles */
+    width: 10px; /* specify width of circles */
+    margin-right: 5px; /* specify position of circles */
+}
+
+/* specify formatting of the 'key' associated with the toggle menu's Toronto bikeshare "label-key-bikeshare" */
+.label-key-bikeshare {
+    display: inline-block;
+    border-radius: 0%;
+    height: 2px;  /* adjust height to make small horizontal lines */
+    width: 10px; /* adjust height to make small horizontal lines */
+    margin-right: 5px; /* specify position of lines */
+}
+
+/* specify formatting of the 'key' associated with the toggle menu's Toronto bicycle parking "label-key-parking" */
+.label-key-parking {
+    display: inline-block;
+    border-radius: 0%; 
+    height: 2px; /* adjust height to make small horizontal lines */
+    width: 10px; /* adjust height to make small horizontal lines */
+    margin-right: 5px; /* specify position of lines */
+}
