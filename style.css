@@ -1,10 +1,8 @@
 .map {
     position: absolute;
-    top: 0; /* place maps below the text and images on the page */
+    top: 50px; /* place maps below the text and images on the page */
     bottom: 0;
-    width: 100%; /* ensure each of the 3 maps takes up 30% width */
-
-    
+    width: 100%; /* ensure each of the 3 maps takes up 30% width */   
 }
 
 /* specify formatting 'map-overlay-search' that included the geocoder and return button */
@@ -76,7 +74,6 @@
 .content {
     padding: 0 18px;
     display: none;
-    overflow: hidden;
     background-color: #f1f1f1;
 }
 
@@ -132,3 +129,10 @@
     width: 10px; /* adjust height to make small horizontal lines */
     margin-right: 5px; /* specify position of lines */
 }
+ .nearby{
+    height: 180px;
+    overflow-y: scroll;
+ }
+
+
+
