@@ -143,9 +143,9 @@ map.on('load', () => {
       }
     });
 
-    //add and style a layer of symbols "toronto_bikeshare_cluster-count" from the defined "toronto_bikeshare_stations" source for the text on top of the clustered bikeshare stations
+    //add and style a layer of symbols "toronto_bikeshare_cluster_count" from the defined "toronto_bikeshare_stations" source for the text on top of the clustered bikeshare stations
     map.addLayer({
-      id: 'toronto_bikeshare_cluster-count',
+      id: 'toronto_bikeshare_cluster_count',
       type: 'symbol',
       source: 'toronto_bikeshare_stations',
       //only show text when there is more than 1 bikeshare station within radius 
@@ -596,7 +596,7 @@ map.on('load', () => {
 
   //load and add image 'parking-marker' for parking icons (throw an error if this process fails)
   map.loadImage(
-    'https://anamariiaz.github.io/GGR472-Group-Project-Sources/bike_parking.png', //https://anamariiaz.github.io/GGR472-Group-Project-Sources/bike_parking.png
+    'https://ireo00.github.io/472-Resources/bicycle-parking.png', //https://anamariiaz.github.io/GGR472-Group-Project-Sources/bike_parking.png
     (error, image) => {
       if (error) throw error;
       map.addImage('parking-marker', image);
@@ -629,9 +629,9 @@ map.on('load', () => {
     }
   });
 
-  //add and style a layer of symbols "toronto_bike_parking_cluster-count" from the defined "toronto_bicycle_parking" source for the text on top of the clustered parking stations
+  //add and style a layer of symbols "toronto_bike_parking_cluster_count" from the defined "toronto_bicycle_parking" source for the text on top of the clustered parking stations
   map.addLayer({
-    id: 'toronto_bike_parking_cluster-count',
+    id: 'toronto_bike_parking_cluster_count',
     type: 'symbol',
     source: 'toronto_bicycle_parking',
     //only show text when there is more than 1 bike parking station within radius 
@@ -717,9 +717,9 @@ map.on('load', () => {
     }
   });
 
-  //add and style a layer of symbols "toronto_bike_parking_cluster-count" from the defined "toronto_bicycle_parking" source for the text on top of the clustered parking stations
+  //add and style a layer of symbols "toronto_bike_parking_cluster_count" from the defined "toronto_bicycle_parking" source for the text on top of the clustered parking stations
   map.addLayer({
-    id: 'gta_bike_parking_cluster-count',
+    id: 'gta_bike_parking_cluster_count',
     type: 'symbol',
     source: 'gta_bicycle_parking',
     //only show text when there is more than 1 bike parking station within radius 
@@ -762,7 +762,7 @@ map.on('load', () => {
 
   //load and add image 'shop-marker' for shop icons (throw an error if this process fails)
   map.loadImage(
-    'https://ireo00.github.io/472-Resources/bike_shop.png',
+    'https://ireo00.github.io/472-Resources/bike-shop.png',
     (error, image) => {
       if (error) throw error;
       map.addImage('shop-marker', image);
@@ -796,7 +796,7 @@ map.on('load', () => {
     }
   });
 
-  //add and style a layer of symbols "toronto_bicycle_shops_cluster-count" from the defined "toronto_bicycle_shops" source for the text on top of the clustered bike shops
+  //add and style a layer of symbols "toronto_bicycle_shops_cluster_count" from the defined "toronto_bicycle_shops" source for the text on top of the clustered bike shops
   map.addLayer({
     id: 'toronto_bicycle_shop_clustered_count',
     type: 'symbol',
@@ -886,9 +886,9 @@ map.on('load', () => {
     }
   });
 
-  //add and style a layer of symbols "toronto_bicycle_shops_cluster-count" from the defined "toronto_bicycle_shops" source for the text on top of the clustered bike shops
+  //add and style a layer of symbols "toronto_bicycle_shops_cluster_count" from the defined "toronto_bicycle_shops" source for the text on top of the clustered bike shops
   map.addLayer({
-    id: 'gta_bicycle_shop_clustered_count',
+    id: 'gta_bicycle_shop_cluster_count',
     type: 'symbol',
     source: 'gta_bicycle_shops',
     //only show text when there is more than 1 bike shop within radius 
@@ -956,7 +956,7 @@ map.on('load', () => {
     }
   });
 
-  //add and style a layer of symbols "toronto_bicycle_shops_cluster-count" from the defined "toronto_bicycle_shops" source for the text on top of the clustered bike shops
+  //add and style a layer of symbols "toronto_bicycle_shops_cluster_count" from the defined "toronto_bicycle_shops" source for the text on top of the clustered bike shops
   map.addLayer({
     id: 'gta_bicycle_rental_clustered_count',
     type: 'symbol',
@@ -1284,7 +1284,7 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
     document.getElementById('bufferbutton').innerHTML = "CLOSE"
     map.setLayoutProperty('toronto_bikeshare_unclustered', 'visibility', 'visible')
     map.setLayoutProperty('toronto_bikeshare_clustered', 'visibility', 'visible')
-    map.setLayoutProperty('toronto_bikeshare_cluster-count', 'visibility', 'visible')
+    map.setLayoutProperty('toronto_bikeshare_cluster_count', 'visibility', 'visible')
     document.getElementById('layercheck2').checked=true
     //show slider
     slider_div = document.getElementById('slider_div');
@@ -1797,6 +1797,11 @@ document.getElementById('returnbutton').addEventListener('click', () => {
 //Change map layer display based on check box using setlayoutproperty
 document.getElementById('layercheck1').addEventListener('change', (e) => {
   map.setLayoutProperty(
+    'toronto_bicycle_shop',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
     'toronto_bicycle_shop_clustered',
     'visibility',
     e.target.checked ? 'visible' : 'none'
@@ -1808,6 +1813,26 @@ document.getElementById('layercheck1').addEventListener('change', (e) => {
   );
   map.setLayoutProperty(
     'toronto_bicycle_shop_clustered_count',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'gta_bicycle_shop',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'gta_bicycle_shop_clustered',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'gta_bicycle_shop_unclustered',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'gta_bicycle_shop_cluster_count',
     'visibility',
     e.target.checked ? 'visible' : 'none'
   );
@@ -1857,7 +1882,64 @@ document.getElementById('layercheck3').addEventListener('change', (e) => {
     'visibility',
     e.target.checked ? 'visible' : 'none'
   );
+  map.setLayoutProperty(
+    'gta_bike_parking',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'gta_bike_parking_clustered',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'gta_bike_parking_unclustered',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
+  map.setLayoutProperty(
+    'gta_bike_parking_cluster_count',
+    'visibility',
+    e.target.checked ? 'visible' : 'none'
+  );
 });
+
+//assign 'label_shops' variable to HTML element with 'label_shops' id
+const label_shops = document.getElementById('label_shops'); //assign 'item_shops' variable to a created 'section'
+const item_shops = document.createElement('div'); //assign 'key_shops' variable to a created 'span' (i.e. space into which content can be inserted)
+const key_shops = document.createElement('span'); //specify the class of 'key_shops' span as 'label-key-shops' such that its style is defined by the latter in css
+key_shops.className = 'label-key-shops'; //specify the background color of 'key_shops' span
+key_shops.style.backgroundColor = 'blue'; //assign 'value_shops' variable to a created 'span' (i.e. space into which content can be inserted)
+const value_shops = document.createElement('span');  //insert text into 'value_shops' span
+value_shops.innerHTML = 'Bicycle Shops' //add 'key_points' span to the created section 'item_shops'
+item_shops.appendChild(key_shops);  //add 'value_shops' span to the created section 'item_shops'
+item_shops.appendChild(value_shops);  //add 'item_shops' section into the HTML element assigned to 'label_shops' variable
+label_shops.appendChild(item_shops); 
+
+//assign 'label_parking' variable to HTML element with 'label_parking' id
+const label_parking = document.getElementById('label_parking'); //assign 'item_parking' variable to a created 'section'
+const item_parking = document.createElement('div'); //assign 'key_parking' variable to a created 'span' (i.e. space into which content can be inserted)
+const key_parking = document.createElement('span');  //specify the class of 'key_parking' span as 'label-key-parking' such that its style is defined by the latter in css
+key_parking.className = 'label-key-parking';  //specify the background color of 'key_parking' span
+key_parking.style.backgroundColor = 'orange';  //assign 'value_parking' variable to a created 'span' (i.e. space into which content can be inserted)
+const value_parking = document.createElement('span'); //insert text into 'value_parking' span
+value_parking.innerHTML = 'Bicycle Parkings' //add 'key_parking' span to the created section 'item_parking'
+item_parking.appendChild(key_parking);  //add 'value_parking' span to the created section 'item_parking'
+item_parking.appendChild(value_parking); //add 'item_parking' section into the HTML element assigned to 'label_parking' variable
+label_parking.appendChild(item_parking); 
+
+//assign 'label_bikeshare' variable to HTML element with 'label_bikeshare' id
+const label_bikeshare = document.getElementById('label_bikeshare'); //assign 'item_bikeshare' variable to a created 'section'
+const item_bikeshare = document.createElement('div'); //assign 'key_bikeshare' variable to a created 'span' (i.e. space into which content can be inserted)
+const key_bikeshare = document.createElement('span'); //specify the class of 'key_bikeshare' span as 'label-key-bikeshare' such that its style is defined by the latter in css
+key_bikeshare.className = 'label-key-bikeshare'; //specify the background color of 'key_bikeshare' span
+key_bikeshare.style.backgroundColor = 'black'; //assign 'value_bikeshare' variable to a created 'span' (i.e. space into which content can be inserted)
+const value_bikeshare = document.createElement('span'); //insert text into 'value_bikeshare' span
+value_bikeshare.innerHTML = 'Toronto Bikeshare' //add 'key_bikeshare' span to the created section 'item_bikeshare'
+item_bikeshare.appendChild(key_bikeshare); //add 'value_bikeshare' span to the created section 'item_bikeshare'
+item_bikeshare.appendChild(value_bikeshare); //add 'item_bikeshare' section into the HTML element assigned to 'label_bikeshare' variable
+label_bikeshare.appendChild(item_bikeshare); 
+
 
 // document.getElementById('layercheck4').addEventListener('change', (e) => {
 //   if (document.getElementById('layercheck4').checked==true){
