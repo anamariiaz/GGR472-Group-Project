@@ -2182,3 +2182,42 @@ document.getElementById("tobikelanetype").addEventListener('change',(e) => {
 
 });
 
+const legendlabels = [
+  'Bike Lanes',
+  'Multi-use Trails', 
+  'Sharrows', 
+  'Cycle Track',
+  'Paved Shoulders',
+  'Hiking/Park Trails'
+];
+
+const legendcolours = [
+  'red',
+  'blue',
+  'purple',
+  'orange',
+  '#0492C2',
+  '#5C4033'
+];
+
+//Declare legend variable using legend div tag
+const legend = document.getElementById('legend');
+
+//For each layer create a block to put the colour and label in
+legendlabels.forEach((label, i) => {
+  const color = legendcolours[i];
+
+  const item = document.createElement('div'); 
+  const key = document.createElement('span'); 
+
+  key.className = 'legend-key'; 
+  key.style.backgroundColor = color; 
+
+  const value = document.createElement('span'); 
+  value.innerHTML = `${label}`; 
+
+  item.appendChild(key); 
+  item.appendChild(value); 
+
+  legend.appendChild(item); 
+});
