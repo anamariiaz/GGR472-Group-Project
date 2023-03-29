@@ -197,9 +197,10 @@ map.on('load', () => {
         bikeshare_status.data.stations.forEach((station) => {
         
           if (station.station_id===station_id){
+            console.log(station.station_id)
             new mapboxgl.Popup()
             .setLngLat(e.lngLat)
-            .setHTML("No. Bikes: " + station.num_bikes_available + "/" + station.num_docks_available)
+            .setHTML("No. Bikes: " + station.num_bikes_available + "<br>" + "No. Available Docks: " + station.num_docks_available)
               .addTo(map);
           }
         })
@@ -1402,7 +1403,7 @@ function get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types){
 }
 
 function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types){
-  fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/toronto_bicycle_parking.geojson')
+  fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/all_bicycle_parking.geojson') //toronto
       .then(response => response.json())
       .then(response => {
         parkings = response; // Store geojson as variable using URL from fetch response
@@ -1429,10 +1430,10 @@ function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types){
           divs_types.push("parking")
           divs_properties.push(feature.properties)
           const value_p = document.createElement('span');
-          if (feature.properties.name != 'None') {
+          if (feature.properties.name != 'None' && feature.properties.name != 'Not Available') {
             value_p.innerHTML = `${feature.properties.name}`;
           } else {
-            value_p.innerHTML = `Bike Parking ${feature.properties.id}`;
+            value_p.innerHTML = `Bike Parking ${feature.properties.number}`; //feature.properties.id
           }
           item_p.appendChild(value_p);
           nearby_p.appendChild(item_p);
@@ -1509,7 +1510,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types){
       
       const item_temp = document.createElement('div');
       const value_temp = document.createElement('span');
-      value_temp.innerHTML = temp_at_point.hourly.temperature_2m[Math.floor(hour/ 3)] + '°C' //temp_at_point.hourly.temperature_2m.length - 1
+      value_temp.innerHTML = temp_at_point.hourly.temperature_2m[Math.floor(hour_point/ 3)] + '°C' //temp_at_point.hourly.temperature_2m.length - 1
       item_temp.appendChild(value_temp);
       nearby_w.appendChild(item_temp);
       });
@@ -1521,7 +1522,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types){
         //create text within it that says 'Nearby Parking'
       const item_prec = document.createElement('div');
       const value_prec = document.createElement('span');
-      value_prec.innerHTML = prec_at_point.hourly.precipitation[Math.floor(hour/ 3)] + 'mm total precipitation in last hour' //prec_at_point.hourly.precipitation.length - 1
+      value_prec.innerHTML = prec_at_point.hourly.precipitation[Math.floor(hour_point/ 3)] + 'mm total precipitation in last hour' //prec_at_point.hourly.precipitation.length - 1
       item_prec.appendChild(value_prec);
       nearby_w.appendChild(item_prec);
       });
@@ -1533,7 +1534,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types){
         //create text within it that says 'Nearby Parking'
       const item_snow = document.createElement('div');
       const value_snow = document.createElement('span');
-      value_snow.innerHTML = snow_at_point.hourly.snowfall[Math.floor(hour/ 3)] + 'mm snowfall in last hour' //snow_at_point.hourly.snowfall.length - 1
+      value_snow.innerHTML = snow_at_point.hourly.snowfall[Math.floor(hour_point/ 3)] + 'mm snowfall in last hour' //snow_at_point.hourly.snowfall.length - 1
       item_snow.appendChild(value_snow);
       nearby_w.appendChild(item_snow);
       });
@@ -1546,7 +1547,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types){
         //create text within it that says 'Nearby Parking'
       const item_wind = document.createElement('div');
       const value_wind = document.createElement('span');
-      value_wind.innerHTML = wind_at_point.hourly.windspeed_10m[Math.floor(hour/ 3)] + 'km/h wind at 10m above ground' //wind_at_point.hourly.windspeed_10m.length - 1
+      value_wind.innerHTML = wind_at_point.hourly.windspeed_10m[Math.floor(hour_point/ 3)] + 'km/h wind at 10m above ground' //wind_at_point.hourly.windspeed_10m.length - 1
       item_wind.appendChild(value_wind);
       nearby_w.appendChild(item_wind);
       });
@@ -1591,13 +1592,43 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
             .addTo(map);
       }
         else if (features1==="parking"){
+        if (properties1.city==='Toronto' && properties1.bike_capacity==null){
         popup_parking=new mapboxgl.Popup()
           .setLngLat([lon1, lat1])
-          .setHTML("Name: " + "<br>" + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
+          .setHTML("Name: " + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
           + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Parking:  " + properties1.parking_type + "<br>" +       
-          "Capacity: " + properties1.bike_capacity)
+          "Capacity: " + 'Not Available')
             .addTo(map);
         }
+        else if (properties1.city==='Toronto' && properties1.bike_capacity!=null){
+          popup_parking=new mapboxgl.Popup()
+            .setLngLat([lon1, lat1])
+            .setHTML("Name: " + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
+            + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Parking:  " + properties1.parking_type + "<br>" +       
+            "Capacity: " + properties1.bike_capacity)
+              .addTo(map);
+          }
+        else if (properties1.city!='Toronto' && properties1.bike_capacity==null){
+          popup_parking=new mapboxgl.Popup()
+            .setLngLat([lon1, lat1])
+            .setHTML("Name: " + properties1.name + "<br>" +  "Covered?: " + properties1.covered + "<br>" + "Fee: " + properties1.fee + "<br>" + "Parking: " + properties1.parking_type + "<br>" +       
+            "Capacity: " + "Not Available") //properties1.bike_capacity
+              .addTo(map);
+          }
+          else if (properties1.city!='Toronto' && properties1.bike_capacity!=null){
+            popup_parking=new mapboxgl.Popup()
+              .setLngLat([lon1, lat1])
+              .setHTML("Name: " + properties1.name + "<br>" +  "Covered?: " + properties1.covered + "<br>" + "Fee: " + properties1.fee + "<br>" + "Parking: " + properties1.parking_type + "<br>" +       
+              "Capacity: " + properties1.bike_capacity) //properties1.bike_capacity
+                .addTo(map);
+            }
+        }
+        else if (features1==="share"){
+          popup_parking=new mapboxgl.Popup()
+            .setLngLat([lon1, lat1])
+            .setHTML("Name: " + "<br>" + properties1.station_id + "<br>")
+              .addTo(map);
+          }
       }
       });
     };
@@ -2150,3 +2181,4 @@ document.getElementById("tobikelanetype").addEventListener('change',(e) => {
     }
 
 });
+

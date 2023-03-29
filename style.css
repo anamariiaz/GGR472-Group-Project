@@ -20,6 +20,20 @@
 }
 
 /* specify formatting 'map-overlay-search' that included the geocoder and return button */
+.map-overlay-legend {
+    position: relative;
+    font: 14px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    background: rgba(249, 249, 249, 0.8);
+    top: 18px;
+    left: 1000px;
+    width: 260px;
+    margin: 10px 0 0 10px;
+    padding: 10px;
+    /*around elements inside of overlay*/
+    overflow: visible;
+}
+
+/* specify formatting 'map-overlay-search' that included the geocoder and return button */
 .map-overlay-search {
     position: relative;
     font: 14px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
