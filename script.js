@@ -1,5 +1,5 @@
 //provide access token to Mapbox API 
-mapboxgl.accessToken = 'pk.eyJ1IjoiYW5hbWFyaWlheiIsImEiOiJjbGRtMTR5YmUwMjBqM3VrZDU0N2RmeTVuIn0.TtYMegWHD_9XSk_jO1jZFg';
+mapboxgl.accessToken = 'pk.eyJ1IjoiaXJlbyIsImEiOiJjbGRtMTVrbGkwNHh5M3B0Yjd5YnF3cHNvIn0.KNtbmsY84dCZpXiXy91keg';
 
 //define maximum and minimum scroll bounds for the maps
 const maxBounds = [
@@ -10,8 +10,8 @@ const maxBounds = [
 //define a constant variable "map" and assign it to a map created with the Mapbox API 
 const map = new mapboxgl.Map({
   container: 'map1', //ID for div where map will be embedded in HTML file
-  style: 'mapbox://styles/mapbox/light-v11', //link to style URL
-  center: [-79.3, 38.765], //starting position [longitude, latitude]
+  style: 'mapbox://styles/ireo/clfvlsqn800m701mxbykznqv5',//'mapbox://styles/mapbox/light-v11', //link to style URL
+  center: [-79.266, 43.926], //starting position [longitude, latitude]
   zoom: 8.65, //starting zoom
   bearing: -17.7, //angle rotation of map
   maxBounds: maxBounds //maximum and minimum scroll bounds
@@ -35,7 +35,7 @@ const geocoder = new MapboxGeocoder({
 //Use geocoder div to position geocoder on page
 document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
 
-isProcessing=false
+isProcessing = false
 
 
 // Create empty GeoJSON objects to hold point features
@@ -176,7 +176,7 @@ map.on('load', () => {
       }
     });
 
- 
+
 
   }
 
@@ -189,22 +189,22 @@ map.on('load', () => {
   });
 
   map.on('click', 'toronto_bikeshare_unclustered', (e) => {
-    let station_id=e.features[0].properties.station_id
+    let station_id = e.features[0].properties.station_id
     fetch('https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_status')
       .then(response => response.json())
       .then(response => {
         bikeshare_status = response;
         bikeshare_status.data.stations.forEach((station) => {
-        
-          if (station.station_id===station_id){
+
+          if (station.station_id === station_id) {
             console.log(station.station_id)
             new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML("No. Bikes: " + station.num_bikes_available + "<br>" + "No. Available Docks: " + station.num_docks_available)
+              .setLngLat(e.lngLat)
+              .setHTML("No. Bikes: " + station.num_bikes_available + "<br>" + "No. Available Docks: " + station.num_docks_available)
               .addTo(map);
           }
         })
-      })  
+      })
   });
 
   //add a geojson file source "toronto_cycling_network" for Toronto bikeways
@@ -232,7 +232,7 @@ map.on('load', () => {
         'orange',
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
         'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
         'purple',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
@@ -259,8 +259,8 @@ map.on('load', () => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility 1: " + e.features[0].properties.type +
-      "<br>" + "Facility 2: " + "<br>" + e.features[0].properties.second_type) //if statement
-        .addTo(map);
+        "<br>" + "Facility 2: " + "<br>" + e.features[0].properties.second_type) //if statement
+      .addTo(map);
   });
 
 
@@ -289,7 +289,7 @@ map.on('load', () => {
         'orange',
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
         'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
         'purple',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
@@ -313,9 +313,9 @@ map.on('load', () => {
   map.on('click', 'peel_bikeways', (e) => {
     console.log(e)
     new mapboxgl.Popup()
-    .setLngLat(e.lngLat)
-    .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility: " + e.features[0].properties.type +
-    "<br>" + "City: " + "<br>" + e.features[0].properties.municipality) //if statement needed for "systems"
+      .setLngLat(e.lngLat)
+      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility: " + e.features[0].properties.type +
+        "<br>" + "City: " + "<br>" + e.features[0].properties.municipality) //if statement needed for "systems"
       .addTo(map);
   });
 
@@ -341,7 +341,7 @@ map.on('load', () => {
         'red',
         ['any', ['in', 'multi', ['downcase', ['get', 'Type']]], ['in', 'shared pathway', ['downcase', ['get', 'Type']]]],
         'blue',
-        ['any', ['in', 'marked', ['downcase', ['get', 'Type']]],  ['in', 'connection', ['downcase', ['get', 'Type']]], ['in', 'shared roadway', ['downcase', ['get', 'Type']]], ['in', 'signed route', ['downcase', ['get', 'Type']]]],//marked on road bike route? on road connection?
+        ['any', ['in', 'marked', ['downcase', ['get', 'Type']]], ['in', 'connection', ['downcase', ['get', 'Type']]], ['in', 'shared roadway', ['downcase', ['get', 'Type']]], ['in', 'signed route', ['downcase', ['get', 'Type']]]],//marked on road bike route? on road connection?
         'purple',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'Type']]], ['in', 'dirt', ['downcase', ['get', 'Type']]]],
@@ -367,8 +367,8 @@ map.on('load', () => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility: " + e.features[0].properties.class +
-      "<br>" + "City: " + "<br>" + e.features[0].properties.MUN) //if statement needed
-        .addTo(map);
+        "<br>" + "City: " + "<br>" + e.features[0].properties.MUN) //if statement needed
+      .addTo(map);
   });
 
   //add a geojson file source "durham_region_cycling_network" for Durham Region bikeways
@@ -395,7 +395,7 @@ map.on('load', () => {
         'orange',
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
         'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
         'purple',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
@@ -421,9 +421,9 @@ map.on('load', () => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("Name: " + "<br>" + e.features[0].properties.name)
-        .addTo(map);
+      .addTo(map);
   });
-  
+
   //add a geojson file source "burlington_cycling_networkk" for Burlington bikeways
   map.addSource('burlington_cycling_network', {
     type: 'geojson',
@@ -444,7 +444,7 @@ map.on('load', () => {
         'red',
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
         'orange',
-        ['any', ['in', 'mupoff', ['downcase', ['get', 'type']]], ['in', 'mupadj', ['downcase', ['get', 'type']]],  ['in', 'bl-shared', ['downcase', ['get', 'type']]]], //'multi', Multiuse path off road (MUPOFF) OR Multiuse path adjacent to road	(MUPADJ)
+        ['any', ['in', 'mupoff', ['downcase', ['get', 'type']]], ['in', 'mupadj', ['downcase', ['get', 'type']]], ['in', 'bl-shared', ['downcase', ['get', 'type']]]], //'multi', Multiuse path off road (MUPOFF) OR Multiuse path adjacent to road	(MUPADJ)
         'blue',
         ['in', 'shared', ['downcase', ['get', 'type']]], //'sharrows', Shared use - Sharrows painted on pavement (SHARED)
         'purple',
@@ -479,7 +479,7 @@ map.on('load', () => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("Facility: " + "<br>" + e.features[0].properties.type)
-        .addTo(map);
+      .addTo(map);
   });
 
   //add a geojson file source "milton_cycling_network" for Milton bikeways
@@ -506,7 +506,7 @@ map.on('load', () => {
         'orange',
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
         'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
         'purple',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
@@ -532,7 +532,7 @@ map.on('load', () => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("Facility: " + "<br>" + e.features[0].properties.type)
-        .addTo(map);
+      .addTo(map);
   });
 
   //add a geojson file source "oakville_cycling_network" for Oakville bikeways
@@ -581,7 +581,7 @@ map.on('load', () => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("Status: " + "<br>" + e.features[0].properties.status)
-        .addTo(map);
+      .addTo(map);
   });
 
   //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
@@ -676,9 +676,9 @@ map.on('load', () => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + "Address: " + "<br>" + e.features[0].properties.address + "<br>" + "Postal Code: "
-      + e.features[0].properties.postal_code + "<br>" + "City:  " + e.features[0].properties.city + "<br>" + "Parking:  " + e.features[0].properties.parking_type + "<br>" +       
-      "Capacity: " + e.features[0].properties.bike_capacity)
-        .addTo(map);
+        + e.features[0].properties.postal_code + "<br>" + "City:  " + e.features[0].properties.city + "<br>" + "Parking:  " + e.features[0].properties.parking_type + "<br>" +
+        "Capacity: " + e.features[0].properties.bike_capacity)
+      .addTo(map);
   });
 
   //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
@@ -763,7 +763,7 @@ map.on('load', () => {
 
   //load and add image 'shop-marker' for shop icons (throw an error if this process fails)
   map.loadImage(
-    'https://ireo00.github.io/472-Resources/bike-shop.png',
+    'https://ireo00.github.io/472-Resources/bicycle-shop3.png',
     (error, image) => {
       if (error) throw error;
       map.addImage('shop-marker', image);
@@ -830,24 +830,24 @@ map.on('load', () => {
     }
   });
 
-    //Hover and pop-up
-    map.on('mouseenter', 'toronto_bicycle_shop_unclustered', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-  
-    map.on('mouseleave', 'toronto_bicycle_shop_unclustered', () => {
-      map.getCanvas().style.cursor = '';
-    });
-  
-    map.on('click', 'toronto_bicycle_shop_unclustered', (e) => {
-      console.log(e)
-      new mapboxgl.Popup()
-        .setLngLat(e.lngLat)
-        .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + "Address: " + "<br>" + e.features[0].properties.address + "<br>" + "Postal Code: "
-        + e.features[0].properties.postal_code + "<br>" + "City:  " + e.features[0].properties.city + "<br>" + "Phone:  " + e.features[0].properties.phone + "<br>" +       
+  //Hover and pop-up
+  map.on('mouseenter', 'toronto_bicycle_shop_unclustered', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'toronto_bicycle_shop_unclustered', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'toronto_bicycle_shop_unclustered', (e) => {
+    console.log(e)
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + "Address: " + "<br>" + e.features[0].properties.address + "<br>" + "Postal Code: "
+        + e.features[0].properties.postal_code + "<br>" + "City:  " + e.features[0].properties.city + "<br>" + "Phone:  " + e.features[0].properties.phone + "<br>" +
         "Email: " + e.features[0].properties.email + "<br>" + "Rental: " + e.features[0].properties.rental)
-          .addTo(map);
-    });
+      .addTo(map);
+  });
 
 
   //add a geojson file source "toronto_bicycle_shops" for Toronto bike shops
@@ -903,7 +903,7 @@ map.on('load', () => {
       'text-ignore-placement': true
     }
   });
-  
+
   //add and style a layer of circles "toronto_bicycle_shop_unclustered" from the defined "toronto_bicycle_shops" source for the unclustered (single) shop
   map.addLayer({
     id: 'gta_bicycle_shop_unclustered',
@@ -973,7 +973,7 @@ map.on('load', () => {
       'text-ignore-placement': true
     }
   });
-  
+
   //add and style a layer of circles "toronto_bicycle_shop_unclustered" from the defined "toronto_bicycle_shops" source for the unclustered (single) shop
   map.addLayer({
     id: 'gta_bicycle_rental_unclustered',
@@ -1013,7 +1013,7 @@ map.on('load', () => {
         'orange',
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
         'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
         'purple',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
@@ -1040,8 +1040,8 @@ map.on('load', () => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("Location: " + "<br>" + e.features[0].properties.location + "<br>" + "Status: "
-      + e.features[0].properties.status + "<br>" + "Facility: " + e.features[0].properties.type)
-        .addTo(map);
+        + e.features[0].properties.status + "<br>" + "Facility: " + e.features[0].properties.type)
+      .addTo(map);
   });
   map.addSource('whitby_cycling_network', {
     type: 'geojson',
@@ -1066,7 +1066,7 @@ map.on('load', () => {
         'orange',
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
         'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
         'purple',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
@@ -1093,65 +1093,65 @@ map.on('load', () => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("Road name: " + "<br>" + e.features[0].properties['road name'] + "<br>" + "Length(m): "
-      + e.features[0].properties.length + "<br>" + "Facility: " + e.features[0].properties.type)
-        .addTo(map);
+        + e.features[0].properties.length + "<br>" + "Facility: " + e.features[0].properties.type)
+      .addTo(map);
   });
 
-  map.addSource('traffic_source', { 
+  map.addSource('traffic_source', {
     'type': 'vector',
-    'url': 'mapbox://mapbox.mapbox-traffic-v1' 
+    'url': 'mapbox://mapbox.mapbox-traffic-v1'
   });
   map.addLayer({
     'id': 'traffic',
     'type': 'line',
-    'source': 'traffic_source', 
-    'layout':{'visibility': 'none'},
+    'source': 'traffic_source',
+    'layout': { 'visibility': 'none' },
     'paint': {
-        'line-color':  [
-          "case",
-          [
+      'line-color': [
+        "case",
+        [
           "==",
           "low",
           [
-          "get",
-          "congestion"
+            "get",
+            "congestion"
           ]
-          ],
-          "green",
-          [
+        ],
+        "green",
+        [
           "==",
           "moderate",
           [
-          "get",
-          "congestion"
+            "get",
+            "congestion"
           ]
-          ],
-          "#ffff00",
-          [
+        ],
+        "#ffff00",
+        [
           "==",
           "heavy",
           [
-          "get",
-          "congestion"
+            "get",
+            "congestion"
           ]
-          ],
-          "orange",
-          [
+        ],
+        "orange",
+        [
           "==",
           "severe",
           [
-          "get",
-          "congestion"
+            "get",
+            "congestion"
           ]
-          ],
-          "red",
-          "#000000"
-          ],
-        'line-width': 2
+        ],
+        "red",
+        "#000000"
+      ],
+      'line-width': 2
     },
-    'source-layer': 'traffic' 
+    'source-layer': 'traffic'
   });
-  
+
 
 
   // map.addSource('weather1', {
@@ -1224,11 +1224,11 @@ document.getElementById('collapsible').addEventListener('click', () => {
     //reinitialize longitude/latitude list of nearby features
     divs_lons = []
     divs_lats = []
-    divs_properties=[]
-    divs_types=[]
+    divs_properties = []
+    divs_types = []
     //fly back to original view
     map.flyTo({
-      center: [-79.3, 38.765],
+      center: [-79.266, 43.926],
       zoom: 8.65,
       bearing: -17.7,
       essential: true
@@ -1271,7 +1271,7 @@ map.on('click', (e) => {
     instructions.innerHTML = 'Click GO';
     //Update the datasource to include clicked points
     map.getSource('inputgeojson').setData(geojson);
-    lonlat_click=e.lngLat
+    lonlat_click = e.lngLat
     //show slider
     //slider_div = document.getElementById('slider_div');
     //slider_div.style.display = 'block'
@@ -1280,61 +1280,61 @@ map.on('click', (e) => {
 
 //when the 'GO' button is clicked in the 'Plan your trip!'...
 document.getElementById('bufferbutton').addEventListener('click', () => {
-  
+
   if (document.getElementById('bufferbutton').textContent === "GO" && geojson.features.length > 0) {
     document.getElementById('bufferbutton').innerHTML = "CLOSE"
     map.setLayoutProperty('toronto_bikeshare_unclustered', 'visibility', 'visible')
     map.setLayoutProperty('toronto_bikeshare_clustered', 'visibility', 'visible')
     map.setLayoutProperty('toronto_bikeshare_cluster_count', 'visibility', 'visible')
-    document.getElementById('layercheck2').checked=true
+    document.getElementById('layercheck2').checked = true
     //show slider
     slider_div = document.getElementById('slider_div');
     slider_div.style.display = 'block'
-    let lastExecution2=0
+    let lastExecution2 = 0
     document.getElementById('slider').addEventListener('input', (e) => {
       //e.preventDefault();
-      if (e.target.value!=0 && ((lastExecution2 + 900) < Date.now())){ 
-      console.log((lastExecution2 + 800), Date.now())
-      lastExecution2 = Date.now()
-      const radius = e.target.value;
-      //create the buffer for each point
-    buffresult.features = []
-    document.getElementById('nearby').innerHTML=''
-    divs_lons=[]
-    divs_lats=[]
-    divs_properties=[]
-    divs_types=[]
-    geojson.features.forEach((feature) => {
-      let buffer = turf.buffer(feature, radius);
-      buffresult.features.push(buffer);
-    });
-    map.getSource('buffgeojson').setData(buffresult);
-    //change instructions
-    const instructions = document.getElementById('instructions');
-    instructions.innerHTML = 'Click on any features below to zoom in ';
-    if (isProcessing==true){
-      return 
-    }
-    isProcessing=true
-    get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types)
-    //get bike shops
+      if (e.target.value != 0 && ((lastExecution2 + 900) < Date.now())) {
+        console.log((lastExecution2 + 800), Date.now())
+        lastExecution2 = Date.now()
+        const radius = e.target.value;
+        //create the buffer for each point
+        buffresult.features = []
+        document.getElementById('nearby').innerHTML = ''
+        divs_lons = []
+        divs_lats = []
+        divs_properties = []
+        divs_types = []
+        geojson.features.forEach((feature) => {
+          let buffer = turf.buffer(feature, radius);
+          buffresult.features.push(buffer);
+        });
+        map.getSource('buffgeojson').setData(buffresult);
+        //change instructions
+        const instructions = document.getElementById('instructions');
+        instructions.innerHTML = 'Click on any features below to zoom in ';
+        if (isProcessing == true) {
+          return
+        }
+        isProcessing = true
+        get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types)
+        //get bike shops
 
-    //get the bike parking
-    
+        //get the bike parking
+
 
       }
       else {
-      buffresult.features = []
-      map.getSource('buffgeojson').setData(buffresult);
-      document.getElementById('nearby').innerHTML=''
-      divs_lons=[]
-      divs_lats=[]
-      divs_properties=[]
-      divs_types=[]
+        buffresult.features = []
+        map.getSource('buffgeojson').setData(buffresult);
+        document.getElementById('nearby').innerHTML = ''
+        divs_lons = []
+        divs_lats = []
+        divs_properties = []
+        divs_types = []
       }
     });
 
-    
+
 
   }
   else {
@@ -1350,10 +1350,10 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
     document.getElementById('nearby').innerHTML = ''
     divs_lons = []
     divs_lats = []
-    divs_properties=[]
-    divs_types=[]
+    divs_properties = []
+    divs_types = []
     map.flyTo({
-      center: [-79.3, 38.765],//[parseFloat(divs_lons[i]), divs_lats[i]],
+      center: [-79.266, 43.926],//[parseFloat(divs_lons[i]), divs_lats[i]],
       zoom: 8.65,
       bearing: -17.7,
       essential: true
@@ -1364,201 +1364,201 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
 });
 
 
-function get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types){
+function get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types) {
   //get the bike shops
   fetch('https://ireo00.github.io/472-Resources/toronto_bicycle_shops.geojson')
-  .then(response => response.json())
-  .then(response => {
-    shops = response; // Store geojson as variable using URL from fetch response
-    //retrieve div for nearby stores
-    const nearby = document.getElementById('nearby');
-    //create text within it that says 'Nearby Shops'
-    const text_div = document.createElement('div');
-    const text = document.createElement('span');
-    text.innerHTML = 'Nearby Shops';
-    text.style.fontWeight = 'bold';
-    //check whether any shops exist within the buffer - if they do, show the text 'Nearby Shops'
-    if (turf.pointsWithinPolygon(shops, buffresult.features[0]).features.length > 0) {
-      text_div.appendChild(text)
-      nearby.appendChild(text_div)
-    }
-    //check whether any shops exist within the buffer
-    turf.pointsWithinPolygon(shops, buffresult.features[0]).features.forEach((feature) => {
-      //create a div with their name if they do exist
-      const item = document.createElement('div');
-      item.className = 'divs'
-      divs_lons.push(feature.geometry.coordinates[0])
-      divs_lats.push(feature.geometry.coordinates[1])
-      divs_properties.push(feature.properties)
-      divs_types.push("shop")
-      //console.log(divs_lons)
-      const value = document.createElement('span');
-      value.innerHTML = `${feature.properties.name}`;
-      item.appendChild(value);
-      nearby.appendChild(item);
-    });
-    //trigger list_click
-    get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types)
-  });
-}
-
-function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types){
-  fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/all_bicycle_parking.geojson') //toronto
-      .then(response => response.json())
-      .then(response => {
-        parkings = response; // Store geojson as variable using URL from fetch response
-        //retrieve div for nearby parkings
-        const nearby_p = document.getElementById('nearby');
-        //create text within it that says 'Nearby Parking'
-        const text_div_p = document.createElement('div');
-        const text_p = document.createElement('span');
-        //create text within it that says 'Nearby Parking'
-        text_p.innerHTML = 'Nearby Parking'
-        text_p.style.fontWeight = 'bold';
-        //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
-        if (turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.length > 0) {
-          text_div_p.appendChild(text_p)
-          nearby_p.appendChild(text_div_p)
-        }
-        //check whether any shops exist within the buffer
-        turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.forEach((feature) => {
-          //create a div with their name if they do exist
-          const item_p = document.createElement('div');
-          item_p.className = 'divs'
-          divs_lons.push(feature.geometry.coordinates[0])
-          divs_lats.push(feature.geometry.coordinates[1])
-          divs_types.push("parking")
-          divs_properties.push(feature.properties)
-          const value_p = document.createElement('span');
-          if (feature.properties.name != 'None' && feature.properties.name != 'Not Available') {
-            value_p.innerHTML = `${feature.properties.name}`;
-          } else {
-            value_p.innerHTML = `Bike Parking ${feature.properties.number}`; //feature.properties.id
-          }
-          item_p.appendChild(value_p);
-          nearby_p.appendChild(item_p);
-        });
-        //trigger list_click
-        get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types)
+    .then(response => response.json())
+    .then(response => {
+      shops = response; // Store geojson as variable using URL from fetch response
+      //retrieve div for nearby stores
+      const nearby = document.getElementById('nearby');
+      //create text within it that says 'Nearby Shops'
+      const text_div = document.createElement('div');
+      const text = document.createElement('span');
+      text.innerHTML = 'Nearby Shops';
+      text.style.fontWeight = 'bold';
+      //check whether any shops exist within the buffer - if they do, show the text 'Nearby Shops'
+      if (turf.pointsWithinPolygon(shops, buffresult.features[0]).features.length > 0) {
+        text_div.appendChild(text)
+        nearby.appendChild(text_div)
+      }
+      //check whether any shops exist within the buffer
+      turf.pointsWithinPolygon(shops, buffresult.features[0]).features.forEach((feature) => {
+        //create a div with their name if they do exist
+        const item = document.createElement('div');
+        item.className = 'divs'
+        divs_lons.push(feature.geometry.coordinates[0])
+        divs_lats.push(feature.geometry.coordinates[1])
+        divs_properties.push(feature.properties)
+        divs_types.push("shop")
+        //console.log(divs_lons)
+        const value = document.createElement('span');
+        value.innerHTML = `${feature.properties.name}`;
+        item.appendChild(value);
+        nearby.appendChild(item);
       });
+      //trigger list_click
+      get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types)
+    });
 }
 
-function get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types){
+function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types) {
+  fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/all_bicycle_parking.geojson') //toronto
+    .then(response => response.json())
+    .then(response => {
+      parkings = response; // Store geojson as variable using URL from fetch response
+      //retrieve div for nearby parkings
+      const nearby_p = document.getElementById('nearby');
+      //create text within it that says 'Nearby Parking'
+      const text_div_p = document.createElement('div');
+      const text_p = document.createElement('span');
+      //create text within it that says 'Nearby Parking'
+      text_p.innerHTML = 'Nearby Parking'
+      text_p.style.fontWeight = 'bold';
+      //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
+      if (turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.length > 0) {
+        text_div_p.appendChild(text_p)
+        nearby_p.appendChild(text_div_p)
+      }
+      //check whether any shops exist within the buffer
+      turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.forEach((feature) => {
+        //create a div with their name if they do exist
+        const item_p = document.createElement('div');
+        item_p.className = 'divs'
+        divs_lons.push(feature.geometry.coordinates[0])
+        divs_lats.push(feature.geometry.coordinates[1])
+        divs_types.push("parking")
+        divs_properties.push(feature.properties)
+        const value_p = document.createElement('span');
+        if (feature.properties.name != 'None' && feature.properties.name != 'Not Available') {
+          value_p.innerHTML = `${feature.properties.name}`;
+        } else {
+          value_p.innerHTML = `Bike Parking ${feature.properties.number}`; //feature.properties.id
+        }
+        item_p.appendChild(value_p);
+        nearby_p.appendChild(item_p);
+      });
+      //trigger list_click
+      get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types)
+    });
+}
+
+function get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types) {
   // fetch('https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_information')
   //     .then(response => response.json())
   //     .then(response => {
-        shares = {
-          "type": "FeatureCollection",
-          "features": test
-        }; // Store geojson as variable using URL from fetch response
-        //retrieve div for nearby parkings
-        const nearby_s = document.getElementById('nearby');
-        //create text within it that says 'Nearby Parking'
-        const text_div_s = document.createElement('div');
-        const text_s = document.createElement('span');
-        //create text within it that says 'Nearby Parking'
-        text_s.innerHTML = 'Nearby BikeShare'
-        text_s.style.fontWeight = 'bold';
-        //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
-        if (turf.pointsWithinPolygon(shares, buffresult.features[0]).features.length > 0) {
-          text_div_s.appendChild(text_s)
-          nearby_s.appendChild(text_div_s)
-        }
-        //check whether any shops exist within the buffer
-        turf.pointsWithinPolygon(shares, buffresult.features[0]).features.forEach((feature) => {
-          //create a div with their name if they do exist
-          const item_s = document.createElement('div');
-          item_s.className = 'divs'
-          divs_lons.push(feature.geometry.coordinates[0])
-          divs_lats.push(feature.geometry.coordinates[1])
-          divs_types.push("share")
-          divs_properties.push(feature.properties)
-          const value_s = document.createElement('span');
-          if (feature.properties.name != 'None') {
-            value_s.innerHTML = `${feature.properties.name}`;
-          } else {
-            value_s.innerHTML = `BikeShare ${feature.properties.station_id}`;
-          }
-          item_s.appendChild(value_s);
-          nearby_s.appendChild(item_s);
-        });
-        //trigger list_click
-        get_weather(divs_lons, divs_lats, divs_properties, divs_types)
-      // });
+  shares = {
+    "type": "FeatureCollection",
+    "features": test
+  }; // Store geojson as variable using URL from fetch response
+  //retrieve div for nearby parkings
+  const nearby_s = document.getElementById('nearby');
+  //create text within it that says 'Nearby Parking'
+  const text_div_s = document.createElement('div');
+  const text_s = document.createElement('span');
+  //create text within it that says 'Nearby Parking'
+  text_s.innerHTML = 'Nearby BikeShare'
+  text_s.style.fontWeight = 'bold';
+  //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
+  if (turf.pointsWithinPolygon(shares, buffresult.features[0]).features.length > 0) {
+    text_div_s.appendChild(text_s)
+    nearby_s.appendChild(text_div_s)
+  }
+  //check whether any shops exist within the buffer
+  turf.pointsWithinPolygon(shares, buffresult.features[0]).features.forEach((feature) => {
+    //create a div with their name if they do exist
+    const item_s = document.createElement('div');
+    item_s.className = 'divs'
+    divs_lons.push(feature.geometry.coordinates[0])
+    divs_lats.push(feature.geometry.coordinates[1])
+    divs_types.push("share")
+    divs_properties.push(feature.properties)
+    const value_s = document.createElement('span');
+    if (feature.properties.name != 'None') {
+      value_s.innerHTML = `${feature.properties.name}`;
+    } else {
+      value_s.innerHTML = `BikeShare ${feature.properties.station_id}`;
+    }
+    item_s.appendChild(value_s);
+    nearby_s.appendChild(item_s);
+  });
+  //trigger list_click
+  get_weather(divs_lons, divs_lats, divs_properties, divs_types)
+  // });
 }
 
-function get_weather(divs_lons, divs_lats, divs_properties, divs_types){
-  let lon_point=lonlat_click['lng']
-  let lat_point=lonlat_click['lat']
+function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
+  let lon_point = lonlat_click['lng']
+  let lat_point = lonlat_click['lat']
   var today_point = new Date()
-  var date_point = today_point.getFullYear() +'-'+'0'+(today_point.getMonth()+1)+'-'+today_point.getDate()
+  var date_point = today_point.getFullYear() + '-' + '0' + (today_point.getMonth() + 1) + '-' + today_point.getDate()
   var hour_point = today_point.getHours()
   //console.log(lonlat_click['lng'])
   const nearby_w = document.getElementById('nearby');
-        //create text within it that says 'Nearby Parking'
-      const text_div_w = document.createElement('div');
-      const text_w = document.createElement('span');
-        //create text within it that says 'Nearby Parking'
-      text_w.innerHTML = 'Weather' 
-      text_w.style.fontWeight = 'bold';
-      text_div_w.appendChild(text_w)
-      nearby_w.appendChild(text_div_w)
+  //create text within it that says 'Nearby Parking'
+  const text_div_w = document.createElement('div');
+  const text_w = document.createElement('span');
+  //create text within it that says 'Nearby Parking'
+  text_w.innerHTML = 'Weather'
+  text_w.style.fontWeight = 'bold';
+  text_div_w.appendChild(text_w)
+  nearby_w.appendChild(text_div_w)
   fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=temperature_2m&start_date=${date_point}&end_date=${date_point}`)
-      .then(response => response.json())
-      .then(response => {
-        temp_at_point=response;
-      
+    .then(response => response.json())
+    .then(response => {
+      temp_at_point = response;
+
       const item_temp = document.createElement('div');
       const value_temp = document.createElement('span');
-      value_temp.innerHTML = temp_at_point.hourly.temperature_2m[Math.floor(hour_point/ 3)] + '°C' //temp_at_point.hourly.temperature_2m.length - 1
+      value_temp.innerHTML = temp_at_point.hourly.temperature_2m[Math.floor(hour_point / 3)] + '°C' //temp_at_point.hourly.temperature_2m.length - 1
       item_temp.appendChild(value_temp);
       nearby_w.appendChild(item_temp);
-      });
+    });
   fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=precipitation&start_date=${date_point}&end_date=${date_point}`)
-      .then(response => response.json())
-      .then(response => {
-        prec_at_point=response;
-        const nearby_w = document.getElementById('nearby');
-        //create text within it that says 'Nearby Parking'
+    .then(response => response.json())
+    .then(response => {
+      prec_at_point = response;
+      const nearby_w = document.getElementById('nearby');
+      //create text within it that says 'Nearby Parking'
       const item_prec = document.createElement('div');
       const value_prec = document.createElement('span');
-      value_prec.innerHTML = prec_at_point.hourly.precipitation[Math.floor(hour_point/ 3)] + 'mm total precipitation in last hour' //prec_at_point.hourly.precipitation.length - 1
+      value_prec.innerHTML = prec_at_point.hourly.precipitation[Math.floor(hour_point / 3)] + 'mm total precipitation in last hour' //prec_at_point.hourly.precipitation.length - 1
       item_prec.appendChild(value_prec);
       nearby_w.appendChild(item_prec);
-      });
+    });
   fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=snowfall&start_date=${date_point}&end_date=${date_point}`)
-      .then(response => response.json())
-      .then(response => {
-        snow_at_point=response;
-        const nearby_w = document.getElementById('nearby');
-        //create text within it that says 'Nearby Parking'
+    .then(response => response.json())
+    .then(response => {
+      snow_at_point = response;
+      const nearby_w = document.getElementById('nearby');
+      //create text within it that says 'Nearby Parking'
       const item_snow = document.createElement('div');
       const value_snow = document.createElement('span');
-      value_snow.innerHTML = snow_at_point.hourly.snowfall[Math.floor(hour_point/ 3)] + 'mm snowfall in last hour' //snow_at_point.hourly.snowfall.length - 1
+      value_snow.innerHTML = snow_at_point.hourly.snowfall[Math.floor(hour_point / 3)] + 'mm snowfall in last hour' //snow_at_point.hourly.snowfall.length - 1
       item_snow.appendChild(value_snow);
       nearby_w.appendChild(item_snow);
-      });
- //console.log(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=windspeed_10m&start_date=${date_point}&end_date=${date_point}`)
+    });
+  //console.log(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=windspeed_10m&start_date=${date_point}&end_date=${date_point}`)
   fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=windspeed_10m&start_date=${date_point}&end_date=${date_point}`)
-      .then(response => response.json())
-      .then(response => {
-        wind_at_point=response;
-        const nearby_w = document.getElementById('nearby');
-        //create text within it that says 'Nearby Parking'
+    .then(response => response.json())
+    .then(response => {
+      wind_at_point = response;
+      const nearby_w = document.getElementById('nearby');
+      //create text within it that says 'Nearby Parking'
       const item_wind = document.createElement('div');
       const value_wind = document.createElement('span');
-      value_wind.innerHTML = wind_at_point.hourly.windspeed_10m[Math.floor(hour_point/ 3)] + 'km/h wind at 10m above ground' //wind_at_point.hourly.windspeed_10m.length - 1
+      value_wind.innerHTML = wind_at_point.hourly.windspeed_10m[Math.floor(hour_point / 3)] + 'km/h wind at 10m above ground' //wind_at_point.hourly.windspeed_10m.length - 1
       item_wind.appendChild(value_wind);
       nearby_w.appendChild(item_wind);
-      });
+    });
 
-      list_click(divs_lons, divs_lats, divs_properties, divs_types)
-      
+  list_click(divs_lons, divs_lats, divs_properties, divs_types)
+
 }
 
 
 function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
-  isProcessing=false
+  isProcessing = false
   var elements = document.getElementsByClassName("divs");
   //console.log(elements.length)
   let popup_shop
@@ -1569,67 +1569,67 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
       let lon1 = divs_lons[i]
       //console.log(lon1, lat1)
       let properties1 = divs_properties[i]
-      let features1= divs_types[i]
+      let features1 = divs_types[i]
 
-      lastExecution3=0
+      lastExecution3 = 0
       elements[i].addEventListener('click', () => {
-    
-      if ((lastExecution3+600)<Date.now()){
-      lastExecution3=Date.now()
-        map.flyTo({
-          center: [lon1, lat1],
-          zoom: 16,
-          bearing: -17.7,
-          essential: true
-        });
-        
-        if (features1==="shop"){
-          popup_shop=new mapboxgl.Popup()
-          .setLngLat([lon1, lat1])
-          .setHTML("Name: " + "<br>" + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
-          + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Phone:  " + properties1.phone + "<br>" +       
-          "Email: " + properties1.email + "<br>" + "Rental: " + properties1.rental)
-            .addTo(map);
-      }
-        else if (features1==="parking"){
-        if (properties1.city==='Toronto' && properties1.bike_capacity==null){
-        popup_parking=new mapboxgl.Popup()
-          .setLngLat([lon1, lat1])
-          .setHTML("Name: " + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
-          + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Parking:  " + properties1.parking_type + "<br>" +       
-          "Capacity: " + 'Not Available')
-            .addTo(map);
-        }
-        else if (properties1.city==='Toronto' && properties1.bike_capacity!=null){
-          popup_parking=new mapboxgl.Popup()
-            .setLngLat([lon1, lat1])
-            .setHTML("Name: " + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
-            + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Parking:  " + properties1.parking_type + "<br>" +       
-            "Capacity: " + properties1.bike_capacity)
-              .addTo(map);
-          }
-        else if (properties1.city!='Toronto' && properties1.bike_capacity==null){
-          popup_parking=new mapboxgl.Popup()
-            .setLngLat([lon1, lat1])
-            .setHTML("Name: " + properties1.name + "<br>" +  "Covered?: " + properties1.covered + "<br>" + "Fee: " + properties1.fee + "<br>" + "Parking: " + properties1.parking_type + "<br>" +       
-            "Capacity: " + "Not Available") //properties1.bike_capacity
-              .addTo(map);
-          }
-          else if (properties1.city!='Toronto' && properties1.bike_capacity!=null){
-            popup_parking=new mapboxgl.Popup()
+
+        if ((lastExecution3 + 600) < Date.now()) {
+          lastExecution3 = Date.now()
+          map.flyTo({
+            center: [lon1, lat1],
+            zoom: 16,
+            bearing: -17.7,
+            essential: true
+          });
+
+          if (features1 === "shop") {
+            popup_shop = new mapboxgl.Popup()
               .setLngLat([lon1, lat1])
-              .setHTML("Name: " + properties1.name + "<br>" +  "Covered?: " + properties1.covered + "<br>" + "Fee: " + properties1.fee + "<br>" + "Parking: " + properties1.parking_type + "<br>" +       
-              "Capacity: " + properties1.bike_capacity) //properties1.bike_capacity
+              .setHTML("Name: " + "<br>" + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
+                + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Phone:  " + properties1.phone + "<br>" +
+                "Email: " + properties1.email + "<br>" + "Rental: " + properties1.rental)
+              .addTo(map);
+          }
+          else if (features1 === "parking") {
+            if (properties1.city === 'Toronto' && properties1.bike_capacity == null) {
+              popup_parking = new mapboxgl.Popup()
+                .setLngLat([lon1, lat1])
+                .setHTML("Name: " + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
+                  + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Parking:  " + properties1.parking_type + "<br>" +
+                  "Capacity: " + 'Not Available')
                 .addTo(map);
             }
-        }
-        else if (features1==="share"){
-          popup_parking=new mapboxgl.Popup()
-            .setLngLat([lon1, lat1])
-            .setHTML("Name: " + "<br>" + properties1.station_id + "<br>")
+            else if (properties1.city === 'Toronto' && properties1.bike_capacity != null) {
+              popup_parking = new mapboxgl.Popup()
+                .setLngLat([lon1, lat1])
+                .setHTML("Name: " + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
+                  + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Parking:  " + properties1.parking_type + "<br>" +
+                  "Capacity: " + properties1.bike_capacity)
+                .addTo(map);
+            }
+            else if (properties1.city != 'Toronto' && properties1.bike_capacity == null) {
+              popup_parking = new mapboxgl.Popup()
+                .setLngLat([lon1, lat1])
+                .setHTML("Name: " + properties1.name + "<br>" + "Covered?: " + properties1.covered + "<br>" + "Fee: " + properties1.fee + "<br>" + "Parking: " + properties1.parking_type + "<br>" +
+                  "Capacity: " + "Not Available") //properties1.bike_capacity
+                .addTo(map);
+            }
+            else if (properties1.city != 'Toronto' && properties1.bike_capacity != null) {
+              popup_parking = new mapboxgl.Popup()
+                .setLngLat([lon1, lat1])
+                .setHTML("Name: " + properties1.name + "<br>" + "Covered?: " + properties1.covered + "<br>" + "Fee: " + properties1.fee + "<br>" + "Parking: " + properties1.parking_type + "<br>" +
+                  "Capacity: " + properties1.bike_capacity) //properties1.bike_capacity
+                .addTo(map);
+            }
+          }
+          else if (features1 === "share") {
+            popup_parking = new mapboxgl.Popup()
+              .setLngLat([lon1, lat1])
+              .setHTML("Name: " + "<br>" + properties1.station_id + "<br>")
               .addTo(map);
           }
-      }
+        }
       });
     };
   };
@@ -1641,63 +1641,64 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
 
 
 
-function weather_api(variable){
-  let random_list=[]
-  let temperature_list=[]
-  let index_list=[]
+function weather_api(variable) {
+  let random_list = []
+  let temperature_list = []
+  let index_list = []
   fetch('https://ireo00.github.io/472-Resources/all_centroids.geojson')
     .then(response => response.json())
     .then(response => {
       //console.log(response); //Check response in console
       all_centroids = response; // Store geojson as variable using URL from fetch response
       //all_centroids.features.forEach((feature) => {
-      for (i=0; i<all_centroids.features.length; i++) {
+      for (i = 0; i < all_centroids.features.length; i++) {
         var lat = all_centroids.features[i].geometry.coordinates[1];
         var lon = all_centroids.features[i].geometry.coordinates[0];
         var today = new Date()
-        var date = today.getFullYear() +'-'+'0'+(today.getMonth()+1)+'-'+today.getDate()
+        var date = today.getFullYear() + '-' + '0' + (today.getMonth() + 1) + '-' + today.getDate()
         var hour = today.getHours()
         //console.log(i)
-        weat(i, lat, lon, date, hour, random_list, temperature_list, index_list, variable) 
+        weat(i, lat, lon, date, hour, random_list, temperature_list, index_list, variable)
       };
       //})
-    });}
-  
-  function weat(i, lat, lon, date,hour, random_list, temperature_list, index_list, variable){
+    });
+}
 
-    //fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&start_date=${date}&end_date=${date}`)
-    //console.log(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=${variable}&start_date=${date}&end_date=${date}`)
-    //console.log(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=${variable}&start_date=${date}&end_date=${date}`)
-    fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=${variable}&start_date=${date}&end_date=${date}`)
+function weat(i, lat, lon, date, hour, random_list, temperature_list, index_list, variable) {
+
+  //fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&start_date=${date}&end_date=${date}`)
+  //console.log(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=${variable}&start_date=${date}&end_date=${date}`)
+  //console.log(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=${variable}&start_date=${date}&end_date=${date}`)
+  fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=${variable}&start_date=${date}&end_date=${date}`)
     .then(response => response.json())
     .then(response => {
       //console.log(response); //Check response in console
       weather = response; // Store geojson as variable using URL from fetch response
       //console.log(weather, weather.hourly[variable][weather.hourly[variable].length - 1])
-      polygon1(i, lat, lon, date, hour, weather,random_list, temperature_list, index_list, variable)
-    }); 
-    // console.log("weather", weather_test.length)
-    // if (weather_test.length==all_centroids.features.length){
-    //   console.log("no",weather_test)
-    //   work()
-    // }
-  }
+      polygon1(i, lat, lon, date, hour, weather, random_list, temperature_list, index_list, variable)
+    });
+  // console.log("weather", weather_test.length)
+  // if (weather_test.length==all_centroids.features.length){
+  //   console.log("no",weather_test)
+  //   work()
+  // }
+}
 
-  function polygon1(i, lat, lon, date, hour, weather,random_list, temperature_list, index_list, variable){
+function polygon1(i, lat, lon, date, hour, weather, random_list, temperature_list, index_list, variable) {
 
-    fetch('https://ireo00.github.io/472-Resources/all_boundaries.geojson')
-      .then(response => response.json())
-      .then(response => {
-        //console.log(response); //Check response in console
-        polygon = response; // Store geojson as variable using URL from fetch response
-        //polygon.features.forEach((polygonfeature) => {
-        for (let count=0; count<polygon.features.length; count++) {
+  fetch('https://ireo00.github.io/472-Resources/all_boundaries.geojson')
+    .then(response => response.json())
+    .then(response => {
+      //console.log(response); //Check response in console
+      polygon = response; // Store geojson as variable using URL from fetch response
+      //polygon.features.forEach((polygonfeature) => {
+      for (let count = 0; count < polygon.features.length; count++) {
         //if (turf.pointsWithinPolygon(feature,polygonfeature).features.length>0){
         //console.log(all_centroids.features[i], polygon.features[count])
-        if (turf.pointsWithinPolygon(all_centroids.features[i],polygon.features[count]).features.length>0){
+        if (turf.pointsWithinPolygon(all_centroids.features[i], polygon.features[count]).features.length > 0) {
           //let polygon_coordinates=polygonfeature.geometry.coordinates[0][0]
-          let polygon_coordinates=polygon.features[count].geometry.coordinates[0][0]
-          let temperature= weather.hourly[variable][Math.floor(hour/ 3)] //[weather.hourly[variable].length - 1]
+          let polygon_coordinates = polygon.features[count].geometry.coordinates[0][0]
+          let temperature = weather.hourly[variable][Math.floor(hour / 3)] //[weather.hourly[variable].length - 1]
           //console.log(hour, Math.floor(hour/ 3))
           //console.log("2", weather, weather.hourly[variable][weather.hourly[variable].length - 1])
           //weather_test.push(JSON.parse(`{"type": "Feature", "properties": {"temperature":${temperature}}, "geometry": {"type": "MultiPolygon", "coordinates": [[[${polygon_coordinates}]]]}}`))
@@ -1709,7 +1710,7 @@ function weather_api(variable){
           //console.log(count)
           //console.log(i, lat, lon)
           random_list.push(i)
-          if (random_list.length==all_centroids.features.length){
+          if (random_list.length == all_centroids.features.length) {
             add_property(random_list, temperature_list, index_list, variable)
           }
           //console.log("len", random_list.length)
@@ -1717,108 +1718,108 @@ function weather_api(variable){
           // if (random_list.length==all_centroids.features.length){
           //   console.log("no")
           //   work()
-          }
         }
-        //}); 
+      }
+      //}); 
       //};
-      });    
-  }
+    });
+}
 
-  function add_property(random_list, temperature_list, index_list, variable){
-  
-    console.log(temperature_list, index_list)
-    fetch('https://ireo00.github.io/472-Resources/all_boundaries.geojson')
-      .then(response => response.json())
-      .then(response => {
-        polygon2 = response;
-        for (j=0; j<polygon2.features.length; j++){
+function add_property(random_list, temperature_list, index_list, variable) {
+
+  console.log(temperature_list, index_list)
+  fetch('https://ireo00.github.io/472-Resources/all_boundaries.geojson')
+    .then(response => response.json())
+    .then(response => {
+      polygon2 = response;
+      for (j = 0; j < polygon2.features.length; j++) {
         polygon2.features[j].properties.TEMP = temperature_list[index_list.indexOf(j)]
-        if (j==polygon2.features.length-1){
+        if (j == polygon2.features.length - 1) {
           work(variable)
         }
       }
     });
-  }
+}
 
-  function work(variable){
-   
-   
-      map.addSource('weather', {
-        type: 'geojson',
-        data: polygon2,
-        'generateId': true,
-      });
-      if (variable==='temperature_2m'){
-      map.addLayer({
-        'id': 'weather_polygons',
-        'type': 'fill',
-        'source': 'weather',
-        filter: ['has', 'TEMP'],
-        'paint': {
-          'fill-color': 
+function work(variable) {
+
+
+  map.addSource('weather', {
+    type: 'geojson',
+    data: polygon2,
+    'generateId': true,
+  });
+  if (variable === 'temperature_2m') {
+    map.addLayer({
+      'id': 'weather_polygons',
+      'type': 'fill',
+      'source': 'weather',
+      filter: ['has', 'TEMP'],
+      'paint': {
+        'fill-color':
           // {
           //   property: 'TEMP',
           //   stops: [[0, '#fff'], [20, '#f00']]
           // },
           // 'fill-opacity': 0.5
           ['step',
-          ['get', 'TEMP'], 'red', 
-          4, 'blue', 5, 'green', 6, 'orange'],
-          'fill-opacity': 0.5
-        },
-        });   
-      }
-      else if (variable==='precipitation'){
-        map.addLayer({
-          'id': 'weather_polygons',
-          'type': 'fill',
-          'source': 'weather',
-          filter: ['has', 'TEMP'],
-          'paint': {
-            'fill-color': ['step',
-            ['get', 'TEMP'], 'red', 
-            0, 'blue', 1, 'green', 10, 'orange'],
-            'fill-opacity': 0.5
-          },
-          });   
-        }
-        else if (variable==='snowfall'){
-          map.addLayer({
-            'id': 'weather_polygons',
-            'type': 'fill',
-            'source': 'weather',
-            filter: ['has', 'TEMP'],
-            'paint': {
-              'fill-color': ['step',
-              ['get', 'TEMP'], 'red', 
-              0, 'blue', 1, 'green', 10, 'orange'],
-              'fill-opacity': 0.5
-            },
-            });   
-          }
-          else if (variable==='windspeed_10m'){
-            map.addLayer({
-              'id': 'weather_polygons',
-              'type': 'fill',
-              'source': 'weather',
-              filter: ['has', 'TEMP'],
-              'paint': {
-                'fill-color': ['step',
-                ['get', 'TEMP'], 'red', 
-                10, 'blue', 20, 'green', 30, 'orange'],
-                'fill-opacity': 0.5
-              },
-              });   
-            }
-        //console.log(polygon.features)
+            ['get', 'TEMP'], 'red',
+            4, 'blue', 5, 'green', 6, 'orange'],
+        'fill-opacity': 0.5
+      },
+    });
   }
+  else if (variable === 'precipitation') {
+    map.addLayer({
+      'id': 'weather_polygons',
+      'type': 'fill',
+      'source': 'weather',
+      filter: ['has', 'TEMP'],
+      'paint': {
+        'fill-color': ['step',
+          ['get', 'TEMP'], 'red',
+          0, 'blue', 1, 'green', 10, 'orange'],
+        'fill-opacity': 0.5
+      },
+    });
+  }
+  else if (variable === 'snowfall') {
+    map.addLayer({
+      'id': 'weather_polygons',
+      'type': 'fill',
+      'source': 'weather',
+      filter: ['has', 'TEMP'],
+      'paint': {
+        'fill-color': ['step',
+          ['get', 'TEMP'], 'red',
+          0, 'blue', 1, 'green', 10, 'orange'],
+        'fill-opacity': 0.5
+      },
+    });
+  }
+  else if (variable === 'windspeed_10m') {
+    map.addLayer({
+      'id': 'weather_polygons',
+      'type': 'fill',
+      'source': 'weather',
+      filter: ['has', 'TEMP'],
+      'paint': {
+        'fill-color': ['step',
+          ['get', 'TEMP'], 'red',
+          10, 'blue', 20, 'green', 30, 'orange'],
+        'fill-opacity': 0.5
+      },
+    });
+  }
+  //console.log(polygon.features)
+}
 
-  
+
 
 //Add event listener which returns map view to full screen on button click
 document.getElementById('returnbutton').addEventListener('click', () => {
   map.flyTo({
-    center: [-79.3, 38.765],
+    center: [-79.266, 43.926],
     zoom: 8.65,
     bearing: -17.7,
     essential: true
@@ -1945,7 +1946,7 @@ const value_shops = document.createElement('span');  //insert text into 'value_s
 value_shops.innerHTML = 'Bicycle Shops' //add 'key_points' span to the created section 'item_shops'
 item_shops.appendChild(key_shops);  //add 'value_shops' span to the created section 'item_shops'
 item_shops.appendChild(value_shops);  //add 'item_shops' section into the HTML element assigned to 'label_shops' variable
-label_shops.appendChild(item_shops); 
+label_shops.appendChild(item_shops);
 
 //assign 'label_parking' variable to HTML element with 'label_parking' id
 const label_parking = document.getElementById('label_parking'); //assign 'item_parking' variable to a created 'section'
@@ -1957,7 +1958,7 @@ const value_parking = document.createElement('span'); //insert text into 'value_
 value_parking.innerHTML = 'Bicycle Parkings' //add 'key_parking' span to the created section 'item_parking'
 item_parking.appendChild(key_parking);  //add 'value_parking' span to the created section 'item_parking'
 item_parking.appendChild(value_parking); //add 'item_parking' section into the HTML element assigned to 'label_parking' variable
-label_parking.appendChild(item_parking); 
+label_parking.appendChild(item_parking);
 
 //assign 'label_bikeshare' variable to HTML element with 'label_bikeshare' id
 const label_bikeshare = document.getElementById('label_bikeshare'); //assign 'item_bikeshare' variable to a created 'section'
@@ -1969,7 +1970,7 @@ const value_bikeshare = document.createElement('span'); //insert text into 'valu
 value_bikeshare.innerHTML = 'Toronto Bikeshare' //add 'key_bikeshare' span to the created section 'item_bikeshare'
 item_bikeshare.appendChild(key_bikeshare); //add 'value_bikeshare' span to the created section 'item_bikeshare'
 item_bikeshare.appendChild(value_bikeshare); //add 'item_bikeshare' section into the HTML element assigned to 'label_bikeshare' variable
-label_bikeshare.appendChild(item_bikeshare); 
+label_bikeshare.appendChild(item_bikeshare);
 
 
 // document.getElementById('layercheck4').addEventListener('change', (e) => {
@@ -1982,17 +1983,17 @@ label_bikeshare.appendChild(item_bikeshare);
 //   }
 // });
 
-document.getElementById("weathertype").addEventListener('change',(e) => {   
+document.getElementById("weathertype").addEventListener('change', (e) => {
   weathertype = document.getElementById('weather').value;
-  if (map.getLayer('weather_polygons')){
+  if (map.getLayer('weather_polygons')) {
     map.removeLayer('weather_polygons');
   }
-  if (map.getSource('weather')){
-  map.removeSource('weather');
+  if (map.getSource('weather')) {
+    map.removeSource('weather');
   }
   if (weathertype == 'Temperature') {
     weather_api('temperature_2m')
-  } 
+  }
   else if (weathertype == 'Precipitation') {
     weather_api('precipitation')
   }
@@ -2009,183 +2010,255 @@ document.getElementById("weathertype").addEventListener('change',(e) => {
 //Filter data layer to show selected bike lane type from dropdown selection
 let tobikelane;
 
-document.getElementById("tobikelanetype").addEventListener('change',(e) => {   
-    tobikelane = document.getElementById('bikelane').value;
+document.getElementById("tobikelanetype").addEventListener('change', (e) => {
+  tobikelane = document.getElementById('bikelane').value;
 
-    console.log(tobikelane);
+  console.log(tobikelane);
 
-    if (tobikelane == 'All') {
-      map.setLayoutProperty(
-        'toronto_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'york_region_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'peel_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'durham_region_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'ajax_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'whitby_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'milton_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'burlington_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'oakvill_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'traffic',
-        'visibility',
-        'none'
-      );
-        map.setFilter(
-            'toronto_bikeways',
-            ['has', 'type'] //returns all lines from layer that have a value in type field
-        );
-    } 
-    else if (tobikelane != 'All' && tobikelane != 'Traffic') {
-      map.setLayoutProperty(
-        'toronto_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'york_region_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'peel_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'durham_region_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'ajax_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'whitby_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'milton_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'burlington_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'oakvill_bikeways',
-        'visibility',
-        'visible'
-      );
-      map.setLayoutProperty(
-        'traffic',
-        'visibility',
-        'none'
-      );
-        map.setFilter(
-            'toronto_bikeways',
-            ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
-        );
-    }
-    else if (tobikelane == 'Traffic') {
-      map.setLayoutProperty(
-        'traffic',
-        'visibility',
-        'visible'
-      );
-      
-      map.setLayoutProperty(
-        'toronto_bikeways',
-        'visibility',
-        'none'
-      );
-      map.setLayoutProperty(
-        'york_region_bikeways',
-        'visibility',
-        'none'
-      );
-      map.setLayoutProperty(
-        'peel_bikeways',
-        'visibility',
-        'none'
-      );
-      map.setLayoutProperty(
-        'durham_region_bikeways',
-        'visibility',
-        'none'
-      );
-      map.setLayoutProperty(
-        'ajax_bikeways',
-        'visibility',
-        'none'
-      );
-      map.setLayoutProperty(
-        'whitby_bikeways',
-        'visibility',
-        'none'
-      );
-      map.setLayoutProperty(
-        'milton_bikeways',
-        'visibility',
-        'none'
-      );
-      map.setLayoutProperty(
-        'burlington_bikeways',
-        'visibility',
-        'none'
-      );
-      map.setLayoutProperty(
-        'oakvill_bikeways',
-        'visibility',
-        'none'
-      );
-    }
+  if (tobikelane == 'All') {
+    map.setLayoutProperty(
+      'toronto_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'york_region_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'peel_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'durham_region_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'ajax_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'whitby_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'milton_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'burlington_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'oakvill_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'traffic',
+      'visibility',
+      'none'
+    );
+    map.setFilter(
+      'toronto_bikeways',
+      ['has', 'type'] //returns all lines from layer that have a value in type field
+    );
 
+    map.setFilter(
+      'york_region_bikeways',
+      ['has', 'type'] //returns all lines from layer that have a value in type field
+    );
+
+    map.setFilter(
+      'peel_bikeways',
+      ['has', 'Type'] //returns all lines from layer that have a value in type field
+    );
+
+    map.setFilter(
+      'durham_region_bikeways',
+      ['has', 'Name'] //returns all lines from layer that have a value in Name field
+    );
+
+    map.setFilter(
+      'ajax_bikeways',
+      ['has', 'type'] //returns all lines from layer that have a value in type field
+    );
+    
+    map.setFilter(
+      'whitby_bikeways',
+      ['has', 'Type'] //returns all lines from layer that have a value in type field
+    );
+
+    map.setFilter(
+      'milton_bikeways',
+      ['has', 'type'] //returns all lines from layer that have a value in type field
+    );
+
+    map.setFilter(
+      'burlington_bikeways',
+      ['has', 'type'] //returns all lines from layer that have a value in type field
+    );
+
+    map.setFilter(
+      'oakvill_bikeways',
+      ['has', 'type'] //returns all lines from layer that have a value in type field
+    );
+
+  }
+  else if (tobikelane != 'All' && tobikelane != 'Traffic') {
+    map.setLayoutProperty(
+      'toronto_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'york_region_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'peel_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'durham_region_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'ajax_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'whitby_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'milton_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'burlington_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'oakvill_bikeways',
+      'visibility',
+      'visible'
+    );
+    map.setLayoutProperty(
+      'traffic',
+      'visibility',
+      'none'
+    );
+    map.setFilter(
+      'toronto_bikeways',
+      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+    );
+    map.setFilter(
+      'york_region_bikeways',
+      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+    );
+    map.setFilter(
+      'peel_bikeways',
+      ['==', ['get', 'Type'], tobikelane] //returns polygon with type value that matches dropdown selection
+    );
+    map.setFilter(
+      'durham_region_bikeways',
+      ['==', ['get', 'Name'], tobikelane] //returns polygon with type value that matches dropdown selection
+    );
+    map.setFilter(
+      'ajax_bikeways',
+      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+    );
+    map.setFilter(
+      'whitby_bikeways',
+      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+    );
+    map.setFilter(
+      'milton_bikeways',
+      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+    );
+    map.setFilter(
+      'burlington_bikeways',
+      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+    );
+    map.setFilter(
+      'oakvill_bikeways',
+      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+    );
+  }
+  else if (tobikelane == 'Traffic') {
+    map.setLayoutProperty(
+      'traffic',
+      'visibility',
+      'visible'
+    );
+
+    map.setLayoutProperty(
+      'toronto_bikeways',
+      'visibility',
+      'none'
+    );
+    map.setLayoutProperty(
+      'york_region_bikeways',
+      'visibility',
+      'none'
+    );
+    map.setLayoutProperty(
+      'peel_bikeways',
+      'visibility',
+      'none'
+    );
+    map.setLayoutProperty(
+      'durham_region_bikeways',
+      'visibility',
+      'none'
+    );
+    map.setLayoutProperty(
+      'ajax_bikeways',
+      'visibility',
+      'none'
+    );
+    map.setLayoutProperty(
+      'whitby_bikeways',
+      'visibility',
+      'none'
+    );
+    map.setLayoutProperty(
+      'milton_bikeways',
+      'visibility',
+      'none'
+    );
+    map.setLayoutProperty(
+      'burlington_bikeways',
+      'visibility',
+      'none'
+    );
+    map.setLayoutProperty(
+      'oakvill_bikeways',
+      'visibility',
+      'none'
+    );
+  }
 });
 
 const legendlabels = [
   'Bike Lanes',
-  'Multi-use Trails', 
-  'Sharrows', 
+  'Multi-use Trails',
+  'Sharrows',
   'Cycle Track',
   'Paved Shoulders',
   'Hiking/Park Trails'
@@ -2207,17 +2280,17 @@ const legend = document.getElementById('legend');
 legendlabels.forEach((label, i) => {
   const color = legendcolours[i];
 
-  const item = document.createElement('div'); 
-  const key = document.createElement('span'); 
+  const item = document.createElement('div');
+  const key = document.createElement('span');
 
-  key.className = 'legend-key'; 
-  key.style.backgroundColor = color; 
+  key.className = 'legend-key';
+  key.style.backgroundColor = color;
 
-  const value = document.createElement('span'); 
-  value.innerHTML = `${label}`; 
+  const value = document.createElement('span');
+  value.innerHTML = `${label}`;
 
-  item.appendChild(key); 
-  item.appendChild(value); 
+  item.appendChild(key);
+  item.appendChild(value);
 
-  legend.appendChild(item); 
+  legend.appendChild(item);
 });
