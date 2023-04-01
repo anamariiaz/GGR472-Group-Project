@@ -210,7 +210,7 @@ map.on('load', () => {
   //add a geojson file source "toronto_cycling_network" for Toronto bikeways
   map.addSource('toronto_cycling_network', {
     type: 'geojson',
-    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/toronto_cycling_network.geojson',
+    data: 'https://ireo00.github.io/472-Resources/toronto_cycling_network.geojson',
     'generateId': true
   });
 
@@ -267,7 +267,7 @@ map.on('load', () => {
   //add a geojson file source "york_region_cycling_network" for York Region bikeways
   map.addSource('york_region_cycling_network', {
     type: 'geojson',
-    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/york_region_cycling_network.geojson',
+    data: 'https://ireo00.github.io/472-Resources/york_region_cycling_network.geojson',
     'generateId': true
   });
 
@@ -2068,17 +2068,17 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
     );
     map.setFilter(
       'toronto_bikeways',
-      ['has', 'type'] //returns all lines from layer that have a value in type field
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
     );
 
     map.setFilter(
       'york_region_bikeways',
-      ['has', 'type'] //returns all lines from layer that have a value in type field
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
     );
 
     map.setFilter(
       'peel_bikeways',
-      ['has', 'Type'] //returns all lines from layer that have a value in type field
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
     );
 
     map.setFilter(
@@ -2088,27 +2088,27 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
 
     map.setFilter(
       'ajax_bikeways',
-      ['has', 'type'] //returns all lines from layer that have a value in type field
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
     );
     
     map.setFilter(
       'whitby_bikeways',
-      ['has', 'Type'] //returns all lines from layer that have a value in type field
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
     );
 
     map.setFilter(
       'milton_bikeways',
-      ['has', 'type'] //returns all lines from layer that have a value in type field
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
     );
 
     map.setFilter(
       'burlington_bikeways',
-      ['has', 'type'] //returns all lines from layer that have a value in type field
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
     );
 
     map.setFilter(
       'oakvill_bikeways',
-      ['has', 'type'] //returns all lines from layer that have a value in type field
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
     );
 
   }
@@ -2165,39 +2165,39 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
     );
     map.setFilter(
       'toronto_bikeways',
-      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
     );
     map.setFilter(
       'york_region_bikeways',
-      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
     );
     map.setFilter(
       'peel_bikeways',
-      ['==', ['get', 'Type'], tobikelane] //returns polygon with type value that matches dropdown selection
+      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
     );
     map.setFilter(
       'durham_region_bikeways',
-      ['==', ['get', 'Name'], tobikelane] //returns polygon with type value that matches dropdown selection
+      ['==', ['get', 'Name'], tobikelane] //returns polygon with Name value that matches dropdown selection
     );
     map.setFilter(
       'ajax_bikeways',
-      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
     );
     map.setFilter(
       'whitby_bikeways',
-      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
     );
     map.setFilter(
       'milton_bikeways',
-      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
     );
     map.setFilter(
       'burlington_bikeways',
-      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
     );
     map.setFilter(
       'oakvill_bikeways',
-      ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
     );
   }
   else if (tobikelane == 'Traffic') {
@@ -2256,12 +2256,12 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
 });
 
 const legendlabels = [
-  'Bike Lanes',
-  'Multi-use Trails',
+  'Bike Lane',
+  'Multi-Use Trail',
   'Sharrows',
   'Cycle Track',
-  'Paved Shoulders',
-  'Hiking/Park Trails'
+  'Paved Shoulder',
+  'Hiking/Park Trail'
 ];
 
 const legendcolours = [
