@@ -174,7 +174,7 @@ map.on('load', () => {
       filter: ['!', ['has', 'point_count']],
       layout: {
         'icon-image': 'bikeshare-marker',
-        'icon-size': 0.07,
+        'icon-size': 0.09,
         //allow overlap of other icon layers (so that all layers are simultaneously visible)
         'icon-allow-overlap': true,
         'icon-ignore-placement': true
@@ -956,7 +956,7 @@ map.on('load', () => {
     filter: ['!', ['has', 'point_count']],
     layout: {
       'icon-image': 'parking-marker',
-      'icon-size': 0.15, //0.15
+      'icon-size': 0.15,
       //allow overlap of other icon layers (so that all layers are simultaneously visible)
       'icon-allow-overlap': true,
       'icon-ignore-placement': true
@@ -982,6 +982,75 @@ map.on('load', () => {
   });
 
   
+  // //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
+  // map.addSource('gta_bicycle_parking', {
+  //   type: 'geojson',
+  //   data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/gta_bicycle_parking.geojson',
+  //   'generateId': true,
+  //   //cluster the data to limit the symbology on the map at low zoom levels
+  //   cluster: true,
+  //   clusterMaxZoom: 14, //maximum zoom at which points cluster
+  //   clusterRadius: 50 //distance over which points cluster
+  // });
+
+  // //add and style a layer of circles "toronto_bike_parking_clustered" from the defined "toronto_bicycle_parking" source for the clustered parking stations
+  // map.addLayer({
+  //   'id': 'gta_bike_parking_clustered',
+  //   'type': 'circle',
+  //   'source': 'gta_bicycle_parking',
+  //   //only show circles when there is more than 1 bike parking station within radius
+  //   filter: ['has', 'point_count'],
+  //   'paint': {
+  //     'circle-color': '#84BCE4',
+  //     //specify the radius of the circles based on whether the number of bike parking stations within radius is <10, 10-20, 20-50, 50-100 or >100
+  //     'circle-radius': [
+  //       'step',
+  //       ['get', 'point_count'],
+  //       13,
+  //       10,
+  //       15,
+  //       20,
+  //       17,
+  //       50,
+  //       20,
+  //       100,
+  //       25
+  //     ]
+  //   }
+  // });
+
+  // //add and style a layer of symbols "toronto_bike_parking_cluster_count" from the defined "toronto_bicycle_parking" source for the text on top of the clustered parking stations
+  // map.addLayer({
+  //   id: 'gta_bike_parking_cluster_count',
+  //   type: 'symbol',
+  //   source: 'gta_bicycle_parking',
+  //   //only show text when there is more than 1 bike parking station within radius 
+  //   filter: ['has', 'point_count'],
+  //   layout: {
+  //     'text-field': ['get', 'point_count_abbreviated'],
+  //     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+  //     'text-size': 12,
+  //     //allow overlap of other text layers (so that all layers are simultaneously visible)
+  //     'text-allow-overlap': true,
+  //     'text-ignore-placement': true
+  //   }
+  // });
+
+  // //add and style a layer of circles "toronto_bike_parking_unclustered" from the defined "toronto_bicycle_parking" source for the unclustered (single) parking stations
+  // map.addLayer({
+  //   id: 'gta_bike_parking_unclustered',
+  //   type: 'symbol',
+  //   source: 'gta_bicycle_parking',
+  //   //only show circles when there is 1 bike parking station within radius 
+  //   filter: ['!', ['has', 'point_count']],
+  //   layout: {
+  //     'icon-image': 'parking-marker',
+  //     'icon-size': 0.13,
+  //     //allow overlap of other icon layers (so that all layers are simultaneously visible)
+  //     'icon-allow-overlap': true,
+  //     'icon-ignore-placement': true
+  //   }
+  // });
   //add a geojson file source "toronto_bicycle_shops" for Toronto bike shops
   map.addSource('toronto_bicycle_shops', {
     type: 'geojson',
@@ -1058,7 +1127,7 @@ map.on('load', () => {
     filter: ['!', ['has', 'point_count']],
     layout: {
       'icon-image': 'shop-marker',
-      'icon-size': 0.08,
+      'icon-size': 0.09,
       //allow overlap of other icon layers (so that all layers are simultaneously visible)
       'icon-allow-overlap': true,
       'icon-ignore-placement': true
@@ -1376,7 +1445,8 @@ map.on('load', () => {
     }
   });
 
-  //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
+
+   //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
   map.addSource('gta_bicycle_parking', {
     type: 'geojson',
     data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/gta_bicycle_parking.geojson',
@@ -1395,7 +1465,7 @@ map.on('load', () => {
     //only show circles when there is more than 1 bike parking station within radius
     filter: ['has', 'point_count'],
     'paint': {
-      'circle-color': '#11b4da',
+      'circle-color': '#84BCE4',
       //specify the radius of the circles based on whether the number of bike parking stations within radius is <10, 10-20, 20-50, 50-100 or >100
       'circle-radius': [
         'step',
@@ -1439,7 +1509,7 @@ map.on('load', () => {
     filter: ['!', ['has', 'point_count']],
     layout: {
       'icon-image': 'parking-marker',
-      'icon-size': 0.15, //0.15
+      'icon-size': 0.13,
       //allow overlap of other icon layers (so that all layers are simultaneously visible)
       'icon-allow-overlap': true,
       'icon-ignore-placement': true
@@ -1447,21 +1517,92 @@ map.on('load', () => {
   });
 
 
-  map.on('mouseenter', 'gta_bike_parking_unclustered', () => {
-    map.getCanvas().style.cursor = 'pointer';
-  });
+  // //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
+  // map.addSource('gta_bicycle_parking', {
+  //   type: 'geojson',
+  //   data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/gta_bicycle_parking.geojson',
+  //   'generateId': true,
+  //   //cluster the data to limit the symbology on the map at low zoom levels
+  //   cluster: true,
+  //   clusterMaxZoom: 14, //maximum zoom at which points cluster
+  //   clusterRadius: 50 //distance over which points cluster
+  // });
 
-  map.on('mouseleave', 'gta_bike_parking_unclustered', () => {
-    map.getCanvas().style.cursor = '';
-  });
+  // //add and style a layer of circles "toronto_bike_parking_clustered" from the defined "toronto_bicycle_parking" source for the clustered parking stations
+  // map.addLayer({
+  //   'id': 'gta_bike_parking_clustered',
+  //   'type': 'circle',
+  //   'source': 'gta_bicycle_parking',
+  //   //only show circles when there is more than 1 bike parking station within radius
+  //   filter: ['has', 'point_count'],
+  //   'paint': {
+  //     'circle-color': '#11b4da',
+  //     //specify the radius of the circles based on whether the number of bike parking stations within radius is <10, 10-20, 20-50, 50-100 or >100
+  //     'circle-radius': [
+  //       'step',
+  //       ['get', 'point_count'],
+  //       13,
+  //       10,
+  //       15,
+  //       20,
+  //       17,
+  //       50,
+  //       20,
+  //       100,
+  //       25
+  //     ]
+  //   }
+  // });
 
-  map.on('click', 'gta_bike_parking_unclustered', (e) => {
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" +  "<b>Covered?:</b> " + e.features[0].properties.covered + "<br>" + "<b>Fee:</b> " + e.features[0].properties.fee + "<br>" + "<b>Parking Type:</b> " + e.features[0].properties.parking_type + "<br>" +       
-      "<b>Capacity:</b> " + e.features[0].properties.capacity)
-        .addTo(map);
-  });
+  // //add and style a layer of symbols "toronto_bike_parking_cluster_count" from the defined "toronto_bicycle_parking" source for the text on top of the clustered parking stations
+  // map.addLayer({
+  //   id: 'gta_bike_parking_cluster_count',
+  //   type: 'symbol',
+  //   source: 'gta_bicycle_parking',
+  //   //only show text when there is more than 1 bike parking station within radius 
+  //   filter: ['has', 'point_count'],
+  //   layout: {
+  //     'text-field': ['get', 'point_count_abbreviated'],
+  //     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+  //     'text-size': 12,
+  //     //allow overlap of other text layers (so that all layers are simultaneously visible)
+  //     'text-allow-overlap': true,
+  //     'text-ignore-placement': true
+  //   }
+  // });
+
+  // //add and style a layer of circles "toronto_bike_parking_unclustered" from the defined "toronto_bicycle_parking" source for the unclustered (single) parking stations
+  // map.addLayer({
+  //   id: 'gta_bike_parking_unclustered',
+  //   type: 'symbol',
+  //   source: 'gta_bicycle_parking',
+  //   //only show circles when there is 1 bike parking station within radius 
+  //   filter: ['!', ['has', 'point_count']],
+  //   layout: {
+  //     'icon-image': 'parking-marker',
+  //     'icon-size': 0.15, //0.15
+  //     //allow overlap of other icon layers (so that all layers are simultaneously visible)
+  //     'icon-allow-overlap': true,
+  //     'icon-ignore-placement': true
+  //   }
+  // });
+
+
+  // map.on('mouseenter', 'gta_bike_parking_unclustered', () => {
+  //   map.getCanvas().style.cursor = 'pointer';
+  // });
+
+  // map.on('mouseleave', 'gta_bike_parking_unclustered', () => {
+  //   map.getCanvas().style.cursor = '';
+  // });
+
+  // map.on('click', 'gta_bike_parking_unclustered', (e) => {
+  //   new mapboxgl.Popup()
+  //     .setLngLat(e.lngLat)
+  //     .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" +  "<b>Covered?:</b> " + e.features[0].properties.covered + "<br>" + "<b>Fee:</b> " + e.features[0].properties.fee + "<br>" + "<b>Parking Type:</b> " + e.features[0].properties.parking_type + "<br>" +       
+  //     "<b>Capacity:</b> " + e.features[0].properties.capacity)
+  //       .addTo(map);
+  // });
 
   map.addSource('traffic_source', {
     'type': 'vector',
