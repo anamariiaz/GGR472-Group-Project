@@ -139,7 +139,7 @@ map.on('load', () => {
           100,
           25
         ],
-        'circle-color': '#ACDF87'
+        'circle-color': '#147453'
       }
     });
 
@@ -157,7 +157,10 @@ map.on('load', () => {
         //allow overlap of other text layers (so that all layers are simultaneously visible)
         'text-allow-overlap': true,
         'text-ignore-placement': true
-      }
+      },
+      paint: {
+        'text-color': 'white'
+      },
     });
 
     //add and style a layer of circles "toronto_bikeshare_unclustered" from the defined "toronto_bikeshare_stations" source for the unclustered (single) bikeshare stations
@@ -227,18 +230,18 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
         ['in', 'bike lane', ['downcase', ['get', 'type']]],
-        'red',
+        '#5EBD3E', //5EBD3E
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        'orange',
+        '#FFB900', //FFB900
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        'blue',
+        '#009CDF', //009CDF
         ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        'purple',
+        '#E23838', //E23838
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#5C4033',
+        '#6DAB4D', //973999
         ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
-        '#0492C2',
+        '#C11F73', //F78200
         'black'
       ],
       'line-opacity': 0.7
@@ -597,7 +600,7 @@ map.on('load', () => {
 
   //load and add image 'parking-marker' for parking icons (throw an error if this process fails)
   map.loadImage(
-    'https://ireo00.github.io/472-Resources/bicycle-parking.png', //https://anamariiaz.github.io/GGR472-Group-Project-Sources/bike_parking.png
+    'https://ireo00.github.io/472-Resources/bicycle-parking.png',
     (error, image) => {
       if (error) throw error;
       map.addImage('parking-marker', image);
@@ -612,7 +615,7 @@ map.on('load', () => {
     //only show circles when there is more than 1 bike parking station within radius
     filter: ['has', 'point_count'],
     'paint': {
-      'circle-color': '#11b4da',
+      'circle-color': '#84BCE4',
       //specify the radius of the circles based on whether the number of bike parking stations within radius is <10, 10-20, 20-50, 50-100 or >100
       'circle-radius': [
         'step',
@@ -700,7 +703,7 @@ map.on('load', () => {
     //only show circles when there is more than 1 bike parking station within radius
     filter: ['has', 'point_count'],
     'paint': {
-      'circle-color': '#11b4da',
+      'circle-color': '#84BCE4',
       //specify the radius of the circles based on whether the number of bike parking stations within radius is <10, 10-20, 20-50, 50-100 or >100
       'circle-radius': [
         'step',
@@ -779,7 +782,7 @@ map.on('load', () => {
     //only show circles when there is more than 1 bike shop within radius
     filter: ['has', 'point_count'],
     'paint': {
-      'circle-color': 'red',
+      'circle-color': '#AC1C54',
       //specify the radius of the circles based on whether the number of bike shops within radius is <10, 10-20, 20-50, 50-100 or >100
       'circle-radius': [
         'step',
@@ -811,7 +814,10 @@ map.on('load', () => {
       //allow overlap of other text layers (so that all layers are simultaneously visible)
       'text-allow-overlap': true,
       'text-ignore-placement': true
-    }
+    },
+    paint: {
+      'text-color': 'white'
+    },
   });
 
   //add and style a layer of circles "toronto_bicycle_shop_unclustered" from the defined "toronto_bicycle_shops" source for the unclustered (single) shop
@@ -869,7 +875,7 @@ map.on('load', () => {
     //only show circles when there is more than 1 bike shop within radius
     filter: ['has', 'point_count'],
     'paint': {
-      'circle-color': 'red',
+      'circle-color': '#AC1C54',
       //specify the radius of the circles based on whether the number of bike shops within radius is <10, 10-20, 20-50, 50-100 or >100
       'circle-radius': [
         'step',
@@ -901,7 +907,10 @@ map.on('load', () => {
       //allow overlap of other text layers (so that all layers are simultaneously visible)
       'text-allow-overlap': true,
       'text-ignore-placement': true
-    }
+    },
+    paint: {
+      'text-color': 'white'
+    },
   });
 
   //add and style a layer of circles "toronto_bicycle_shop_unclustered" from the defined "toronto_bicycle_shops" source for the unclustered (single) shop
@@ -1941,9 +1950,9 @@ const label_shops = document.getElementById('label_shops'); //assign 'item_shops
 const item_shops = document.createElement('div'); //assign 'key_shops' variable to a created 'span' (i.e. space into which content can be inserted)
 const key_shops = document.createElement('span'); //specify the class of 'key_shops' span as 'label-key-shops' such that its style is defined by the latter in css
 key_shops.className = 'label-key-shops'; //specify the background color of 'key_shops' span
-key_shops.style.backgroundColor = '#84BCE4'; //assign 'value_shops' variable to a created 'span' (i.e. space into which content can be inserted)
+key_shops.style.backgroundColor = '#AC1C54'; //assign 'value_shops' variable to a created 'span' (i.e. space into which content can be inserted)
 const value_shops = document.createElement('span');  //insert text into 'value_shops' span
-value_shops.innerHTML = 'Bicycle Shops' //add 'key_points' span to the created section 'item_shops'
+value_shops.innerHTML = 'Bike Shops' //add 'key_points' span to the created section 'item_shops'
 item_shops.appendChild(key_shops);  //add 'value_shops' span to the created section 'item_shops'
 item_shops.appendChild(value_shops);  //add 'item_shops' section into the HTML element assigned to 'label_shops' variable
 label_shops.appendChild(item_shops);
@@ -1953,9 +1962,9 @@ const label_parking = document.getElementById('label_parking'); //assign 'item_p
 const item_parking = document.createElement('div'); //assign 'key_parking' variable to a created 'span' (i.e. space into which content can be inserted)
 const key_parking = document.createElement('span');  //specify the class of 'key_parking' span as 'label-key-parking' such that its style is defined by the latter in css
 key_parking.className = 'label-key-parking';  //specify the background color of 'key_parking' span
-key_parking.style.backgroundColor = '#AC1C54';  //assign 'value_parking' variable to a created 'span' (i.e. space into which content can be inserted)
+key_parking.style.backgroundColor = '#84BCE4';  //assign 'value_parking' variable to a created 'span' (i.e. space into which content can be inserted)
 const value_parking = document.createElement('span'); //insert text into 'value_parking' span
-value_parking.innerHTML = 'Bicycle Parkings' //add 'key_parking' span to the created section 'item_parking'
+value_parking.innerHTML = 'Bike Parkings' //add 'key_parking' span to the created section 'item_parking'
 item_parking.appendChild(key_parking);  //add 'value_parking' span to the created section 'item_parking'
 item_parking.appendChild(value_parking); //add 'item_parking' section into the HTML element assigned to 'label_parking' variable
 label_parking.appendChild(item_parking);
@@ -2090,7 +2099,7 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
       'ajax_bikeways',
       ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
     );
-    
+
     map.setFilter(
       'whitby_bikeways',
       ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
