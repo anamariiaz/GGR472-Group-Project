@@ -172,7 +172,7 @@ map.on('load', () => {
       filter: ['!', ['has', 'point_count']],
       layout: {
         'icon-image': 'bikeshare-marker',
-        'icon-size': 0.07,
+        'icon-size': 0.09,
         //allow overlap of other icon layers (so that all layers are simultaneously visible)
         'icon-allow-overlap': true,
         'icon-ignore-placement': true
@@ -659,7 +659,7 @@ map.on('load', () => {
     filter: ['!', ['has', 'point_count']],
     layout: {
       'icon-image': 'parking-marker',
-      'icon-size': 0.15, //0.15
+      'icon-size': 0.15,
       //allow overlap of other icon layers (so that all layers are simultaneously visible)
       'icon-allow-overlap': true,
       'icon-ignore-placement': true
@@ -747,7 +747,7 @@ map.on('load', () => {
     filter: ['!', ['has', 'point_count']],
     layout: {
       'icon-image': 'parking-marker',
-      'icon-size': 0.15, //0.15
+      'icon-size': 0.13,
       //allow overlap of other icon layers (so that all layers are simultaneously visible)
       'icon-allow-overlap': true,
       'icon-ignore-placement': true
@@ -829,7 +829,7 @@ map.on('load', () => {
     filter: ['!', ['has', 'point_count']],
     layout: {
       'icon-image': 'shop-marker',
-      'icon-size': 0.08,
+      'icon-size': 0.09,
       //allow overlap of other icon layers (so that all layers are simultaneously visible)
       'icon-allow-overlap': true,
       'icon-ignore-placement': true
