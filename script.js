@@ -763,7 +763,7 @@ map.on('load', () => {
 
   //load and add image 'shop-marker' for shop icons (throw an error if this process fails)
   map.loadImage(
-    'https://ireo00.github.io/472-Resources/bicycle-shop3.png',
+    'https://ireo00.github.io/472-Resources/bicycle-shop.png',
     (error, image) => {
       if (error) throw error;
       map.addImage('shop-marker', image);
