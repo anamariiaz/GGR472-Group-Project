@@ -92,7 +92,9 @@ map.on('load', () => {
       let latitude = data.data.stations[step].lat
       let name = data.data.stations[step].name
       let station_id = data.data.stations[step].station_id
-      test.push(JSON.parse(`{"type": "Feature", "geometry": {"coordinates": [${longitude},${latitude}], "type": "Point"}, "properties": {"name":"${name}", "station_id":"${station_id}"}}`));
+      let address = data.data.stations[step].address
+      let post_code = data.data.stations[step].post_code
+      test.push(JSON.parse(`{"type": "Feature", "geometry": {"coordinates": [${longitude},${latitude}], "type": "Point"}, "properties": {"name":"${name}", "station_id":"${station_id}", "address":"${address}", "post_code":"${post_code}"}}`));
     };
 
     //add a geojson file source "toronto_bikeshare_stations" for Toronto bikeways using the manually created GeoJSON file
@@ -192,7 +194,10 @@ map.on('load', () => {
   });
 
   map.on('click', 'toronto_bikeshare_unclustered', (e) => {
-    let station_id = e.features[0].properties.station_id
+    let station_id=e.features[0].properties.station_id
+    let name=e.features[0].properties.name
+    let address=e.features[0].properties.address
+    let post_code=e.features[0].properties.post_code
     fetch('https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_status')
       .then(response => response.json())
       .then(response => {
@@ -201,10 +206,18 @@ map.on('load', () => {
 
           if (station.station_id === station_id) {
             console.log(station.station_id)
+            if (post_code!="undefined"){
             new mapboxgl.Popup()
-              .setLngLat(e.lngLat)
-              .setHTML("No. Bikes: " + station.num_bikes_available + "<br>" + "No. Available Docks: " + station.num_docks_available)
+            .setLngLat(e.lngLat)
+            .setHTML("<b>Name:</b> " + name + "<br>" + "<b>Address:</b> " + address + "<br>" + "<b>Postal Code:</b> " + post_code + "<br>" + "<b>No. Available Bikes:</b> " + station.num_bikes_available + "<br>" + "<b>No. Available Docks:</b> " + station.num_docks_available)
               .addTo(map);
+            }
+            else if (post_code=="undefined") {
+              new mapboxgl.Popup()
+              .setLngLat(e.lngLat)
+              .setHTML("<b>Name:</b> " + name + "<br>" + "<b>Address:</b> " + address + "<br>" + "<b>No. Available Bikes:</b> " + station.num_bikes_available + "<br>" + "<b>No. Available Docks:</b> " + station.num_docks_available)
+                .addTo(map);
+              }
           }
         })
       })
@@ -213,7 +226,7 @@ map.on('load', () => {
   //add a geojson file source "toronto_cycling_network" for Toronto bikeways
   map.addSource('toronto_cycling_network', {
     type: 'geojson',
-    data: 'https://ireo00.github.io/472-Resources/toronto_cycling_network.geojson',
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/toronto_cycling_network.geojson', //https://ireo00.github.io/472-Resources/toronto_cycling_network.geojson',
     'generateId': true
   });
 
@@ -244,7 +257,13 @@ map.on('load', () => {
         '#C11F73', //F78200
         'black'
       ],
-      'line-opacity': 0.7
+      //'line-opacity': 0.7
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, //change opacity of lines to 1 when hovered over
+        0.5 //leave opacity of lines at 0.5 when not hovered over
+    ]
     }
   });
 
@@ -261,16 +280,51 @@ map.on('load', () => {
 
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
-      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility 1: " + e.features[0].properties.type +
-        "<br>" + "Facility 2: " + "<br>" + e.features[0].properties.second_type) //if statement
-      .addTo(map);
+      .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Facility 1:</b> " + e.features[0].properties.type +  "<br>" + "<b>Classification:</b> " + e.features[0].properties.Classification
+      + "<br>" + "<b>Facility 2:</b> " + e.features[0].properties.secondary_type) //if statement
+        .addTo(map);
   });
+
+  let toronto_bikeID = null; //assign initial value of 'bikeID' variable as null
+
+    //specify events triggered by moving mouse over the 'bike' layer
+    map.on('mousemove', 'toronto_bikeways', (e) => {
+        //enter conditional if mouse hovers over at least one feature of the 'bike' layer
+        if (e.features.length > 0) { 
+            //if bikeID IS NOT NULL - i.e. a feature was being hovered over immediately prior to another - set hover feature-state of this feature back to false to reset its original opacity (before continuing to move and highlight the next hovered line)
+            if (toronto_bikeID !== null) { 
+                map.setFeatureState(
+                    { source: 'toronto_cycling_network', id: toronto_bikeID },
+                    { hover: false }
+                );
+            }
+            //set 'bikeID' variable to the id of the 'bike' layer feature being hovered over
+            toronto_bikeID = e.features[0].id; 
+            //change the hover feature-state to "true" for the feature of the 'bike' layer being hovered over (to change its opacity)
+            map.setFeatureState(
+                { source: 'toronto_cycling_network', id: toronto_bikeID },
+                { hover: true } 
+            );
+        }
+    });
+
+    //specify events triggered by mouse leaving the 'bike' layer
+    map.on('mouseleave', 'toronto_bikeways', () => { 
+        //change the hover feature-state to "false" for the feature of the 'bike' layer that was previously hovered over (to reset its original opacity) and re-initialize bikeID to null
+        if (toronto_bikeID !== null) {
+            map.setFeatureState(
+                { source: 'toronto_cycling_network', id: toronto_bikeID },
+                { hover: false }
+            );
+        }
+        toronto_bikeID = null;
+    });   
 
 
   //add a geojson file source "york_region_cycling_network" for York Region bikeways
   map.addSource('york_region_cycling_network', {
     type: 'geojson',
-    data: 'https://ireo00.github.io/472-Resources/york_region_cycling_network.geojson',
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/york_region_cycling_network.geojson', //https://ireo00.github.io/472-Resources/york_region_cycling_network.geojson',
     'generateId': true
   });
 
@@ -301,31 +355,73 @@ map.on('load', () => {
         '#0492C2',
         'black'
       ],
-      'line-opacity': 0.7
+      //'line-opacity': 0.7
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, //change opacity of lines to 1 when hovered over
+        0.5 //leave opacity of lines at 0.5 when not hovered over
+    ]
     }
   });
 
-  map.on('mouseenter', 'peel_bikeways', () => {
+  let york_bikeID = null; //assign initial value of 'bikeID' variable as null
+
+    //specify events triggered by moving mouse over the 'bike' layer
+    map.on('mousemove', 'york_region_bikeways', (e) => {
+        //enter conditional if mouse hovers over at least one feature of the 'bike' layer
+        if (e.features.length > 0) { 
+            //if bikeID IS NOT NULL - i.e. a feature was being hovered over immediately prior to another - set hover feature-state of this feature back to false to reset its original opacity (before continuing to move and highlight the next hovered line)
+            if (york_bikeID !== null) { 
+                map.setFeatureState(
+                    { source: 'york_region_cycling_network', id: york_bikeID },
+                    { hover: false }
+                );
+            }
+            //set 'bikeID' variable to the id of the 'bike' layer feature being hovered over
+            york_bikeID = e.features[0].id; 
+            //change the hover feature-state to "true" for the feature of the 'bike' layer being hovered over (to change its opacity)
+            map.setFeatureState(
+                { source: 'york_region_cycling_network', id: york_bikeID },
+                { hover: true } 
+            );
+        }
+    });
+
+    //specify events triggered by mouse leaving the 'bike' layer
+    map.on('mouseleave', 'york_region_bikeways', () => { 
+        //change the hover feature-state to "false" for the feature of the 'bike' layer that was previously hovered over (to reset its original opacity) and re-initialize bikeID to null
+        if (york_bikeID !== null) {
+            map.setFeatureState(
+                { source: 'york_region_cycling_network', id: york_bikeID },
+                { hover: false }
+            );
+        }
+        york_bikeID = null;
+    });   
+
+
+  map.on('mouseenter', 'york_region_bikeways', () => {
     map.getCanvas().style.cursor = 'pointer';
   });
 
-  map.on('mouseleave', 'peel_bikeways', () => {
+  map.on('mouseleave', 'york_region_bikeways', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  map.on('click', 'peel_bikeways', (e) => {
+  map.on('click', 'york_region_bikeways', (e) => {
     console.log(e)
     new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility: " + e.features[0].properties.type +
-        "<br>" + "City: " + "<br>" + e.features[0].properties.municipality) //if statement needed for "systems"
+    .setLngLat(e.lngLat)
+    .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Facility:</b> " + e.features[0].properties.type + "<br>" + "<b>Classification:</b> " + e.features[0].properties.Classification +
+    "<br>" + "<b>Surface:</b> " + e.features[0].properties.surface + "<br>" + "<b>Municipality:</b> " +  e.features[0].properties.municipality ) //if statement needed for "systems"
       .addTo(map);
   });
 
   //add a geojson file source "peel_region_cycling_network" for Peel Region bikeways
   map.addSource('peel_region_cycling_network', {
     type: 'geojson',
-    data: 'https://ireo00.github.io/472-Resources/peel_region_cycling_network.geojson', 'generateId': true
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/peel_region_cycling_network.geojson', 'generateId': true //https://ireo00.github.io/472-Resources/peel_region_cycling_network.geojson'
   });
 
   //add and style a layer of lines "peel_bikeways" from the defined "peel_region_cycling_network" source
@@ -353,7 +449,13 @@ map.on('load', () => {
         '#0492C2',
         'black' //default color if none of the above apply
       ],
-      'line-opacity': 0.7
+      //'line-opacity': 0.7
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, //change opacity of lines to 1 when hovered over
+        0.5 //leave opacity of lines at 0.5 when not hovered over
+    ]
     }
   });
 
@@ -369,15 +471,50 @@ map.on('load', () => {
     console.log(e)
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
-      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + " Facility: " + e.features[0].properties.class +
-        "<br>" + "City: " + "<br>" + e.features[0].properties.MUN) //if statement needed
-      .addTo(map);
+      .setHTML("<b>Name:</b> " + e.features[0].properties.Name + "<br>" + "<b>Facility:</b> " + e.features[0].properties.Type + "<br>" + "<b>Classification:</b> " +  e.features[0].properties.Classification +
+      "<br>" + "<b>Surface:</b> " + e.features[0].properties.Surface + "<br>" + "<b>Municipality:</b> " +  e.features[0].properties.Municipality) //if statement needed
+        .addTo(map);
   });
+
+  let peel_bikeID = null; //assign initial value of 'bikeID' variable as null
+
+    //specify events triggered by moving mouse over the 'bike' layer
+    map.on('mousemove', 'peel_bikeways', (e) => {
+        //enter conditional if mouse hovers over at least one feature of the 'bike' layer
+        if (e.features.length > 0) { 
+            //if bikeID IS NOT NULL - i.e. a feature was being hovered over immediately prior to another - set hover feature-state of this feature back to false to reset its original opacity (before continuing to move and highlight the next hovered line)
+            if (peel_bikeID !== null) { 
+                map.setFeatureState(
+                    { source: 'peel_region_cycling_network', id: peel_bikeID },
+                    { hover: false }
+                );
+            }
+            //set 'bikeID' variable to the id of the 'bike' layer feature being hovered over
+            peel_bikeID = e.features[0].id; 
+            //change the hover feature-state to "true" for the feature of the 'bike' layer being hovered over (to change its opacity)
+            map.setFeatureState(
+                { source: 'peel_region_cycling_network', id: peel_bikeID },
+                { hover: true } 
+            );
+        }
+    });
+
+    //specify events triggered by mouse leaving the 'bike' layer
+    map.on('mouseleave', 'peel_bikeways', () => { 
+        //change the hover feature-state to "false" for the feature of the 'bike' layer that was previously hovered over (to reset its original opacity) and re-initialize bikeID to null
+        if (peel_bikeID !== null) {
+            map.setFeatureState(
+                { source: 'peel_region_cycling_network', id: peel_bikeID },
+                { hover: false }
+            );
+        }
+        peel_bikeID = null;
+    }); 
 
   //add a geojson file source "durham_region_cycling_network" for Durham Region bikeways
   map.addSource('durham_region_cycling_network', {
     type: 'geojson',
-    data: 'https://ireo00.github.io/472-Resources/durham_region_cycling_network.geojson', 'generateId': true
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/durham_region_cycling_network.geojson', 'generateId': true //https://ireo00.github.io/472-Resources/durham_region_cycling_network.geojson'
   });
 
   //add and style a layer of lines "durham_region_bikeways" from the defined "durham_region_cycling_network" source
@@ -407,7 +544,13 @@ map.on('load', () => {
         '#0492C2',
         'black'
       ],
-      'line-opacity': 0.7
+      //'line-opacity': 0.7
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, //change opacity of lines to 1 when hovered over
+        0.5 //leave opacity of lines at 0.5 when not hovered over
+    ]
     }
   });
 
@@ -423,14 +566,48 @@ map.on('load', () => {
     console.log(e)
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
-      .setHTML("Name: " + "<br>" + e.features[0].properties.name)
-      .addTo(map);
+      .setHTML("<b>Name:</b> "+ e.features[0].properties.Name + "<br>" + "<b>Classification:</b> " + e.features[0].properties.classification)
+        .addTo(map);
   });
+  
+  let durham_bikeID = null; //assign initial value of 'bikeID' variable as null
 
+    //specify events triggered by moving mouse over the 'bike' layer
+    map.on('mousemove', 'durham_region_bikeways', (e) => {
+        //enter conditional if mouse hovers over at least one feature of the 'bike' layer
+        if (e.features.length > 0) { 
+            //if bikeID IS NOT NULL - i.e. a feature was being hovered over immediately prior to another - set hover feature-state of this feature back to false to reset its original opacity (before continuing to move and highlight the next hovered line)
+            if (durham_bikeID !== null) { 
+                map.setFeatureState(
+                    { source: 'durham_region_cycling_network', id: durham_bikeID },
+                    { hover: false }
+                );
+            }
+            //set 'bikeID' variable to the id of the 'bike' layer feature being hovered over
+            durham_bikeID = e.features[0].id; 
+            //change the hover feature-state to "true" for the feature of the 'bike' layer being hovered over (to change its opacity)
+            map.setFeatureState(
+                { source: 'durham_region_cycling_network', id: durham_bikeID },
+                { hover: true } 
+            );
+        }
+    });
+
+    //specify events triggered by mouse leaving the 'bike' layer
+    map.on('mouseleave', 'durham_region_bikeways', () => { 
+        //change the hover feature-state to "false" for the feature of the 'bike' layer that was previously hovered over (to reset its original opacity) and re-initialize bikeID to null
+        if (durham_bikeID !== null) {
+            map.setFeatureState(
+                { source: 'durham_region_cycling_network', id: durham_bikeID },
+                { hover: false }
+            );
+        }
+        durham_bikeID = null;
+    }); 
   //add a geojson file source "burlington_cycling_networkk" for Burlington bikeways
   map.addSource('burlington_cycling_network', {
     type: 'geojson',
-    data: 'https://ireo00.github.io/472-Resources/burlington_cycling_network.geojson', 'generateId': true
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/burlington_cycling_network.geojson', 'generateId': true //https://ireo00.github.io/472-Resources/burlington_cycling_network.geojson
   });
   map.addLayer({
     'id': 'burlington_bikeways',
@@ -463,7 +640,13 @@ map.on('load', () => {
         '#0492C2',
         'black' //default color if none of the above apply
       ],
-      'line-opacity': 0.7
+      //'line-opacity': 0.7
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, //change opacity of lines to 1 when hovered over
+        0.5 //leave opacity of lines at 0.5 when not hovered over
+    ]
 
 
     }
@@ -481,14 +664,49 @@ map.on('load', () => {
     console.log(e)
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
-      .setHTML("Facility: " + "<br>" + e.features[0].properties.type)
-      .addTo(map);
+      .setHTML("<b>Street Name:</b> " + e.features[0].properties.street_name + "<br>" + "<b>Facility:</b> " + e.features[0].properties.type + "<br>" + "<b>Classification:</b> " + e.features[0].properties.Classification)
+        .addTo(map);
   });
+
+  let burlington_bikeID = null; //assign initial value of 'bikeID' variable as null
+
+    //specify events triggered by moving mouse over the 'bike' layer
+    map.on('mousemove', 'burlington_bikeways', (e) => {
+        //enter conditional if mouse hovers over at least one feature of the 'bike' layer
+        if (e.features.length > 0) { 
+            //if bikeID IS NOT NULL - i.e. a feature was being hovered over immediately prior to another - set hover feature-state of this feature back to false to reset its original opacity (before continuing to move and highlight the next hovered line)
+            if (burlington_bikeID !== null) { 
+                map.setFeatureState(
+                    { source: 'burlington_cycling_network', id: burlington_bikeID },
+                    { hover: false }
+                );
+            }
+            //set 'bikeID' variable to the id of the 'bike' layer feature being hovered over
+           burlington_bikeID = e.features[0].id; 
+            //change the hover feature-state to "true" for the feature of the 'bike' layer being hovered over (to change its opacity)
+            map.setFeatureState(
+                { source: 'burlington_cycling_network', id: burlington_bikeID },
+                { hover: true } 
+            );
+        }
+    });
+
+    //specify events triggered by mouse leaving the 'bike' layer
+    map.on('mouseleave', 'burlington_bikeways', () => { 
+        //change the hover feature-state to "false" for the feature of the 'bike' layer that was previously hovered over (to reset its original opacity) and re-initialize bikeID to null
+        if (burlington_bikeID !== null) {
+            map.setFeatureState(
+                { source: 'burlington_cycling_network', id: burlington_bikeID },
+                { hover: false }
+            );
+        }
+        burlington_bikeID = null;
+    }); 
 
   //add a geojson file source "milton_cycling_network" for Milton bikeways
   map.addSource('milton_cycling_network', {
     type: 'geojson',
-    data: 'https://ireo00.github.io/472-Resources/milton_cycling_network.geojson', 'generateId': true
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/milton_cycling_network.geojson', 'generateId': true //https://ireo00.github.io/472-Resources/milton_cycling_network.geojson'
   });
 
   //add and style a layer of lines "milton_bikeways" from the defined "milton_cycling_network" source
@@ -518,7 +736,12 @@ map.on('load', () => {
         '#0492C2',
         'black'
       ],
-      'line-opacity': 0.7
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, //change opacity of lines to 1 when hovered over
+        0.5 //leave opacity of lines at 0.5 when not hovered over
+    ]
     }
   });
 
@@ -534,14 +757,48 @@ map.on('load', () => {
     console.log(e)
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
-      .setHTML("Facility: " + "<br>" + e.features[0].properties.type)
-      .addTo(map);
+      .setHTML("<b>Facility:</b> " +  e.features[0].properties.type + "<br>" + "<b>Classification:</b> " + e.features[0].properties.classification + "<br>" + "<b>Surface:</b> "  + e.features[0].properties.surface)
+        .addTo(map);
   });
 
+  let milton_bikeID = null; //assign initial value of 'bikeID' variable as null
+
+    //specify events triggered by moving mouse over the 'bike' layer
+    map.on('mousemove', 'milton_bikeways', (e) => {
+        //enter conditional if mouse hovers over at least one feature of the 'bike' layer
+        if (e.features.length > 0) { 
+            //if bikeID IS NOT NULL - i.e. a feature was being hovered over immediately prior to another - set hover feature-state of this feature back to false to reset its original opacity (before continuing to move and highlight the next hovered line)
+            if (milton_bikeID !== null) { 
+                map.setFeatureState(
+                    { source: 'milton_cycling_network', id: milton_bikeID },
+                    { hover: false }
+                );
+            }
+            //set 'bikeID' variable to the id of the 'bike' layer feature being hovered over
+           milton_bikeID = e.features[0].id; 
+            //change the hover feature-state to "true" for the feature of the 'bike' layer being hovered over (to change its opacity)
+            map.setFeatureState(
+                { source: 'milton_cycling_network', id: milton_bikeID },
+                { hover: true } 
+            );
+        }
+    });
+
+    //specify events triggered by mouse leaving the 'bike' layer
+    map.on('mouseleave', 'milton_bikeways', () => { 
+        //change the hover feature-state to "false" for the feature of the 'bike' layer that was previously hovered over (to reset its original opacity) and re-initialize bikeID to null
+        if (milton_bikeID !== null) {
+            map.setFeatureState(
+                { source: 'milton_cycling_network', id: milton_bikeID },
+                { hover: false }
+            );
+        }
+        milton_bikeID = null;
+    }); 
   //add a geojson file source "oakville_cycling_network" for Oakville bikeways
   map.addSource('oakville_cycling_network', {
     type: 'geojson',
-    data: 'https://ireo00.github.io/472-Resources/oakville_cycling_network.geojson', 'generateId': true
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/oakville_cycling_network.geojson' , 'generateId': true //https://ireo00.github.io/472-Resources/oakville_cycling_network.geojson'
   });
 
   //add and style a layer of lines "oakville_bikeways" from the defined "oakville_cycling_network" source
@@ -567,7 +824,13 @@ map.on('load', () => {
         '#0492C2',
         'black' //default color if none of the above apply
       ],
-      'line-opacity': 0.7
+      //'line-opacity': 0.7
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, //change opacity of lines to 1 when hovered over
+        0.5 //leave opacity of lines at 0.5 when not hovered over
+    ]
     }
   });
 
@@ -583,10 +846,44 @@ map.on('load', () => {
     console.log(e)
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
-      .setHTML("Status: " + "<br>" + e.features[0].properties.status)
-      .addTo(map);
+      .setHTML("<b>Facility:</b> " + e.features[0].properties.type + "<br>" + "<b>Classification:</b> "  + e.features[0].properties.Classification + "<br>" + "<b>Surface:</b> "  + e.features[0].properties.surface)
+        .addTo(map);
   });
 
+  let oakville_bikeID = null; //assign initial value of 'bikeID' variable as null
+
+    //specify events triggered by moving mouse over the 'bike' layer
+    map.on('mousemove', 'oakvill_bikeways', (e) => {
+        //enter conditional if mouse hovers over at least one feature of the 'bike' layer
+        if (e.features.length > 0) { 
+            //if bikeID IS NOT NULL - i.e. a feature was being hovered over immediately prior to another - set hover feature-state of this feature back to false to reset its original opacity (before continuing to move and highlight the next hovered line)
+            if (oakville_bikeID !== null) { 
+                map.setFeatureState(
+                    { source: 'oakville_cycling_network', id: oakville_bikeID },
+                    { hover: false }
+                );
+            }
+            //set 'bikeID' variable to the id of the 'bike' layer feature being hovered over
+           oakville_bikeID = e.features[0].id; 
+            //change the hover feature-state to "true" for the feature of the 'bike' layer being hovered over (to change its opacity)
+            map.setFeatureState(
+                { source: 'oakville_cycling_network', id: oakville_bikeID },
+                { hover: true } 
+            );
+        }
+    });
+
+    //specify events triggered by mouse leaving the 'bike' layer
+    map.on('mouseleave', 'oakvill_bikeways', () => { 
+        //change the hover feature-state to "false" for the feature of the 'bike' layer that was previously hovered over (to reset its original opacity) and re-initialize bikeID to null
+        if (oakville_bikeID !== null) {
+            map.setFeatureState(
+                { source: 'oakville_cycling_network', id: oakville_bikeID },
+                { hover: false }
+            );
+        }
+        oakville_bikeID = null;
+    }); 
   //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
   map.addSource('toronto_bicycle_parking', {
     type: 'geojson',
@@ -678,81 +975,13 @@ map.on('load', () => {
     console.log(e)
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
-      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + "Address: " + "<br>" + e.features[0].properties.address + "<br>" + "Postal Code: "
-        + e.features[0].properties.postal_code + "<br>" + "City:  " + e.features[0].properties.city + "<br>" + "Parking:  " + e.features[0].properties.parking_type + "<br>" +
-        "Capacity: " + e.features[0].properties.bike_capacity)
-      .addTo(map);
+      .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Address:</b> " + e.features[0].properties.address + "<br>" + "<b>Postal Code:</b> "
+      + e.features[0].properties.postal_code + "<br>" + "<b>Ward:</b> " + e.features[0].properties.ward + "<br>" + "<b>City:</b>  " + e.features[0].properties.city + "<br>" + "<b>Parking Type:</b>  " + e.features[0].properties.parking_type + "<br>" +       
+      "<b>Capacity:</b> " + e.features[0].properties.bike_capacity)
+        .addTo(map);
   });
 
-  //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
-  map.addSource('gta_bicycle_parking', {
-    type: 'geojson',
-    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/gta_bicycle_parking.geojson',
-    'generateId': true,
-    //cluster the data to limit the symbology on the map at low zoom levels
-    cluster: true,
-    clusterMaxZoom: 14, //maximum zoom at which points cluster
-    clusterRadius: 50 //distance over which points cluster
-  });
-
-  //add and style a layer of circles "toronto_bike_parking_clustered" from the defined "toronto_bicycle_parking" source for the clustered parking stations
-  map.addLayer({
-    'id': 'gta_bike_parking_clustered',
-    'type': 'circle',
-    'source': 'gta_bicycle_parking',
-    //only show circles when there is more than 1 bike parking station within radius
-    filter: ['has', 'point_count'],
-    'paint': {
-      'circle-color': '#84BCE4',
-      //specify the radius of the circles based on whether the number of bike parking stations within radius is <10, 10-20, 20-50, 50-100 or >100
-      'circle-radius': [
-        'step',
-        ['get', 'point_count'],
-        13,
-        10,
-        15,
-        20,
-        17,
-        50,
-        20,
-        100,
-        25
-      ]
-    }
-  });
-
-  //add and style a layer of symbols "toronto_bike_parking_cluster_count" from the defined "toronto_bicycle_parking" source for the text on top of the clustered parking stations
-  map.addLayer({
-    id: 'gta_bike_parking_cluster_count',
-    type: 'symbol',
-    source: 'gta_bicycle_parking',
-    //only show text when there is more than 1 bike parking station within radius 
-    filter: ['has', 'point_count'],
-    layout: {
-      'text-field': ['get', 'point_count_abbreviated'],
-      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-      'text-size': 12,
-      //allow overlap of other text layers (so that all layers are simultaneously visible)
-      'text-allow-overlap': true,
-      'text-ignore-placement': true
-    }
-  });
-
-  //add and style a layer of circles "toronto_bike_parking_unclustered" from the defined "toronto_bicycle_parking" source for the unclustered (single) parking stations
-  map.addLayer({
-    id: 'gta_bike_parking_unclustered',
-    type: 'symbol',
-    source: 'gta_bicycle_parking',
-    //only show circles when there is 1 bike parking station within radius 
-    filter: ['!', ['has', 'point_count']],
-    layout: {
-      'icon-image': 'parking-marker',
-      'icon-size': 0.15, //0.15
-      //allow overlap of other icon layers (so that all layers are simultaneously visible)
-      'icon-allow-overlap': true,
-      'icon-ignore-placement': true
-    }
-  });
+  
   //add a geojson file source "toronto_bicycle_shops" for Toronto bike shops
   map.addSource('toronto_bicycle_shops', {
     type: 'geojson',
@@ -836,24 +1065,215 @@ map.on('load', () => {
     }
   });
 
+    //Hover and pop-up
+    map.on('mouseenter', 'toronto_bicycle_shop_unclustered', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+  
+    map.on('mouseleave', 'toronto_bicycle_shop_unclustered', () => {
+      map.getCanvas().style.cursor = '';
+    });
+  
+    map.on('click', 'toronto_bicycle_shop_unclustered', (e) => {
+      console.log(e)
+      new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Address:</b> " + e.features[0].properties.address + "<br>" + "<b>Postal Code:</b> "
+        + e.features[0].properties.postal_code + "<br>" + "<b>Ward:</b> " + e.features[0].properties.ward + "<br>" +  "<b>Unit No:</b>  " + e.features[0].properties.unit + "<br>" + "<b>City:</b>  " + e.features[0].properties.city + "<br>" + "<b>Phone:</b>  " + e.features[0].properties.phone + "<br>" +       
+        "<b>Email:</b> " + e.features[0].properties.email + "<br>" + "<b>Rentals?:</b> " + e.features[0].properties.rental)
+          .addTo(map);
+    });
+
+
+  
+
+
+  map.addSource('ajax_cycling_network', {
+    type: 'geojson',
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/ajax_cycling_network.geojson', //https://janicewg.github.io/GGR472-Data-Group-Project/Active_Transportation.geojson',
+    'generateId': true,
+  });
+
+  map.addLayer({
+    'id': 'ajax_bikeways',
+    'type': 'line',
+    'source': 'ajax_cycling_network',
+    'paint': {
+      'line-width': 3,
+      //specify the color of the lines based on the text contained within the "Type" data field (i.e. based on the bikeway type)
+      //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
+      'line-color': [
+        'case',
+        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
+        ['any', ['in', 'bike lane', ['downcase', ['get', 'type']]],['in', 'bicycle priority', ['downcase', ['get', 'type']]]],
+        'red',
+        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        'orange',
+        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        'blue',
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]], ['in', 'shared facility', ['downcase', ['get', 'type']]]] ,
+        'purple',
+        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]], ['in', 'off-road', ['downcase', ['get', 'type']]]],
+        '#5C4033',
+        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        '#0492C2',
+        'black'
+      ],
+      //'line-opacity': 0.7
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, //change opacity of lines to 1 when hovered over
+        0.5 //leave opacity of lines at 0.5 when not hovered over
+    ]
+    }
+  });
+
   //Hover and pop-up
-  map.on('mouseenter', 'toronto_bicycle_shop_unclustered', () => {
+  map.on('mouseenter', 'ajax_bikeways', () => {
     map.getCanvas().style.cursor = 'pointer';
   });
 
-  map.on('mouseleave', 'toronto_bicycle_shop_unclustered', () => {
+  map.on('mouseleave', 'ajax_bikeways', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  map.on('click', 'toronto_bicycle_shop_unclustered', (e) => {
+  map.on('click', 'ajax_bikeways', (e) => {
+    console.log(e.features[0].properties.location.split(":"))
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("<b>Facility:</b> " + e.features[0].properties.type + "<br>" + "<b>Classification:</b> " + e.features[0].properties.classification + "<br>" + "<b>Street:</b> " + (e.features[0].properties.location).substring(0, (e.features[0].properties.location).length-9))
+        .addTo(map);
+  });
+
+  let ajax_bikeID = null; //assign initial value of 'bikeID' variable as null
+
+    //specify events triggered by moving mouse over the 'bike' layer
+    map.on('mousemove', 'ajax_bikeways', (e) => {
+        //enter conditional if mouse hovers over at least one feature of the 'bike' layer
+        if (e.features.length > 0) { 
+            //if bikeID IS NOT NULL - i.e. a feature was being hovered over immediately prior to another - set hover feature-state of this feature back to false to reset its original opacity (before continuing to move and highlight the next hovered line)
+            if (ajax_bikeID !== null) { 
+                map.setFeatureState(
+                    { source: 'ajax_cycling_network', id: ajax_bikeID },
+                    { hover: false }
+                );
+            }
+            //set 'bikeID' variable to the id of the 'bike' layer feature being hovered over
+           ajax_bikeID = e.features[0].id; 
+            //change the hover feature-state to "true" for the feature of the 'bike' layer being hovered over (to change its opacity)
+            map.setFeatureState(
+                { source: 'ajax_cycling_network', id: ajax_bikeID },
+                { hover: true } 
+            );
+        }
+    });
+
+    //specify events triggered by mouse leaving the 'bike' layer
+    map.on('mouseleave', 'ajax_bikeways', () => { 
+        //change the hover feature-state to "false" for the feature of the 'bike' layer that was previously hovered over (to reset its original opacity) and re-initialize bikeID to null
+        if (ajax_bikeID !== null) {
+            map.setFeatureState(
+                { source: 'ajax_cycling_network', id: ajax_bikeID },
+                { hover: false }
+            );
+        }
+        ajax_bikeID = null;
+    }); 
+  map.addSource('whitby_cycling_network', {
+    type: 'geojson',
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/whitby_cycling_network.geojson', //https://janicewg.github.io/GGR472-Data-Group-Project/Whitby_cycling_routes.geojson',
+    'generateId': true,
+  });
+
+  map.addLayer({
+    'id': 'whitby_bikeways',
+    'type': 'line',
+    'source': 'whitby_cycling_network',
+    'paint': {
+      'line-width': 3,
+      //specify the color of the lines based on the text contained within the "Type" data field (i.e. based on the bikeway type)
+      //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
+      'line-color': [
+        'case',
+        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
+        ['any', ['in', 'bike lane', ['downcase', ['get', 'type']]], ['in', 'bike route', ['downcase', ['get', 'type']]]],
+        'red',
+        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        'orange',
+        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        'blue',
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
+        'purple',
+        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        '#5C4033',
+        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        '#0492C2',
+        'black'
+      ],
+      //'line-opacity': 0.7
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, //change opacity of lines to 1 when hovered over
+        0.5 //leave opacity of lines at 0.5 when not hovered over
+    ]
+    }
+  });
+
+  //Hover and pop-up
+  map.on('mouseenter', 'whitby_bikeways', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'whitby_bikeways', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'whitby_bikeways', (e) => {
     console.log(e)
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
-      .setHTML("Name: " + "<br>" + e.features[0].properties.name + "<br>" + "Address: " + "<br>" + e.features[0].properties.address + "<br>" + "Postal Code: "
-        + e.features[0].properties.postal_code + "<br>" + "City:  " + e.features[0].properties.city + "<br>" + "Phone:  " + e.features[0].properties.phone + "<br>" +
-        "Email: " + e.features[0].properties.email + "<br>" + "Rental: " + e.features[0].properties.rental)
-      .addTo(map);
+      .setHTML("<b>Facility:</b> " + e.features[0].properties.type + "<br>" + "<b>Classification:</b> " + e.features[0].properties.classification + "<br>" + "<b>Street Name:</b> " + e.features[0].properties['road name'])
+        .addTo(map);
   });
+
+  let whitby_bikeID = null; //assign initial value of 'bikeID' variable as null
+
+    //specify events triggered by moving mouse over the 'bike' layer
+    map.on('mousemove', 'whitby_bikeways', (e) => {
+        //enter conditional if mouse hovers over at least one feature of the 'bike' layer
+        if (e.features.length > 0) { 
+            //if bikeID IS NOT NULL - i.e. a feature was being hovered over immediately prior to another - set hover feature-state of this feature back to false to reset its original opacity (before continuing to move and highlight the next hovered line)
+            if (whitby_bikeID !== null) { 
+                map.setFeatureState(
+                    { source: 'whitby_cycling_network', id: whitby_bikeID },
+                    { hover: false }
+                );
+            }
+            //set 'bikeID' variable to the id of the 'bike' layer feature being hovered over
+           whitby_bikeID = e.features[0].id; 
+            //change the hover feature-state to "true" for the feature of the 'bike' layer being hovered over (to change its opacity)
+            map.setFeatureState(
+                { source: 'whitby_cycling_network', id: whitby_bikeID },
+                { hover: true } 
+            );
+        }
+    });
+
+    //specify events triggered by mouse leaving the 'bike' layer
+    map.on('mouseleave', 'whitby_bikeways', () => { 
+        //change the hover feature-state to "false" for the feature of the 'bike' layer that was previously hovered over (to reset its original opacity) and re-initialize bikeID to null
+        if (whitby_bikeID !== null) {
+            map.setFeatureState(
+                { source: 'whitby_cycling_network', id: whitby_bikeID },
+                { hover: false }
+            );
+        }
+        whitby_bikeID = null;
+    }); 
 
 
   //add a geojson file source "toronto_bicycle_shops" for Toronto bike shops
@@ -929,10 +1349,37 @@ map.on('load', () => {
     }
   });
 
-  //add a geojson file source "toronto_bicycle_shops" for Toronto bike shops
-  map.addSource('gta_bicycle_rentals', {
+  map.on('mouseenter', 'gta_bicycle_shop_unclustered', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'gta_bicycle_shop_unclustered', () => {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'gta_bicycle_shop_unclustered', (e) => {
+    if (e.features[0].properties.city!='Toronto' && (e.features[0].properties.address_number=='Not Available' | e.features[0].properties.address_street=='Not Available')){
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Address:</b> " + "Not Available" + "<br>" + "<b>Postal Code:</b> "
+      + e.features[0].properties.postal_code + "<br>" + "<b>Unit No:</b>  " + e.features[0].properties.unit + "<br>" + "<b>City:</b>  " + e.features[0].properties.city + "<br>" + "<b>Phone:</b>  " + e.features[0].properties.phone + "<br>" +       
+      "<b>Email:</b> " + e.features[0].properties.email + "<br>" + "<b>Website:</b> " + e.features[0].properties.website + "<br>" + "<b>Facebook:</b> " + e.features[0].properties.facebook + "<br>" + "<b>Opening Hours:</b> " + e.features[0].properties.opening_hours)
+        .addTo(map);
+    }
+    else if (e.features[0].properties.city!='Toronto' && e.features[0].properties.address_number!='Not Available' && e.features[0].properties.address_street!='Not Available'){
+      new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Address:</b> " + e.features[0].properties.address_number + " " + e.features[0].properties.address_street + "<br>" + "<b>Postal Code:</b> "
+      + e.features[0].properties.postal_code + "<br>" + "<b>Unit No:</b>  " + e.features[0].properties.unit + "<br>" + "<b>City:</b>  " + e.features[0].properties.city + "<br>" + "<b>Phone:</b>  " + e.features[0].properties.phone + "<br>" +       
+      "<b>Email:</b> " + e.features[0].properties.email + "<br>" + "<b>Website:</b> " + e.features[0].properties.website + "<br>" + "<b>Facebook:</b> " + e.features[0].properties.facebook + "<br>" + "<b>Opening Hours:</b> " + e.features[0].properties.opening_hours)
+        .addTo(map);
+    }
+  });
+
+  //add a geojson file source "toronto_bicycle_parking" for Toronto bike parking stations
+  map.addSource('gta_bicycle_parking', {
     type: 'geojson',
-    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/gta_bicycle_rentals.geojson',
+    data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/gta_bicycle_parking.geojson',
     'generateId': true,
     //cluster the data to limit the symbology on the map at low zoom levels
     cluster: true,
@@ -940,16 +1387,16 @@ map.on('load', () => {
     clusterRadius: 50 //distance over which points cluster
   });
 
-  //add and style a layer of circles "toronto_bicycle_shops_clustered" from the defined "toronto_bicycle_shops" source for the clustered bike shops
+  //add and style a layer of circles "toronto_bike_parking_clustered" from the defined "toronto_bicycle_parking" source for the clustered parking stations
   map.addLayer({
-    'id': 'gta_bicycle_rental_clustered',
+    'id': 'gta_bike_parking_clustered',
     'type': 'circle',
-    'source': 'gta_bicycle_rentals',
-    //only show circles when there is more than 1 bike shop within radius
+    'source': 'gta_bicycle_parking',
+    //only show circles when there is more than 1 bike parking station within radius
     filter: ['has', 'point_count'],
     'paint': {
-      'circle-color': 'red',
-      //specify the radius of the circles based on whether the number of bike shops within radius is <10, 10-20, 20-50, 50-100 or >100
+      'circle-color': '#11b4da',
+      //specify the radius of the circles based on whether the number of bike parking stations within radius is <10, 10-20, 20-50, 50-100 or >100
       'circle-radius': [
         'step',
         ['get', 'point_count'],
@@ -966,12 +1413,12 @@ map.on('load', () => {
     }
   });
 
-  //add and style a layer of symbols "toronto_bicycle_shops_cluster_count" from the defined "toronto_bicycle_shops" source for the text on top of the clustered bike shops
+  //add and style a layer of symbols "toronto_bike_parking_cluster_count" from the defined "toronto_bicycle_parking" source for the text on top of the clustered parking stations
   map.addLayer({
-    id: 'gta_bicycle_rental_clustered_count',
+    id: 'gta_bike_parking_cluster_count',
     type: 'symbol',
-    source: 'gta_bicycle_rentals',
-    //only show text when there is more than 1 bike shop within radius 
+    source: 'gta_bicycle_parking',
+    //only show text when there is more than 1 bike parking station within radius 
     filter: ['has', 'point_count'],
     layout: {
       'text-field': ['get', 'point_count_abbreviated'],
@@ -983,127 +1430,37 @@ map.on('load', () => {
     }
   });
 
-  //add and style a layer of circles "toronto_bicycle_shop_unclustered" from the defined "toronto_bicycle_shops" source for the unclustered (single) shop
+  //add and style a layer of circles "toronto_bike_parking_unclustered" from the defined "toronto_bicycle_parking" source for the unclustered (single) parking stations
   map.addLayer({
-    id: 'gta_bicycle_rental_unclustered',
+    id: 'gta_bike_parking_unclustered',
     type: 'symbol',
-    source: 'gta_bicycle_rentals',
-    //only show circles when there is 1 bike shop within radius 
+    source: 'gta_bicycle_parking',
+    //only show circles when there is 1 bike parking station within radius 
     filter: ['!', ['has', 'point_count']],
     layout: {
-      'icon-image': 'shop-marker',
-      'icon-size': 0.08,
+      'icon-image': 'parking-marker',
+      'icon-size': 0.15, //0.15
       //allow overlap of other icon layers (so that all layers are simultaneously visible)
       'icon-allow-overlap': true,
       'icon-ignore-placement': true
     }
   });
 
-  map.addSource('ajax_cycling_network', {
-    type: 'geojson',
-    data: 'https://janicewg.github.io/GGR472-Data-Group-Project/Active_Transportation.geojson',
-    'generateId': true,
-  });
 
-  map.addLayer({
-    'id': 'ajax_bikeways',
-    'type': 'line',
-    'source': 'ajax_cycling_network',
-    'paint': {
-      'line-width': 3,
-      //specify the color of the lines based on the text contained within the "Type" data field (i.e. based on the bikeway type)
-      //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
-      'line-color': [
-        'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
-        ['in', 'bike lane', ['downcase', ['get', 'type']]],
-        'red',
-        ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        'orange',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        'purple',
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#5C4033',
-        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
-        '#0492C2',
-        'black'
-      ],
-      'line-opacity': 0.7
-    }
-  });
-
-  //Hover and pop-up
-  map.on('mouseenter', 'ajax_bikeways', () => {
+  map.on('mouseenter', 'gta_bike_parking_unclustered', () => {
     map.getCanvas().style.cursor = 'pointer';
   });
 
-  map.on('mouseleave', 'ajax_bikeways', () => {
+  map.on('mouseleave', 'gta_bike_parking_unclustered', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  map.on('click', 'ajax_bikeways', (e) => {
-    console.log(e)
+  map.on('click', 'gta_bike_parking_unclustered', (e) => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
-      .setHTML("Location: " + "<br>" + e.features[0].properties.location + "<br>" + "Status: "
-        + e.features[0].properties.status + "<br>" + "Facility: " + e.features[0].properties.type)
-      .addTo(map);
-  });
-  map.addSource('whitby_cycling_network', {
-    type: 'geojson',
-    data: 'https://janicewg.github.io/GGR472-Data-Group-Project/Whitby_cycling_routes.geojson',
-    'generateId': true,
-  });
-
-  map.addLayer({
-    'id': 'whitby_bikeways',
-    'type': 'line',
-    'source': 'whitby_cycling_network',
-    'paint': {
-      'line-width': 3,
-      //specify the color of the lines based on the text contained within the "Type" data field (i.e. based on the bikeway type)
-      //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
-      'line-color': [
-        'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
-        ['in', 'bike lane', ['downcase', ['get', 'type']]],
-        'red',
-        ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        'orange',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        'purple',
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#5C4033',
-        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
-        '#0492C2',
-        'black'
-      ],
-      'line-opacity': 0.7
-    }
-  });
-
-  //Hover and pop-up
-  map.on('mouseenter', 'whitby_bikeways', () => {
-    map.getCanvas().style.cursor = 'pointer';
-  });
-
-  map.on('mouseleave', 'whitby_bikeways', () => {
-    map.getCanvas().style.cursor = '';
-  });
-
-  map.on('click', 'whitby_bikeways', (e) => {
-    console.log(e)
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML("Road name: " + "<br>" + e.features[0].properties['road name'] + "<br>" + "Length(m): "
-        + e.features[0].properties.length + "<br>" + "Facility: " + e.features[0].properties.type)
-      .addTo(map);
+      .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" +  "<b>Covered?:</b> " + e.features[0].properties.covered + "<br>" + "<b>Fee:</b> " + e.features[0].properties.fee + "<br>" + "<b>Parking Type:</b> " + e.features[0].properties.parking_type + "<br>" +       
+      "<b>Capacity:</b> " + e.features[0].properties.capacity)
+        .addTo(map);
   });
 
   map.addSource('traffic_source', {
@@ -1302,33 +1659,32 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
     let lastExecution2 = 0
     document.getElementById('slider').addEventListener('input', (e) => {
       //e.preventDefault();
-      if (e.target.value != 0 && ((lastExecution2 + 900) < Date.now())) {
-        console.log((lastExecution2 + 800), Date.now())
-        lastExecution2 = Date.now()
-        const radius = e.target.value;
-        //create the buffer for each point
-        buffresult.features = []
-        document.getElementById('nearby').innerHTML = ''
-        divs_lons = []
-        divs_lats = []
-        divs_properties = []
-        divs_types = []
-        geojson.features.forEach((feature) => {
-          let buffer = turf.buffer(feature, radius);
-          buffresult.features.push(buffer);
-        });
-        map.getSource('buffgeojson').setData(buffresult);
-        //change instructions
-        const instructions = document.getElementById('instructions');
-        instructions.innerHTML = 'Click on any features below to zoom in ';
-        if (isProcessing == true) {
-          return
-        }
-        isProcessing = true
-        get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types)
-        //get bike shops
-
-        //get the bike parking
+      document.getElementById('radius_value').innerHTML=" " + e.target.value +"km"
+      if (e.target.value!=0 && ((lastExecution2 + 900) < Date.now())){ 
+      console.log((lastExecution2 + 800), Date.now())
+      lastExecution2 = Date.now()
+      const radius = e.target.value;
+      //create the buffer for each point
+    buffresult.features = []
+    document.getElementById('nearby').innerHTML=''
+    divs_lons=[]
+    divs_lats=[]
+    divs_properties=[]
+    divs_types=[]
+    geojson.features.forEach((feature) => {
+      let buffer = turf.buffer(feature, radius);
+      buffresult.features.push(buffer);
+    });
+    map.getSource('buffgeojson').setData(buffresult);
+    //change instructions
+    const instructions = document.getElementById('instructions');
+    instructions.innerHTML = 'Click on any features below to zoom in ';
+    if (isProcessing==true){
+      return 
+    }
+    isProcessing=true
+    get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types)
+    //get bike shops
 
 
       }
@@ -1375,82 +1731,172 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
 
 function get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types) {
   //get the bike shops
-  fetch('https://ireo00.github.io/472-Resources/toronto_bicycle_shops.geojson')
-    .then(response => response.json())
-    .then(response => {
-      shops = response; // Store geojson as variable using URL from fetch response
-      //retrieve div for nearby stores
-      const nearby = document.getElementById('nearby');
-      //create text within it that says 'Nearby Shops'
-      const text_div = document.createElement('div');
-      const text = document.createElement('span');
-      text.innerHTML = 'Nearby Shops';
-      text.style.fontWeight = 'bold';
-      //check whether any shops exist within the buffer - if they do, show the text 'Nearby Shops'
-      if (turf.pointsWithinPolygon(shops, buffresult.features[0]).features.length > 0) {
-        text_div.appendChild(text)
-        nearby.appendChild(text_div)
-      }
-      //check whether any shops exist within the buffer
-      turf.pointsWithinPolygon(shops, buffresult.features[0]).features.forEach((feature) => {
-        //create a div with their name if they do exist
-        const item = document.createElement('div');
-        item.className = 'divs'
-        divs_lons.push(feature.geometry.coordinates[0])
-        divs_lats.push(feature.geometry.coordinates[1])
-        divs_properties.push(feature.properties)
-        divs_types.push("shop")
-        //console.log(divs_lons)
-        const value = document.createElement('span');
-        value.innerHTML = `${feature.properties.name}`;
-        item.appendChild(value);
-        nearby.appendChild(item);
-      });
-      //trigger list_click
-      get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types)
+  fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/all_bicycle_shops.geojson')
+  .then(response => response.json())
+  .then(response => {
+    shops = response; // Store geojson as variable using URL from fetch response
+    //retrieve div for nearby stores
+    const nearby = document.getElementById('nearby');
+    //create text within it that says 'Nearby Shops'
+    const text_div = document.createElement('div');
+    const text = document.createElement('span');
+    text.innerHTML = 'Nearby Shops';
+    text.style.fontWeight = 'bold';
+    //check whether any shops exist within the buffer - if they do, show the text 'Nearby Shops'
+    if (turf.pointsWithinPolygon(shops, buffresult.features[0]).features.length > 0) {
+      text_div.appendChild(text)
+      nearby.appendChild(text_div)
+    }
+    //check whether any shops exist within the buffer
+    turf.pointsWithinPolygon(shops, buffresult.features[0]).features.forEach((feature) => {
+      //create a div with their name if they do exist
+      const item = document.createElement('div');
+      item.className = 'divs'
+      divs_lons.push(feature.geometry.coordinates[0])
+      divs_lats.push(feature.geometry.coordinates[1])
+      divs_properties.push(feature.properties)
+      console.log(feature.properties)
+      divs_types.push("shop")
+      //console.log(divs_lons)
+      const value = document.createElement('span');
+      value.innerHTML = `${feature.properties.name}`;
+      item.appendChild(value);
+      nearby.appendChild(item);
     });
+    //trigger list_click
+    get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types)
+  });
 }
 
-function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types) {
+function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types){
   fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/all_bicycle_parking.geojson') //toronto
-    .then(response => response.json())
-    .then(response => {
-      parkings = response; // Store geojson as variable using URL from fetch response
-      //retrieve div for nearby parkings
-      const nearby_p = document.getElementById('nearby');
-      //create text within it that says 'Nearby Parking'
-      const text_div_p = document.createElement('div');
-      const text_p = document.createElement('span');
-      //create text within it that says 'Nearby Parking'
-      text_p.innerHTML = 'Nearby Parking'
-      text_p.style.fontWeight = 'bold';
-      //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
-      if (turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.length > 0) {
-        text_div_p.appendChild(text_p)
-        nearby_p.appendChild(text_div_p)
-      }
-      //check whether any shops exist within the buffer
-      turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.forEach((feature) => {
-        //create a div with their name if they do exist
-        const item_p = document.createElement('div');
-        item_p.className = 'divs'
-        divs_lons.push(feature.geometry.coordinates[0])
-        divs_lats.push(feature.geometry.coordinates[1])
-        divs_types.push("parking")
-        divs_properties.push(feature.properties)
-        const value_p = document.createElement('span');
-        if (feature.properties.name != 'None' && feature.properties.name != 'Not Available') {
-          value_p.innerHTML = `${feature.properties.name}`;
-        } else {
-          value_p.innerHTML = `Bike Parking ${feature.properties.number}`; //feature.properties.id
+      .then(response => response.json())
+      .then(response => {
+        parkings = response; // Store geojson as variable using URL from fetch response
+        //retrieve div for nearby parkings
+        const nearby_p = document.getElementById('nearby');
+        //create text within it that says 'Nearby Parking'
+        const text_div_p = document.createElement('div');
+        const text_p = document.createElement('span');
+        //create text within it that says 'Nearby Parking'
+        text_p.innerHTML = 'Nearby Parking'
+        text_p.style.fontWeight = 'bold';
+        //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
+        if (turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.length > 0) {
+          text_div_p.appendChild(text_p)
+          nearby_p.appendChild(text_div_p)
         }
-        item_p.appendChild(value_p);
-        nearby_p.appendChild(item_p);
+        //check whether any shops exist within the buffer
+        turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.forEach((feature) => {
+          //create a div with their name if they do exist
+          const item_p = document.createElement('div');
+          item_p.className = 'divs'
+          divs_lons.push(feature.geometry.coordinates[0])
+          divs_lats.push(feature.geometry.coordinates[1])
+          divs_types.push("parking")
+          divs_properties.push(feature.properties)
+          const value_p = document.createElement('span');
+          if (feature.properties.name != 'None' && feature.properties.name != 'Not Available') {
+            value_p.innerHTML = `${feature.properties.name}`;
+          } else {
+            value_p.innerHTML = `Bike Parking ${feature.properties.number}`; //feature.properties.id
+          }
+          item_p.appendChild(value_p);
+          nearby_p.appendChild(item_p);
+        });
+        //trigger list_click
+        get_bikeways(divs_lons, divs_lats, divs_properties, divs_types)
+      });
+}
+
+function get_bikeways(divs_lons, divs_lats, divs_properties, divs_types){
+  fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/all_bikeways.geojson') //toronto
+      .then(response => response.json())
+      .then(response => {
+        bikeways = response; // Store geojson as variable using URL from fetch response
+        //retrieve div for nearby parkings
+        const nearby_b = document.getElementById('nearby');
+        //create text within it that says 'Nearby Parking'
+        const text_div_b = document.createElement('div');
+        const text_b = document.createElement('span');
+        //create text within it that says 'Nearby Parking'
+        text_b.innerHTML = 'Nearby Bikeways'
+        text_b.style.fontWeight = 'bold';
+        //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
+        bikeways.features.forEach((feature) => {
+          //console.log(feature.geometry.coordinates[0].length)
+          if (feature.geometry.coordinates[0].length>0 && turf.booleanIntersects(feature, buffresult.features[0])===true) {
+          text_div_b.appendChild(text_b)
+          nearby_b.appendChild(text_div_b)
+          return
+        }
+          });
+        //check whether any shops exist within the buffer
+        bikeways.features.forEach((feature) => {
+          if (feature.geometry.coordinates[0].length>0 && turf.booleanIntersects(feature, buffresult.features[0])){
+          //create a div with their name if they do exist
+          const item_b = document.createElement('div');
+          item_b.className = 'divs'
+          divs_lons.push(feature.geometry.coordinates[0][0][0])
+          divs_lats.push(feature.geometry.coordinates[0][0][1])
+          divs_types.push("bikeway")
+          divs_properties.push(feature.properties)
+          const value_b = document.createElement('span');
+          if (feature.properties.Name!=null && feature.properties.Name != 'None' && feature.properties.Name != 'Not Available') {
+            value_b.innerHTML = `${feature.properties.Name}`;
+          } else {
+            value_b.innerHTML = `Bikeway ${feature.properties.number}`; //feature.properties.id
+          }
+          item_b.appendChild(value_b);
+          nearby_b.appendChild(item_b);
+          }
+        });
+        //trigger list_click
+        get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types)
       });
       //trigger list_click
-      get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types)
-    });
 }
+
+// function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types) {
+//   fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/all_bicycle_parking.geojson') //toronto
+//     .then(response => response.json())
+//     .then(response => {
+//       parkings = response; // Store geojson as variable using URL from fetch response
+//       //retrieve div for nearby parkings
+//       const nearby_p = document.getElementById('nearby');
+//       //create text within it that says 'Nearby Parking'
+//       const text_div_p = document.createElement('div');
+//       const text_p = document.createElement('span');
+//       //create text within it that says 'Nearby Parking'
+//       text_p.innerHTML = 'Nearby Parking'
+//       text_p.style.fontWeight = 'bold';
+//       //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
+//       if (turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.length > 0) {
+//         text_div_p.appendChild(text_p)
+//         nearby_p.appendChild(text_div_p)
+//       }
+//       //check whether any shops exist within the buffer
+//       turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.forEach((feature) => {
+//         //create a div with their name if they do exist
+//         const item_p = document.createElement('div');
+//         item_p.className = 'divs'
+//         divs_lons.push(feature.geometry.coordinates[0])
+//         divs_lats.push(feature.geometry.coordinates[1])
+//         divs_types.push("parking")
+//         divs_properties.push(feature.properties)
+//         const value_p = document.createElement('span');
+//         if (feature.properties.name != 'None' && feature.properties.name != 'Not Available') {
+//           value_p.innerHTML = `${feature.properties.name}`;
+//         } else {
+//           value_p.innerHTML = `Bike Parking ${feature.properties.number}`; //feature.properties.id
+//         }
+//         item_p.appendChild(value_p);
+//         nearby_p.appendChild(item_p);
+//       });
+//       //trigger list_click
+//       get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types)
+//     });
+// }
 
 function get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types) {
   // fetch('https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_information')
@@ -1500,7 +1946,19 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
   let lon_point = lonlat_click['lng']
   let lat_point = lonlat_click['lat']
   var today_point = new Date()
-  var date_point = today_point.getFullYear() + '-' + '0' + (today_point.getMonth() + 1) + '-' + today_point.getDate()
+  if ((today_point.getMonth()+1)<10) {
+    month_point='0'+(today_point.getMonth()+1)
+  }
+  else {
+    month_point=today_point.getMonth()+1
+  }
+  if (today_point.getDate()<10) {
+    day_point='0'+(today_point.getDate())
+  }
+  else {
+    day_point=today_point.getDate()
+  }
+  var date_point = today_point.getFullYear() +'-'+month_point+'-'+day_point //today_point.getFullYear() +'-'+'0'+(today_point.getMonth()+1)+'-'+today_point.getDate()
   var hour_point = today_point.getHours()
   //console.log(lonlat_click['lng'])
   const nearby_w = document.getElementById('nearby');
@@ -1582,63 +2040,163 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
 
       lastExecution3 = 0
       elements[i].addEventListener('click', () => {
+    
+      if ((lastExecution3+600)<Date.now()){
+      lastExecution3=Date.now()
+        map.flyTo({
+          center: [lon1, lat1],
+          zoom: 16,
+          bearing: -17.7,
+          essential: true
+        });
+        
+        if (features1==="shop"){
+          if (properties1.city==='Toronto'){
+          popup_shop=new mapboxgl.Popup()
+          .setLngLat([lon1, lat1])
+          .setHTML("<b>Name:</b> " + properties1.name + "<br>" + "<b>Address:</b> " + properties1.address + "<br>" + "<b>Postal Code:</b> "
+        + properties1.postal_code + "<br>" + "<b>Ward:</b> " + properties1.ward + "<br>" +  "<b>Unit No:</b>  " + properties1.unit + "<br>" + "<b>City:</b>  " + properties1.city + "<br>" + "<b>Phone:</b>  " + properties1.phone + "<br>" +       
+        "<b>Email:</b> " + properties1.email + "<br>" + "<b>Rentals?:</b> " + properties1.rental)
+          .addTo(map);
+          }
 
-        if ((lastExecution3 + 600) < Date.now()) {
-          lastExecution3 = Date.now()
-          map.flyTo({
-            center: [lon1, lat1],
-            zoom: 16,
-            bearing: -17.7,
-            essential: true
-          });
+          
+          else if (properties1.city!='Toronto' && (properties1.address_number=='Not Available' | properties1.address_street=='Not Available')){
+              popup_shop=new mapboxgl.Popup()
+                .setLngLat([lon1, lat1])
+                .setHTML("<b>Name:</b> " + properties1.name + "<br>" + "<b>Address:</b> " + "Not Available" + "<br>" + "<b>Postal Code:</b> "
+      + properties1.postal_code + "<br>" + "<b>Unit No:</b>  " + properties1.unit + "<br>" + "<b>City:</b>  " + properties1.city + "<br>" + "<b>Phone:</b>  " + properties1.phone + "<br>" +       
+      "<b>Email:</b> " + properties1.email + "<br>" + "<b>Website:</b> " + properties1.website + "<br>" + "<b>Facebook:</b> " + properties1.facebook + "<br>" + "<b>Opening Hours:</b> " + properties1.opening_hours)
+        .addTo(map);
+              }
 
-          if (features1 === "shop") {
-            popup_shop = new mapboxgl.Popup()
-              .setLngLat([lon1, lat1])
-              .setHTML("Name: " + "<br>" + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
-                + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Phone:  " + properties1.phone + "<br>" +
-                "Email: " + properties1.email + "<br>" + "Rental: " + properties1.rental)
-              .addTo(map);
-          }
-          else if (features1 === "parking") {
-            if (properties1.city === 'Toronto' && properties1.bike_capacity == null) {
-              popup_parking = new mapboxgl.Popup()
-                .setLngLat([lon1, lat1])
-                .setHTML("Name: " + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
-                  + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Parking:  " + properties1.parking_type + "<br>" +
-                  "Capacity: " + 'Not Available')
-                .addTo(map);
-            }
-            else if (properties1.city === 'Toronto' && properties1.bike_capacity != null) {
-              popup_parking = new mapboxgl.Popup()
-                .setLngLat([lon1, lat1])
-                .setHTML("Name: " + properties1.name + "<br>" + "Address: " + "<br>" + properties1.address + "<br>" + "Postal Code: "
-                  + properties1.postal_code + "<br>" + "City:  " + properties1.city + "<br>" + "Parking:  " + properties1.parking_type + "<br>" +
-                  "Capacity: " + properties1.bike_capacity)
-                .addTo(map);
-            }
-            else if (properties1.city != 'Toronto' && properties1.bike_capacity == null) {
-              popup_parking = new mapboxgl.Popup()
-                .setLngLat([lon1, lat1])
-                .setHTML("Name: " + properties1.name + "<br>" + "Covered?: " + properties1.covered + "<br>" + "Fee: " + properties1.fee + "<br>" + "Parking: " + properties1.parking_type + "<br>" +
-                  "Capacity: " + "Not Available") //properties1.bike_capacity
-                .addTo(map);
-            }
-            else if (properties1.city != 'Toronto' && properties1.bike_capacity != null) {
-              popup_parking = new mapboxgl.Popup()
-                .setLngLat([lon1, lat1])
-                .setHTML("Name: " + properties1.name + "<br>" + "Covered?: " + properties1.covered + "<br>" + "Fee: " + properties1.fee + "<br>" + "Parking: " + properties1.parking_type + "<br>" +
-                  "Capacity: " + properties1.bike_capacity) //properties1.bike_capacity
-                .addTo(map);
-            }
-          }
-          else if (features1 === "share") {
-            popup_parking = new mapboxgl.Popup()
-              .setLngLat([lon1, lat1])
-              .setHTML("Name: " + "<br>" + properties1.station_id + "<br>")
-              .addTo(map);
-          }
+          else if (properties1.city!='Toronto' && properties1.address_number!='Not Available' && properties1.address_street!='Not Available'){
+                popup_shop=new mapboxgl.Popup()
+                  .setLngLat([lon1, lat1])
+                  .setHTML("<b>Name:</b> " + properties1.name + "<br>" + "<b>Address:</b> " + properties1.address_number + " " + properties1.address_street + "<br>" + "<b>Postal Code:</b> "
+        + properties1.postal_code + "<br>" + "<b>Unit No:</b>  " + properties1.unit + "<br>" + "<b>City:</b>  " + properties1.city + "<br>" + "<b>Phone:</b>  " + properties1.phone + "<br>" +       
+        "<b>Email:</b> " + properties1.email + "<br>" + "<b>Website:</b> " + properties1.website + "<br>" + "<b>Facebook:</b> " + properties1.facebook + "<br>" + "<b>Opening Hours:</b> " + properties1.opening_hours)
+          .addTo(map);
+                }
+        
+      }
+        else if (features1==="parking"){
+        if (properties1.city==='Toronto'){
+        popup_parking=new mapboxgl.Popup()
+          .setLngLat([lon1, lat1])
+          .setHTML("<b>Name:</b> " + properties1.name + "<br>" + "<b>Address:</b> " + properties1.address + "<br>" + "<b>Postal Code:</b> "
+          + properties1.postal_code + "<br>" + "<b>Ward:</b> " + properties1.ward + "<br>" + "<b>City:</b>  " + properties1.city + "<br>" + "<b>Parking Type:</b>  " + properties1.parking_type + "<br>" +       
+          "<b>Capacity:</b> " + properties1.bike_capacity)
+            .addTo(map);
         }
+          else if (properties1.city!='Toronto'){
+            popup_parking=new mapboxgl.Popup()
+              .setLngLat([lon1, lat1])
+              .setHTML("<b>Name:</b> " + properties1.name + "<br>" +  "<b>Covered?:</b> " + properties1.covered + "<br>" + "<b>Fee:</b> " + properties1.fee + "<br>" + "<b>Parking Type:</b> " + properties1.parking_type + "<br>" +       
+              "<b>Capacity:</b> " + properties1.capacity) //properties1.bike_capacity
+                .addTo(map);
+            }
+        }
+        else if (features1==="share"){
+          popup_parking=new mapboxgl.Popup()
+          let station_id=properties1.station_id
+          let name=properties1.name
+          let address=properties1.address
+          let post_code=properties1.post_code
+          fetch('https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_status')
+            .then(response => response.json())
+            .then(response => {
+              bikeshare_status = response;
+              bikeshare_status.data.stations.forEach((station) => {
+              
+                if (station.station_id===station_id){
+                  console.log(station.station_id)
+                  if (post_code!="undefined"){
+                  new mapboxgl.Popup()
+                  .setLngLat([lon1, lat1])
+                  .setHTML("<b>Name:</b> " + name + "<br>" + "<b>Address:</b> " + address + "<br>" + "<b>Postal Code:</b> " + post_code + "<br>" + "<b>No. Available Bikes:</b> " + station.num_bikes_available + "<br>" + "<b>No. Available Docks:</b> " + station.num_docks_available)
+                    .addTo(map);
+                  }
+                  else if (post_code=="undefined") {
+                    new mapboxgl.Popup()
+                  .setLngLat([lon1, lat1])
+                  .setHTML("<b>Name:</b> " + name + "<br>" + "<b>Address:</b> " + address + "<br>" + "<b>No. Available Bikes:</b> " + station.num_bikes_available + "<br>" + "<b>No. Available Docks:</b> " + station.num_docks_available)
+                    .addTo(map);
+                  }
+                }
+
+              })
+            }); 
+          // popup_parking=new mapboxgl.Popup()
+          //   .setLngLat([lon1, lat1])
+          //   .setHTML("No. of Available Bikes: " + properties1.station_id +properties1.num_bikes_available + "<br>" + "No. of Available Docks: " + properties1.num_docks_available)
+          //     .addTo(map);
+          }
+          else if (features1==="bikeway"){
+ 
+              if (properties1.region==='Whitby'){
+                new mapboxgl.Popup()
+                .setLngLat([lon1, lat1])
+                .setHTML("<b>Facility:</b> " + properties1.type + "<br>" + "<b>Classification:</b> " + properties1.classification + "<br>" + "<b>Street Name:</b> " + properties1['road name'])
+                  .addTo(map);
+              }
+              else if (properties1.region==='Ajax'){
+                new mapboxgl.Popup()
+                .setLngLat([lon1, lat1])
+                .setHTML("<b>Facility:</b> " + properties1.type + "<br>" + "<b>Classification:</b> " + properties1.classification + "<br>" + "<b>Street:</b> " + (properties1.location).substring(0, (properties1.location).length-9))
+                  .addTo(map);
+              }
+              else if (properties1.region==='Oakville'){
+                new mapboxgl.Popup()
+              .setLngLat([lon1, lat1])
+              .setHTML("<b>Facility:</b> " + properties1.type + "<br>" + "<b>Classification:</b> "  + properties1.classification + "<br>" + "<b>Surface:</b> "  + properties1.surface)
+                .addTo(map);
+              }
+              else if (properties1.region==='Milton'){
+                new mapboxgl.Popup()
+              .setLngLat([lon1, lat1])
+              .setHTML("<b>Facility:</b> " +  properties1.type + "<br>" + "<b>Classification:</b> " + properties1.classification + "<br>" + "<b>Surface:</b> "  + properties1.surface)
+                .addTo(map);
+              }
+              else if (properties1.region==='Burlington'){
+                new mapboxgl.Popup()
+              .setLngLat([lon1, lat1])
+              .setHTML("<b>Street Name:</b> " + properties1.street_name + "<br>" + "<b>Facility:</b> " + properties1.type + "<br>" + "<b>Classification:</b> " + properties1.classification)
+                .addTo(map);
+              }
+              else if (properties1.region==='Durham'){
+                new mapboxgl.Popup()
+                .setLngLat([lon1, lat1])
+                .setHTML("<b>Name:</b> "+ properties1.Name + "<br>" + "<b>Classification:</b> " + properties1.classification)
+                  .addTo(map);
+              }
+              else if (properties1.region==='Peel'){
+                new mapboxgl.Popup()
+              .setLngLat([lon1, lat1])
+              .setHTML("<b>Name:</b> " + properties1.Name + "<br>" + "<b>Facility:</b> " + properties1.type + "<br>" + "<b>Classification:</b> " +  properties1.classification +
+              "<br>" + "<b>Surface:</b> " + properties1.surface + "<br>" + "<b>Municipality:</b> " +  properties1.Municipality) //if statement needed
+                .addTo(map);
+              }
+              else if (properties1.region==='York'){
+                new mapboxgl.Popup()
+              .setLngLat([lon1, lat1])
+              .setHTML("<b>Name:</b> " + properties1.Name + "<br>" + "<b>Facility:</b> " + properties1.type + "<br>" + "<b>Classification:</b> " + properties1.classification +
+              "<br>" + "<b>Surface:</b> " + properties1.surface + "<br>" + "<b>Municipality:</b> " +  properties1.Municipality ) //if statement needed for "systems"
+                .addTo(map);
+              }
+              else if (properties1.region==='Toronto'){
+                console.log(properties1)
+                new mapboxgl.Popup()
+              .setLngLat([lon1, lat1])
+              .setHTML("<b>Name:</b> " + properties1.Name + "<br>" + "<b>Facility 1:</b> " + properties1.type +  "<br>" + "<b>Classification:</b> " + properties1.classification
+              + "<br>" + "<b>Facility 2:</b> " + properties1.secondary_type) //if statement
+                .addTo(map);
+              }
+
+                  
+            }
+        
+      }
       });
     };
   };
@@ -1664,7 +2222,19 @@ function weather_api(variable) {
         var lat = all_centroids.features[i].geometry.coordinates[1];
         var lon = all_centroids.features[i].geometry.coordinates[0];
         var today = new Date()
-        var date = today.getFullYear() + '-' + '0' + (today.getMonth() + 1) + '-' + today.getDate()
+        if ((today.getMonth()+1)<10) {
+          month='0'+(today.getMonth()+1)
+        }
+        else {
+          month=today.getMonth()+1
+        }
+        if (today.getDate()<10) {
+          day='0'+(today.getDate())
+        }
+        else {
+          day=today.getDate()
+        }
+        var date = today.getFullYear() +'-'+month+'-'+day //today.getFullYear() +'-'+'0'+(today.getMonth()+1)+'-'+today.getDate()
         var hour = today.getHours()
         //console.log(i)
         weat(i, lat, lon, date, hour, random_list, temperature_list, index_list, variable)
@@ -1750,78 +2320,140 @@ function add_property(random_list, temperature_list, index_list, variable) {
     });
 }
 
-function work(variable) {
-
-
-  map.addSource('weather', {
-    type: 'geojson',
-    data: polygon2,
-    'generateId': true,
-  });
-  if (variable === 'temperature_2m') {
-    map.addLayer({
-      'id': 'weather_polygons',
-      'type': 'fill',
-      'source': 'weather',
-      filter: ['has', 'TEMP'],
-      'paint': {
-        'fill-color':
-          // {
-          //   property: 'TEMP',
-          //   stops: [[0, '#fff'], [20, '#f00']]
-          // },
+  function work(variable){
+   
+   
+      map.addSource('weather', {
+        type: 'geojson',
+        data: polygon2,
+        'generateId': true,
+      });
+      if (variable==='temperature_2m'){
+      map.addLayer({
+        'id': 'weather_polygons',
+        'type': 'fill',
+        'source': 'weather',
+        filter: ['has', 'TEMP'],
+        'paint': {
+          'fill-color': 
+          {
+            property: 'TEMP',
+            stops: [[-20, 'blue'], [0, '#fff'], [20, 'red']]
+          },
+          'fill-opacity': 0.5
+          // ['step',
+          // ['get', 'TEMP'], 'red', 
+          // 4, 'blue', 5, 'green', 6, 'orange'],
           // 'fill-opacity': 0.5
-          ['step',
-            ['get', 'TEMP'], 'red',
-            4, 'blue', 5, 'green', 6, 'orange'],
-        'fill-opacity': 0.5
-      },
-    });
+        },
+        });   
+      }
+      else if (variable==='precipitation'){
+        map.addLayer({
+          'id': 'weather_polygons',
+          'type': 'fill',
+          'source': 'weather',
+          filter: ['has', 'TEMP'],
+          'paint': {
+            'fill-color': 
+          {
+            property: 'TEMP',
+            stops: [[0, '#fff'], [20, 'blue']]
+          },
+          'fill-opacity': 0.5
+            // 'fill-color': ['step',
+            // ['get', 'TEMP'], 'red', 
+            // 0, 'blue', 1, 'green', 10, 'orange'],
+            // 'fill-opacity': 0.5
+          },
+          });   
+        }
+        else if (variable==='snowfall'){
+          map.addLayer({
+            'id': 'weather_polygons',
+            'type': 'fill',
+            'source': 'weather',
+            filter: ['has', 'TEMP'],
+            'paint': {
+              'fill-color': 
+          {
+            property: 'TEMP',
+            stops: [[0, '#fff'], [7, 'blue']]
+          },
+          'fill-opacity': 0.5
+              // 'fill-color': ['step',
+              // ['get', 'TEMP'], 'red', 
+              // 0, 'blue', 1, 'green', 10, 'orange'],
+              // 'fill-opacity': 0.5
+            },
+            });   
+          }
+          else if (variable==='windspeed_10m'){
+            map.addLayer({
+              'id': 'weather_polygons',
+              'type': 'fill',
+              'source': 'weather',
+              filter: ['has', 'TEMP'],
+              'paint': {
+                'fill-color': 
+          {
+            property: 'TEMP',
+            stops: [[0, '#fff'], [50, 'blue']]
+          },
+          'fill-opacity': 0.5
+                // 'fill-color': ['step',
+                // ['get', 'TEMP'], 'red', 
+                // 10, 'blue', 20, 'green', 30, 'orange'],
+                // 'fill-opacity': 0.5
+              },
+              });   
+            }
+        //console.log(polygon.features)
   }
-  else if (variable === 'precipitation') {
-    map.addLayer({
-      'id': 'weather_polygons',
-      'type': 'fill',
-      'source': 'weather',
-      filter: ['has', 'TEMP'],
-      'paint': {
-        'fill-color': ['step',
-          ['get', 'TEMP'], 'red',
-          0, 'blue', 1, 'green', 10, 'orange'],
-        'fill-opacity': 0.5
-      },
-    });
-  }
-  else if (variable === 'snowfall') {
-    map.addLayer({
-      'id': 'weather_polygons',
-      'type': 'fill',
-      'source': 'weather',
-      filter: ['has', 'TEMP'],
-      'paint': {
-        'fill-color': ['step',
-          ['get', 'TEMP'], 'red',
-          0, 'blue', 1, 'green', 10, 'orange'],
-        'fill-opacity': 0.5
-      },
-    });
-  }
-  else if (variable === 'windspeed_10m') {
-    map.addLayer({
-      'id': 'weather_polygons',
-      'type': 'fill',
-      'source': 'weather',
-      filter: ['has', 'TEMP'],
-      'paint': {
-        'fill-color': ['step',
-          ['get', 'TEMP'], 'red',
-          10, 'blue', 20, 'green', 30, 'orange'],
-        'fill-opacity': 0.5
-      },
-    });
-  }
-  //console.log(polygon.features)
-}
+//   else if (variable === 'precipitation') {
+//     map.addLayer({
+//       'id': 'weather_polygons',
+//       'type': 'fill',
+//       'source': 'weather',
+//       filter: ['has', 'TEMP'],
+//       'paint': {
+//         'fill-color': ['step',
+//           ['get', 'TEMP'], 'red',
+//           0, 'blue', 1, 'green', 10, 'orange'],
+//         'fill-opacity': 0.5
+//       },
+//     });
+//   }
+//   else if (variable === 'snowfall') {
+//     map.addLayer({
+//       'id': 'weather_polygons',
+//       'type': 'fill',
+//       'source': 'weather',
+//       filter: ['has', 'TEMP'],
+//       'paint': {
+//         'fill-color': ['step',
+//           ['get', 'TEMP'], 'red',
+//           0, 'blue', 1, 'green', 10, 'orange'],
+//         'fill-opacity': 0.5
+//       },
+//     });
+//   }
+//   else if (variable === 'windspeed_10m') {
+//     map.addLayer({
+//       'id': 'weather_polygons',
+//       'type': 'fill',
+//       'source': 'weather',
+//       filter: ['has', 'TEMP'],
+//       'paint': {
+//         'fill-color': ['step',
+//           ['get', 'TEMP'], 'red',
+//           10, 'blue', 20, 'green', 30, 'orange'],
+//         'fill-opacity': 0.5
+//       },
+//     });
+//   }
+//   //console.log(polygon.features)
+// }
 
 
 
@@ -2000,21 +2632,67 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
   if (map.getSource('weather')) {
     map.removeSource('weather');
   }
-  if (weathertype == 'Temperature') {
-    weather_api('temperature_2m')
+  if (legend_colorbar.hasChildNodes()){
+    legend_colorbar.removeChild(legend_colorbar.lastElementChild)
   }
+  legend_weather_title.innerHTML=''
+  if (weathertype == 'Temperature') {
+    weather_api('temperature_2m');
+    const legend_colorbar = document.getElementById('legend_colorbar');
+    const colorbar = document.createElement('img');
+    colorbar.src="data/temperature_colorbar.png";
+    colorbar.style.height = '200px';
+    colorbar.style.width = 'auto';
+    legend_colorbar.appendChild(colorbar);
+    const legend_weather_title = document.getElementById('legend_weather_title');
+    legend_weather_title.innerHTML='Temperature at 2m above ground'
+  } 
   else if (weathertype == 'Precipitation') {
-    weather_api('precipitation')
+    weather_api('precipitation');
+    const legend_colorbar = document.getElementById('legend_colorbar');
+    // if (legend_colorbar.hasChildNodes()){
+    //   legend_colorbar.removeChild(legend_colorbar.lastElementChild)
+    // }
+    const colorbar = document.createElement('img');
+    colorbar.src="data/precipitation_colorbar.png";
+    colorbar.style.height = '200px';
+    colorbar.style.width = 'auto';
+    legend_colorbar.appendChild(colorbar);
+    const legend_weather_title = document.getElementById('legend_weather_title');
+    legend_weather_title.innerHTML='Total precipitation sum of preceding hour'
   }
   else if (weathertype == 'Snowfall') {
-    weather_api('snowfall')
+    weather_api('snowfall');
+    const legend_colorbar = document.getElementById('legend_colorbar');
+    // if (legend_colorbar.hasChildNodes()){
+    //   legend_colorbar.removeChild(legend_colorbar.lastElementChild)
+    // }
+    const colorbar = document.createElement('img');
+    colorbar.src="data/snowfall_colorbar.png";
+    colorbar.style.height = '200px';
+    colorbar.style.width = 'auto';
+    legend_colorbar.appendChild(colorbar);
+    const legend_weather_title = document.getElementById('legend_weather_title');
+    legend_weather_title.innerHTML='Total snowfall sum of preceding hour'
   }
   else if (weathertype == 'Wind Speed') {
     weather_api('windspeed_10m')
+    const legend_colorbar = document.getElementById('legend_colorbar');
+    // if (legend_colorbar.hasChildNodes()){
+    //   legend_colorbar.removeChild(legend_colorbar.lastElementChild)
+    // }
+    const colorbar = document.createElement('img');
+    colorbar.src="data/windspeed_colorbar.png";
+    colorbar.style.height = '200px';
+    colorbar.style.width = 'auto';
+    legend_colorbar.appendChild(colorbar);
+    const legend_weather_title = document.getElementById('legend_weather_title');
+    legend_weather_title.innerHTML='Windspeed at 10m above ground'
   }
 
 
 });
+
 
 //Filter data layer to show selected bike lane type from dropdown selection
 let tobikelane;
@@ -2022,193 +2700,386 @@ let tobikelane;
 document.getElementById("tobikelanetype").addEventListener('change', (e) => {
   tobikelane = document.getElementById('bikelane').value;
 
-  console.log(tobikelane);
+  // console.log(tobikelane);
 
-  if (tobikelane == 'All') {
-    map.setLayoutProperty(
-      'toronto_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'york_region_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'peel_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'durham_region_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'ajax_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'whitby_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'milton_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'burlington_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'oakvill_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'traffic',
-      'visibility',
-      'none'
-    );
-    map.setFilter(
-      'toronto_bikeways',
-      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    );
+  // if (tobikelane == 'All') {
+  //   map.setLayoutProperty(
+  //     'toronto_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'york_region_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'peel_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'durham_region_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'ajax_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'whitby_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'milton_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'burlington_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'oakvill_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'traffic',
+  //     'visibility',
+  //     'none'
+  //   );
+  //   map.setFilter(
+  //     'toronto_bikeways',
+  //     ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
+  //   );
+    console.log(tobikelane);
+    const legend_discrete = document.getElementById('legend_discrete');
+    // if (legend_discrete.hasChildNodes()){
+    //   legend_discrete.removeChild(legend_discrete.lastElementChild)
+    //   console.log(legend_discrete.lastElementChild)
+    // }
+    while (legend_discrete.firstChild) {
+      legend_discrete.removeChild(legend_discrete.lastChild);
+    }
+    // const legend_bikeways_title = document.getElementById('legend_bikeways_title');
+    // legend_bikeways_title.innerHTML=''
+    // const legend_collapsible = document.getElementById('legend_collapsible');
+    // if (legend_collapsible.hasChildNodes()==false){
+    //   legend_collapsible.appendChild(document.createTextNode("test content"))
+    // }
+    if (tobikelane == 'All') {
+      bikeways_legend()
+      const legend_bikeways_title = document.getElementById('legend_bikeways_title');
+      legend_bikeways_title.innerHTML='Bikeways'
+      map.setLayoutProperty(
+        'toronto_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'york_region_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'peel_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'durham_region_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'ajax_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'whitby_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'milton_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'burlington_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'oakvill_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'traffic',
+        'visibility',
+        'none'
+      );
+        map.setFilter(
+            'toronto_bikeways',
+            ['has', 'Classification'] //returns all lines from layer that have a value in type field (type!!)
+        );
+        map.setFilter(
+          'york_region_bikeways',
+          ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
+        );
+    
+        map.setFilter(
+          'peel_bikeways',
+          ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
+        );
+    
+        map.setFilter(
+          'durham_region_bikeways',
+          ['has', 'classification'] //returns all lines from layer that have a value in Name field ['has', 'Name']
+        );
+    
+        map.setFilter(
+          'ajax_bikeways',
+          ['has', 'classification'] //returns all lines from layer that have a value in Classification field
+        );
+    
+        map.setFilter(
+          'whitby_bikeways',
+          ['has', 'classification'] //returns all lines from layer that have a value in Classification field
+        );
+    
+        map.setFilter(
+          'milton_bikeways',
+          ['has', 'classification'] //returns all lines from layer that have a value in Classification field
+        );
+    
+        map.setFilter(
+          'burlington_bikeways',
+          ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
+        );
+    
+        map.setFilter(
+          'oakvill_bikeways',
+          ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
+        );
+    } 
+    else if (tobikelane != 'All' && tobikelane != 'Traffic') {
+      bikeways_legend()
+      // console.log(document.getElementById('legend_bikeways_title'))
+      const legend_bikeways_title = document.getElementById('legend_bikeways_title');
+      legend_bikeways_title.innerHTML='Bikeways'
+      map.setLayoutProperty(
+        'toronto_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'york_region_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'peel_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'durham_region_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'ajax_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'whitby_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'milton_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'burlington_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'oakvill_bikeways',
+        'visibility',
+        'visible'
+      );
+      map.setLayoutProperty(
+        'traffic',
+        'visibility',
+        'none'
+      );
+        // map.setFilter(
+        //     'toronto_bikeways',
+        //     ['==', ['get', 'type'], tobikelane] //returns polygon with type value that matches dropdown selection
+        // );
+        map.setFilter(
+          'toronto_bikeways',
+          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+        );
+        map.setFilter(
+          'york_region_bikeways',
+          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+        );
+        map.setFilter(
+          'peel_bikeways',
+          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+        );
+        map.setFilter(
+          'durham_region_bikeways',
+          ['==', ['get', 'classification'], tobikelane] //returns polygon with Name value that matches dropdown selection ['==', ['get', 'Name'], tobikelane]
+        );
+        map.setFilter(
+          'ajax_bikeways',
+          ['==', ['get', 'classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+        );
+        map.setFilter(
+          'whitby_bikeways',
+          ['==', ['get', 'classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+        );
+        map.setFilter(
+          'milton_bikeways',
+          ['==', ['get', 'classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+        );
+        map.setFilter(
+          'burlington_bikeways',
+          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+        );
+        map.setFilter(
+          'oakvill_bikeways',
+          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+        );
+    }
+    else if (tobikelane == 'Traffic') {
+      traffic_legend()
+      const legend_bikeways_title = document.getElementById('legend_bikeways_title');
+      legend_bikeways_title.innerHTML='Traffic'
+      map.setLayoutProperty(
+        'traffic',
+        'visibility',
+        'visible'
+      );
+      
+      map.setLayoutProperty(
+        'toronto_bikeways',
+        'visibility',
+        'none'
+      );
+      map.setLayoutProperty(
+        'york_region_bikeways',
+        'visibility',
+        'none'
+      );
+      map.setLayoutProperty(
+        'peel_bikeways',
+        'visibility',
+        'none'
+      );
+      map.setLayoutProperty(
+        'durham_region_bikeways',
+        'visibility',
+        'none'
+      );
+      map.setLayoutProperty(
+        'ajax_bikeways',
+        'visibility',
+        'none'
+      );
+      map.setLayoutProperty(
+        'whitby_bikeways',
+        'visibility',
+        'none'
+      );
+      map.setLayoutProperty(
+        'milton_bikeways',
+        'visibility',
+        'none'
+      );
+      map.setLayoutProperty(
+        'burlington_bikeways',
+        'visibility',
+        'none'
+      );
+      map.setLayoutProperty(
+        'oakvill_bikeways',
+        'visibility',
+        'none'
+      );
 
-    map.setFilter(
-      'york_region_bikeways',
-      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    );
+    }
 
-    map.setFilter(
-      'peel_bikeways',
-      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    );
 
-    map.setFilter(
-      'durham_region_bikeways',
-      ['has', 'Name'] //returns all lines from layer that have a value in Name field
-    );
 
-    map.setFilter(
-      'ajax_bikeways',
-      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    );
-
-    map.setFilter(
-      'whitby_bikeways',
-      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    );
-
-    map.setFilter(
-      'milton_bikeways',
-      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    );
-
-    map.setFilter(
-      'burlington_bikeways',
-      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    );
-
-    map.setFilter(
-      'oakvill_bikeways',
-      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    );
-
-  }
-  else if (tobikelane != 'All' && tobikelane != 'Traffic') {
-    map.setLayoutProperty(
-      'toronto_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'york_region_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'peel_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'durham_region_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'ajax_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'whitby_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'milton_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'burlington_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'oakvill_bikeways',
-      'visibility',
-      'visible'
-    );
-    map.setLayoutProperty(
-      'traffic',
-      'visibility',
-      'none'
-    );
-    map.setFilter(
-      'toronto_bikeways',
-      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
-    );
-    map.setFilter(
-      'york_region_bikeways',
-      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
-    );
-    map.setFilter(
-      'peel_bikeways',
-      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
-    );
-    map.setFilter(
-      'durham_region_bikeways',
-      ['==', ['get', 'Name'], tobikelane] //returns polygon with Name value that matches dropdown selection
-    );
-    map.setFilter(
-      'ajax_bikeways',
-      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
-    );
-    map.setFilter(
-      'whitby_bikeways',
-      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
-    );
-    map.setFilter(
-      'milton_bikeways',
-      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
-    );
-    map.setFilter(
-      'burlington_bikeways',
-      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
-    );
-    map.setFilter(
-      'oakvill_bikeways',
-      ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
-    );
-  }
+  
+  // else if (tobikelane != 'All' && tobikelane != 'Traffic') {
+  //   map.setLayoutProperty(
+  //     'toronto_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'york_region_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'peel_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'durham_region_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'ajax_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'whitby_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'milton_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'burlington_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'oakvill_bikeways',
+  //     'visibility',
+  //     'visible'
+  //   );
+  //   map.setLayoutProperty(
+  //     'traffic',
+  //     'visibility',
+  //     'none'
+  //   );
+    
+  // }
   else if (tobikelane == 'Traffic') {
     map.setLayoutProperty(
       'traffic',
@@ -2264,42 +3135,120 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
   }
 });
 
-const legendlabels = [
-  'Bike Lane',
-  'Multi-Use Trail',
-  'Sharrows',
-  'Cycle Track',
-  'Paved Shoulder',
-  'Hiking/Park Trail'
-];
 
-const legendcolours = [
-  'red',
-  'blue',
-  'purple',
-  'orange',
-  '#0492C2',
-  '#5C4033'
-];
 
-//Declare legend variable using legend div tag
-const legend = document.getElementById('legend');
+legend_content.style.display='block'
+const legend_bikeways_title = document.getElementById('legend_bikeways_title');
+legend_bikeways_title.innerHTML='Bikeways'
+legend_collapsible = document.getElementById('legend_collapsible');
+if (legend_collapsible.hasChildNodes()==false){
+  legend_collapsible.appendChild(document.createTextNode("Collapse Legend"))
+}
+// const legend_content = document.getElementById('legend_content');
+//legend_content.style.display='block'
+// console.log(legend_content.style.display)
+bikeways_legend()
 
-//For each layer create a block to put the colour and label in
-legendlabels.forEach((label, i) => {
-  const color = legendcolours[i];
 
-  const item = document.createElement('div');
-  const key = document.createElement('span');
 
-  key.className = 'legend-key';
-  key.style.backgroundColor = color;
+function bikeways_legend(){
+  const legendlabels = [
+    'Bike Lane',
+    'Multi-use Trail', 
+    'Sharrow', 
+    'Cycle Track',
+    'Paved Shoulder',
+    'Hiking/Park Trail'
+  ];
 
-  const value = document.createElement('span');
-  value.innerHTML = `${label}`;
+  const legendcolours = [
+    'red',
+    'blue',
+    'purple',
+    'orange',
+    '#0492C2',
+    '#5C4033'
+  ];
 
-  item.appendChild(key);
-  item.appendChild(value);
+  //Declare legend variable using legend div tag
+  const legend_discrete = document.getElementById('legend_discrete');
+  const legend_bikeways_title = document.getElementById('legend_bikeways_title');
+  legend_bikeways_title.innerHTML='Bikeways'
+  //For each layer create a block to put the colour and label in
+  legendlabels.forEach((label, i) => {
+    const color = legendcolours[i];
 
-  legend.appendChild(item);
-});
+    const item = document.createElement('div'); 
+    const key = document.createElement('span'); 
+
+    key.className = 'legend-key'; 
+    key.style.backgroundColor = color; 
+
+    const value = document.createElement('span'); 
+    value.innerHTML = `${label}`; 
+
+    item.appendChild(key); 
+    item.appendChild(value); 
+
+    legend_discrete.appendChild(item); 
+  });
+}
+
+function traffic_legend(){
+
+  const legendlabels = [
+    'Low',
+    'Moderate', 
+    'Heavy', 
+    'Severe'
+  ];
+
+  const legendcolours = [
+    'green',
+    '#ffff00',
+    'orange',
+    'red'
+  ];
+
+  //Declare legend variable using legend div tag
+  const legend_discrete = document.getElementById('legend_discrete');
+  // var collapse_button = document.createElement("BUTTON");
+  // collapse_button.setAttribute("id","collapsible");
+  // collapse_button.setAttribute("class","collapsible");
+  // collapse_button.appendChild(document.createTextNode("test content"))
+  // legend_discrete.appendChild(collapse_button); 
+  // const legend_bikeways_title = document.getElementById('legend_bikeways_title');
+  // legend_bikeways_title.innerHTML='Traffic'
+  //For each layer create a block to put the colour and label in
+  legendlabels.forEach((label, i) => {
+    const color = legendcolours[i];
+
+    const item = document.createElement('div'); 
+    const key = document.createElement('span'); 
+
+    key.className = 'legend-key'; 
+    key.style.backgroundColor = color; 
+
+    const value = document.createElement('span'); 
+    value.innerHTML = `${label}`; 
+
+    item.appendChild(key); 
+    item.appendChild(value); 
+    legend_discrete.appendChild(item); 
+  });
+}
+
+document.getElementById('legend_collapsible').addEventListener('click',(e) => {   
+  var legend_content = document.getElementById('legend_content');
+  //if this content was already open...
+  if (legend_content.style.display === "block") {
+    //close it
+    legend_content.style.display = "none";
+    legend_collapsible.innerText= "Expand Legend";
+  }
+  else {
+    //close it
+    legend_content.style.display = "block";
+    legend_collapsible.innerText= "Collapse Legend";
+  }
+})

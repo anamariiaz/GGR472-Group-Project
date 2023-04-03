@@ -127,7 +127,7 @@
         <div class="content" id="content">
         <p id="instructions">Click anywhere on the map</p>
         <div class="slider_div" id="slider_div">
-            <label>buffer radius:</label>
+            <label>buffer radius:<span id="radius_value"></span></label>
             <input id="slider" type="range" min="0" max="1.5" step="0.5" value="0">
         </div>
         <button type="button" class="btn btn-primary btn-sm" id="bufferbutton">GO</button>
@@ -137,8 +137,17 @@
     </div>
 
     <div class='map-overlay-legend'>
+      <button type="button" class="collapsible" id="legend_collapsible"></button>
+      <div class="legend_content" id="legend_content">
         <div id='legend'>
-          <h1> Bikeways</h1>
+          <h5 id="legend_bikeways_title"></h5>
+          <div id="legend_discrete"></div>
+        </div>
+        <br>
+        <div id='legend_weather'>
+            <h5 id="legend_weather_title"></h5>
+            <div id="legend_colorbar"></div>
+          </div>
         </div>
     </div>
 

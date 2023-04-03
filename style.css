@@ -21,11 +21,11 @@
 
 /* specify formatting 'map-overlay-search' that included the geocoder and return button */
 .map-overlay-legend {
-    position: relative;
+    position: absolute;
     font: 14px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     background: rgba(249, 249, 249, 0.8);
-    top: 150px;
-    left: 1655px;
+    bottom: 20px;
+    right: 0px;
     width: 260px;
     margin: 10px 0 0 10px;
     padding: 10px;
@@ -89,6 +89,13 @@
     padding: 0 18px;
     display: none;
     background-color: #f1f1f1;
+    height: 100px;
+    overflow-y: scroll;
+}
+
+.legend_content {
+    padding: 0 18px;
+    background-color: #f1f1f1;
 }
 
 .map-overlay-planner {
@@ -143,10 +150,10 @@
     width: 12px; /* adjust height to make small horizontal lines */
     margin-right: 5px; /* specify position of lines */
 }
- .nearby{
-    height: 180px;
+ /* .nearby{
+    height: 100px;
     overflow-y: scroll;
- }
+ } */
 
 
 
