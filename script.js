@@ -110,7 +110,7 @@ map.on('load', () => {
 
     //load and add image 'bikeshare-marker' for bikeshare icons (throw an error if this process fails)
     map.loadImage(
-      'https://anamariiaz.github.io/GGR472-Group-Project-Sources/bikeshare.png',
+      'https://ireo00.github.io/472-Resources/bikeshare.png',
       (error, image) => {
         if (error) throw error;
         map.addImage('bikeshare-marker', image);
@@ -1941,7 +1941,7 @@ const label_shops = document.getElementById('label_shops'); //assign 'item_shops
 const item_shops = document.createElement('div'); //assign 'key_shops' variable to a created 'span' (i.e. space into which content can be inserted)
 const key_shops = document.createElement('span'); //specify the class of 'key_shops' span as 'label-key-shops' such that its style is defined by the latter in css
 key_shops.className = 'label-key-shops'; //specify the background color of 'key_shops' span
-key_shops.style.backgroundColor = 'blue'; //assign 'value_shops' variable to a created 'span' (i.e. space into which content can be inserted)
+key_shops.style.backgroundColor = '#84BCE4'; //assign 'value_shops' variable to a created 'span' (i.e. space into which content can be inserted)
 const value_shops = document.createElement('span');  //insert text into 'value_shops' span
 value_shops.innerHTML = 'Bicycle Shops' //add 'key_points' span to the created section 'item_shops'
 item_shops.appendChild(key_shops);  //add 'value_shops' span to the created section 'item_shops'
@@ -1953,7 +1953,7 @@ const label_parking = document.getElementById('label_parking'); //assign 'item_p
 const item_parking = document.createElement('div'); //assign 'key_parking' variable to a created 'span' (i.e. space into which content can be inserted)
 const key_parking = document.createElement('span');  //specify the class of 'key_parking' span as 'label-key-parking' such that its style is defined by the latter in css
 key_parking.className = 'label-key-parking';  //specify the background color of 'key_parking' span
-key_parking.style.backgroundColor = 'orange';  //assign 'value_parking' variable to a created 'span' (i.e. space into which content can be inserted)
+key_parking.style.backgroundColor = '#AC1C54';  //assign 'value_parking' variable to a created 'span' (i.e. space into which content can be inserted)
 const value_parking = document.createElement('span'); //insert text into 'value_parking' span
 value_parking.innerHTML = 'Bicycle Parkings' //add 'key_parking' span to the created section 'item_parking'
 item_parking.appendChild(key_parking);  //add 'value_parking' span to the created section 'item_parking'
@@ -1965,7 +1965,7 @@ const label_bikeshare = document.getElementById('label_bikeshare'); //assign 'it
 const item_bikeshare = document.createElement('div'); //assign 'key_bikeshare' variable to a created 'span' (i.e. space into which content can be inserted)
 const key_bikeshare = document.createElement('span'); //specify the class of 'key_bikeshare' span as 'label-key-bikeshare' such that its style is defined by the latter in css
 key_bikeshare.className = 'label-key-bikeshare'; //specify the background color of 'key_bikeshare' span
-key_bikeshare.style.backgroundColor = 'black'; //assign 'value_bikeshare' variable to a created 'span' (i.e. space into which content can be inserted)
+key_bikeshare.style.backgroundColor = '#147453'; //assign 'value_bikeshare' variable to a created 'span' (i.e. space into which content can be inserted)
 const value_bikeshare = document.createElement('span'); //insert text into 'value_bikeshare' span
 value_bikeshare.innerHTML = 'Toronto Bikeshare' //add 'key_bikeshare' span to the created section 'item_bikeshare'
 item_bikeshare.appendChild(key_bikeshare); //add 'value_bikeshare' span to the created section 'item_bikeshare'

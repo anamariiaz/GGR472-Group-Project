@@ -120,9 +120,9 @@
 /* specify formatting of the 'key' associated with the toggle menu's Toronto bicycle shops "label-key-shops" */
 .label-key-shops {
     display: inline-block;
-    border-radius: 50%; /* curve border to make circles */
-    height: 10px; /* specify height of circles */
-    width: 10px; /* specify width of circles */
+    border-radius: 0%; /* curve border to make circles */
+    height: 12px; /* specify height of circles */
+    width: 12px; /* specify width of circles */
     margin-right: 5px; /* specify position of circles */
 }
 
@@ -130,8 +130,8 @@
 .label-key-bikeshare {
     display: inline-block;
     border-radius: 0%;
-    height: 2px;  /* adjust height to make small horizontal lines */
-    width: 10px; /* adjust height to make small horizontal lines */
+    height: 12px;  /* adjust height to make small horizontal lines */
+    width: 12px; /* adjust height to make small horizontal lines */
     margin-right: 5px; /* specify position of lines */
 }
 
@@ -139,8 +139,8 @@
 .label-key-parking {
     display: inline-block;
     border-radius: 0%; 
-    height: 2px; /* adjust height to make small horizontal lines */
-    width: 10px; /* adjust height to make small horizontal lines */
+    height: 12px; /* adjust height to make small horizontal lines */
+    width: 12px; /* adjust height to make small horizontal lines */
     margin-right: 5px; /* specify position of lines */
 }
  .nearby{
