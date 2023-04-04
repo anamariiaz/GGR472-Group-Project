@@ -243,16 +243,16 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
         ['in', 'bike lane', ['downcase', ['get', 'type']]],
-        '#5EBD3E', //5EBD3E
+        '#FC6468', //5EBD3E, CC79A7
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
         '#FFB900', //FFB900
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        '#009CDF', //009CDF
+        '#0072B2', //009CDF
         ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        '#E23838', //E23838
+        '#8B4DAB', //E23838, 56B4E9
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#6DAB4D', //973999
+        '#009E73', //973999
         ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
         '#C11F73', //F78200
         'black'
@@ -341,18 +341,18 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
         ['in', 'bike lane', ['downcase', ['get', 'type']]],
-        'red',
+        '#FC6468',
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        'orange',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        'purple',
+        '#FFB900',
+        ['any', ['in', 'multi', ['downcase', ['get', 'type']]]],
+        '#0072B2',
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        '#8B4DAB',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#5C4033',
+        '#009E73',
         ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
-        '#0492C2',
+        '#C11F73',
         'black'
       ],
       //'line-opacity': 0.7
@@ -437,16 +437,16 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
         ['in', 'bicycle lane', ['downcase', ['get', 'Type']]],
-        'red',
-        ['any', ['in', 'multi', ['downcase', ['get', 'Type']]], ['in', 'shared pathway', ['downcase', ['get', 'Type']]]],
-        'blue',
-        ['any', ['in', 'marked', ['downcase', ['get', 'Type']]], ['in', 'connection', ['downcase', ['get', 'Type']]], ['in', 'shared roadway', ['downcase', ['get', 'Type']]], ['in', 'signed route', ['downcase', ['get', 'Type']]]],//marked on road bike route? on road connection?
-        'purple',
+        '#FC6468',
+        ['in', 'multi', ['downcase', ['get', 'Type']]],
+        '#0072B2',
+        ['any', ['in', 'marked', ['downcase', ['get', 'Type']]], ['in', 'shared pathway', ['downcase', ['get', 'Type']]],['in', 'connection', ['downcase', ['get', 'Type']]], ['in', 'shared roadway', ['downcase', ['get', 'Type']]], ['in', 'signed route', ['downcase', ['get', 'Type']]]],//marked on road bike route? on road connection?
+        '#8B4DAB',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'Type']]], ['in', 'dirt', ['downcase', ['get', 'Type']]]],
-        '#5C4033',
+        '#009E73',
         ['in', 'paved shoulder', ['downcase', ['get', 'Type']]],
-        '#0492C2',
+        '#C11F73',
         'black' //default color if none of the above apply
       ],
       //'line-opacity': 0.7
@@ -530,18 +530,18 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
         ['in', 'bike lane', ['downcase', ['get', 'type']]],
-        'red',
+        '#FC6468',
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        'orange',
+        '#FFB900',
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        'blue',
+        '#0072B2',
         ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        'purple',
+        '#8B4DAB',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#5C4033',
+        '#009E73',
         ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
-        '#0492C2',
+        '#C11F73',
         'black'
       ],
       //'line-opacity': 0.7
@@ -621,23 +621,23 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
         ['in', 'bl', ['downcase', ['get', 'type']]], //'bike lane', Bike lane (BL)
-        'red',
+        '#FC6468',
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        'orange',
+        '#FFB900',
         ['any', ['in', 'mupoff', ['downcase', ['get', 'type']]], ['in', 'mupadj', ['downcase', ['get', 'type']]], ['in', 'bl-shared', ['downcase', ['get', 'type']]]], //'multi', Multiuse path off road (MUPOFF) OR Multiuse path adjacent to road	(MUPADJ)
-        'blue',
+        '#0072B2',
         ['in', 'shared', ['downcase', ['get', 'type']]], //'sharrows', Shared use - Sharrows painted on pavement (SHARED)
-        'purple',
+        '#8B4DAB',
         //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
         //['any', ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        //'purple',
+        //'#8B4DAB',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#5C4033',
+        '#009E73',
         // ['in', 'bl-shared', ['downcase', ['get', 'type']]], // 'shared pathway', Mixed use - Bike lane and sharrows (BL-SHARED) 
         // '#ff69b4',
         ['in', 'ps', ['downcase', ['get', 'type']]], //'paved shoulder', Paved shoulder (PS)
-        '#0492C2',
+        '#C11F73',
         'black' //default color if none of the above apply
       ],
       //'line-opacity': 0.7
@@ -722,18 +722,18 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
         ['in', 'bike lane', ['downcase', ['get', 'type']]],
-        'red',
+        '#FC6468',
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        'orange',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        'blue',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        'purple',
+        '#FFB900',
+        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in',
+        '#0072B2',
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], 'shared pathway', ['downcase', ['get', 'type']]]],['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        '#8B4DAB',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#5C4033',
+        '#009E73',
         ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
-        '#0492C2',
+        '#C11F73',
         'black'
       ],
       'line-opacity': [
@@ -814,14 +814,16 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
         ['==', 1, ['get', 'type']],
-        'red',
+        '#FC6468',
         ['==', 2, ['get', 'type']],
-        'blue',
+        '#0072B2',
         //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
         ['==', 3, ['get', 'type']],
-        'purple',
+        '#8B4DAB',
         ['==', 4, ['get', 'type']],
-        '#0492C2',
+        '#C11F73',
+        ['==', 6, ['get', 'type']],
+        '#8B4DAB',
         'black' //default color if none of the above apply
       ],
       //'line-opacity': 0.7
@@ -1175,18 +1177,18 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
         ['any', ['in', 'bike lane', ['downcase', ['get', 'type']]],['in', 'bicycle priority', ['downcase', ['get', 'type']]]],
-        'red',
+        '#FC6468',
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        'orange',
+        '#FFB900',
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        'blue',
+        '#0072B2',
         ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]], ['in', 'shared facility', ['downcase', ['get', 'type']]]] ,
-        'purple',
+        '#8B4DAB',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]], ['in', 'off-road', ['downcase', ['get', 'type']]]],
-        '#5C4033',
+        '#009E73',
         ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
-        '#0492C2',
+        '#C11F73',
         'black'
       ],
       //'line-opacity': 0.7
@@ -1268,18 +1270,18 @@ map.on('load', () => {
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
         ['any', ['in', 'bike lane', ['downcase', ['get', 'type']]], ['in', 'bike route', ['downcase', ['get', 'type']]]],
-        'red',
+        '#FC6468',
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        'orange',
+        '#FFB900',
         ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        'blue',
+        '#0072B2',
         ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
-        'purple',
+        '#8B4DAB',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#5C4033',
+        '#009E73',
         ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
-        '#0492C2',
+        '#C11F73',
         'black'
       ],
       //'line-opacity': 0.7
@@ -3296,19 +3298,19 @@ function bikeways_legend(){
   const legendlabels = [
     'Bike Lane',
     'Multi-use Trail', 
-    'Sharrow', 
+    'Sharrows', 
     'Cycle Track',
     'Paved Shoulder',
     'Hiking/Park Trail'
   ];
 
   const legendcolours = [
-    'red',
-    'blue',
-    'purple',
-    'orange',
-    '#0492C2',
-    '#5C4033'
+    '#FC6468',
+    '#0072B2',
+    '#8B4DAB',
+    '#FFB900',
+    '#C11F73',
+    '#009E73'
   ];
 
   //Declare legend variable using legend div tag

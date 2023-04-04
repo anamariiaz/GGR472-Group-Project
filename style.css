@@ -10,7 +10,7 @@
     position: relative;
     font: 14px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     background: rgba(249, 249, 249, 0.8);
-    top: 18px;
+    top: 0px;
     left: 0;
     width: 260px;
     margin: 10px 0 0 10px;
@@ -26,7 +26,7 @@
     background: rgba(249, 249, 249, 0.8);
     bottom: 20px;
     right: 0px;
-    width: 260px;
+    width: 230px;
     margin: 10px 0 0 10px;
     padding: 10px;
     /*around elements inside of overlay*/
@@ -38,7 +38,7 @@
     position: relative;
     font: 14px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     background: rgba(249, 249, 249, 0.8);
-    top: 18px;
+    top: 0px;
     left: 0;
     width: 260px;
     margin: 10px 0 0 10px;
@@ -52,7 +52,7 @@
     position: relative;
     font: 14px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     background: rgba(249, 249, 249, 0.8);
-    top: 18px;
+    top: 0px;
     left: 0;
     width: 260px;
     margin: 10px 0 0 10px;
@@ -102,7 +102,7 @@
     position: relative;
     font: 14px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     background: rgba(249, 249, 249, 0.8);
-    top: 18px;
+    top: 0px;
     left: 0;
     width: 260px;
     margin: 10px 0 0 10px;
@@ -115,13 +115,13 @@
     background-color:#FF0000;
  }
 
-/* specify formatting of the legend's key (i.e. circle)*/
+/* specify formatting of the legend's key (i.e. line)*/
 .legend-key {
     display: inline-block;
-    border-radius: 50%; /*curve border to make a circle*/
-    height: 12px; /*size of circle*/
-    width: 12px;
-    margin-right: 5px; /*position of circle*/
+    border-radius: 0%; 
+    height: 5px; /*height of the line*/
+    width: 35px; /*width of the line*/
+    margin-right: 5px; /*position of line*/
 }
 
 /* specify formatting of the 'key' associated with the toggle menu's Toronto bicycle shops "label-key-shops" */
