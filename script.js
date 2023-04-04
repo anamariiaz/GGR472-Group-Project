@@ -725,9 +725,9 @@ map.on('load', () => {
         '#FC6468',
         ['in', 'cycle track', ['downcase', ['get', 'type']]],
         '#FFB900',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in',
+        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
         '#0072B2',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], 'shared pathway', ['downcase', ['get', 'type']]]],['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]], ['in', 'shared facility', ['downcase', ['get', 'type']]]] ,
         '#8B4DAB',
         //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
         ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
