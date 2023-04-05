@@ -43,7 +43,7 @@
           <li class="nav-item">
             <!-- specify that the web page should not redirect when "More Info" is clicked in the navbar while on the "More Info" page -->
             <!-- specify that the "More Info" button of the navbar should be highlighted while on the "More Info" page  -->
-            <a class="nav-link active" href="#">Instructions</a>
+            <a class="nav-link" aria-current="page" href="instructions.html">Instructions</a>
           </li>
           <li class="nav-item">
             <!-- specify that the web page should redirect to the local index.html file when "Home" is clicked in the navbar while on the "More Info" page -->
@@ -51,7 +51,7 @@
           </li>
           <li class="nav-item">
             <!-- specify that the web page should redirect to the local more_info.html file when "More Info" is clicked in the navbar while on the "Home" page -->
-            <a class="nav-link" href="data.html">Data</a>
+            <a class="nav-link active" href="#">Data</a>
           </li>
         </ul>
       </div>
@@ -68,7 +68,7 @@
         <!-- define a new section within the column which has centered text within it -->
         <div class="text-center">
           <!-- specify text to be displayed at a heading 1 level -->
-          <h1>Instructions</h1>
+          <h1>Data</h1>
         </div>
       </div>
     </div>
@@ -79,39 +79,38 @@
       <div class="col-8">
         <!-- define a new section within the column which has centered text within it -->
         <div class="text-left">
-          <!-- specify text to be displayed at a paragraph level with a link that opens a page about Toronto bikeway types in a new window-->
-          <p>
-            The GTAccess to Cycling Map simultaneously provides users with a comprehensive view of cycling resources
-            available in the GTA, a real time update of traffic and weather conditions, and a planning tool to plan
-            their upcoming cycling trips.
-          <p>
-          <h5><b>To get a comprehensive overview of cycling resources and current conditions...</b></h5>
-          </p>
-          <p>
-            Use the toggle menu by clicking on the check boxes for each of the bicycle shops, parking, and shares, to
-            control which of these facilities are visible on the map.
-            <br>
-            <br>
-            Use the dropdown menu for GTA streets to select whether traffic or bikeways (1 type or all types) are
-            visible on the map. Use the weather dropdown menu to select which weather conditions are viewed on the map.
-          </p>
-          <p>
-          <h5><b>To plan your next biking trip...</b></h5>
-          </p>
-          <p>
-            Click the "Plan Your Trip!" menu. It will prompt you to select any location on the map by clicking on it -
-            the search function can also be used to find a location before clicking on it.
-            <br>
-            <br>
-            Once the location is selected, click "GO". A slider will appear which allows you to select the size of the
-            buffer region surrounding the point. Toggle the slider to select desired buffer size.
-            <br>
-            <br>
-            For every selected buffer, a list of all available amenities (bike shops, bike parkings, bike shares) within
-            the buffer radius, as well as a summary of weather conditions at the clicked point, will be provided. To
-            select a new point, click 'Close' and repeat these steps.
-          </p>
-          </p>
+          <h2>Non-API Data Sources</h2>
+          <h5>Bikeways</h5>
+          <ul>
+            <li>  <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Toronto Cycling Network </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> York Region Cycling Network </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Peel Region Cycling Network </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Durham Region Cycling Network </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Milton Cycling Network </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Burlington Cycling Network </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Oakville Cycling Network </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Ajax Cycling Network </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Whitby Cycling Network </a> </li>
+          </ul>
+          <br>
+          <h5>Bike Shops</h5>
+          <ul>
+            <li>  <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Toronto Bike Shops </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Rest of GTA Bike Shops </a> </li>
+          </ul>
+          <br>
+          <h5>Bike Parkings</h5>
+          <ul>
+            <li>  <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Toronto Bike Parkings </a> </li>
+            <li> <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Rest of GTA Bike Parkings </a> </li>
+          </ul>
+          <br>
+          <h2>API Data Sources</h2>
+          <ul>
+            <li>  <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Toronto Bike Share </a> </li>
+            <li>  <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Open-Meteo Weather </a> </li>
+            <li>  <a href="https://nacto.org/publication/urban-bikeway-design-guide/bike-lanes/#:~:text=A%20Bike%20Lane%20is%20defined,or%20exclusive%20use%20of%20bicyclists"> Mapbox Traffic </a> </li>
+          </ul>
         </div>
       </div>
     </div>

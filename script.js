@@ -2321,6 +2321,7 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
                 .addTo(map);
               }
               else if (properties1.region==='York'){
+                console.log(properties1.type)
                 new mapboxgl.Popup()
               .setLngLat([lon1, lat1])
               .setHTML("<b>Name:</b> " + properties1.Name + "<br>" + "<b>Facility:</b> " + properties1.type + "<br>" + "<b>Classification:</b> " + properties1.classification +
