@@ -2784,7 +2784,7 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
     weather_api('temperature_2m');
     const legend_colorbar = document.getElementById('legend_colorbar');
     const colorbar = document.createElement('img');
-    colorbar.src="data/temperature_colorbar.png";
+    colorbar.src="https://anamariiaz.github.io/GGR472-Group-Project-Sources/temperature_colorbar.png";
     colorbar.style.height = '200px';
     colorbar.style.width = 'auto';
     legend_colorbar.appendChild(colorbar);
@@ -2798,7 +2798,7 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
     //   legend_colorbar.removeChild(legend_colorbar.lastElementChild)
     // }
     const colorbar = document.createElement('img');
-    colorbar.src="data/precipitation_colorbar.png";
+    colorbar.src="https://anamariiaz.github.io/GGR472-Group-Project-Sources/precipitation_colorbar.png";
     colorbar.style.height = '200px';
     colorbar.style.width = 'auto';
     legend_colorbar.appendChild(colorbar);
@@ -2812,7 +2812,7 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
     //   legend_colorbar.removeChild(legend_colorbar.lastElementChild)
     // }
     const colorbar = document.createElement('img');
-    colorbar.src="data/snowfall_colorbar.png";
+    colorbar.src="https://anamariiaz.github.io/GGR472-Group-Project-Sources/snowfall_colorbar.png";
     colorbar.style.height = '200px';
     colorbar.style.width = 'auto';
     legend_colorbar.appendChild(colorbar);
@@ -2826,7 +2826,7 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
     //   legend_colorbar.removeChild(legend_colorbar.lastElementChild)
     // }
     const colorbar = document.createElement('img');
-    colorbar.src="data/windspeed_colorbar.png";
+    colorbar.src="https://anamariiaz.github.io/GGR472-Group-Project-Sources/windspeed_colorbar.png";
     colorbar.style.height = '200px';
     colorbar.style.width = 'auto';
     legend_colorbar.appendChild(colorbar);
