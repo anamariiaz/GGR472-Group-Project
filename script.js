@@ -3,8 +3,12 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaXJlbyIsImEiOiJjbGRtMTVrbGkwNHh5M3B0Yjd5YnF3c
 
 //define maximum and minimum scroll bounds for the maps
 const maxBounds = [
-  [-90.8, 43.4], //SW coords
-  [-100, 45] //NE coords
+  [-82, 42.94], //SW coords
+  [-77, 44.87] //NE coords
+  // [-82, 43.4], //SW coords
+  // [-75, 44.1] //NE coords
+  // [-79.8, 43.4], //SW coords 90.8
+  // [-78.8, 44] //NE coords
 ];
 
 //define a constant variable "map" and assign it to a map created with the Mapbox API 
@@ -241,20 +245,33 @@ map.on('load', () => {
       //note that 'downcase' is used to ignore the case of the entries in the field 'type' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
-        ['in', 'bike lane', ['downcase', ['get', 'type']]],
-        '#FC6468', //5EBD3E, CC79A7
-        ['in', 'cycle track', ['downcase', ['get', 'type']]],
-        '#FFB900', //FFB900
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
-        '#0072B2', //009CDF
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        '#8B4DAB', //E23838, 56B4E9
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
-        '#009E73', //973999
-        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
-        '#C11F73', //F78200
+        // //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
+        // ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        // '#FC6468', //5EBD3E, CC79A7
+        // ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        // '#FFB900', //FFB900
+        // ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        // '#0072B2', //009CDF
+        // ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        // '#8B4DAB', //E23838, 56B4E9
+        // //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        // ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        // '#009E73', //973999
+        // ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        // '#C11F73', //F78200
+        // 'black'
+        ['==', 'bike lane', ['downcase', ['get', 'Classification']]],
+        '#FC6468',
+        ['==', 'cycle track', ['downcase', ['get', 'Classification']]],
+        '#FFB900',
+        ['==', 'multi-use trail', ['downcase', ['get', 'Classification']]],
+        '#0072B2',
+        ['==', 'sharrows', ['downcase', ['get', 'Classification']]],
+        '#8B4DAB',
+        ['==', 'hiking/park trail', ['downcase', ['get', 'Classification']]],
+        '#009E73',
+        ['==', 'paved shoulder', ['downcase', ['get', 'Classification']]],
+        '#C11F73',
         'black'
       ],
       //'line-opacity': 0.7
@@ -339,19 +356,32 @@ map.on('load', () => {
       //note that 'downcase' is used to ignore the case of the entries in the field 'type' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
-        ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        // //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
+        // ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        // '#FC6468',
+        // ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        // '#FFB900',
+        // ['any', ['in', 'multi', ['downcase', ['get', 'type']]]],
+        // '#0072B2',
+        // ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        // '#8B4DAB',
+        // //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        // ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        // '#009E73',
+        // ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        // '#C11F73',
+        // 'black'
+        ['==', 'bike lane', ['downcase', ['get', 'Classification']]],
         '#FC6468',
-        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        ['==', 'cycle track', ['downcase', ['get', 'Classification']]],
         '#FFB900',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]]],
+        ['==', 'multi-use trail', ['downcase', ['get', 'Classification']]],
         '#0072B2',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        ['==', 'sharrows', ['downcase', ['get', 'Classification']]],
         '#8B4DAB',
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        ['==', 'hiking/park trail', ['downcase', ['get', 'Classification']]],
         '#009E73',
-        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        ['==', 'paved shoulder', ['downcase', ['get', 'Classification']]],
         '#C11F73',
         'black'
       ],
@@ -436,18 +466,31 @@ map.on('load', () => {
       'line-color': [
         'case',
         //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
-        ['in', 'bicycle lane', ['downcase', ['get', 'Type']]],
+        // ['in', 'bicycle lane', ['downcase', ['get', 'Type']]],
+        // '#FC6468',
+        // ['in', 'multi', ['downcase', ['get', 'Type']]],
+        // '#0072B2',
+        // ['any', ['in', 'marked', ['downcase', ['get', 'Type']]], ['in', 'shared pathway', ['downcase', ['get', 'Type']]],['in', 'connection', ['downcase', ['get', 'Type']]], ['in', 'shared roadway', ['downcase', ['get', 'Type']]], ['in', 'signed route', ['downcase', ['get', 'Type']]]],//marked on road bike route? on road connection?
+        // '#8B4DAB',
+        // //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        // ['any', ['in', 'hiking', ['downcase', ['get', 'Type']]], ['in', 'dirt', ['downcase', ['get', 'Type']]]],
+        // '#009E73',
+        // ['in', 'paved shoulder', ['downcase', ['get', 'Type']]],
+        // '#C11F73',
+        // 'black' //default color if none of the above apply
+        ['==', 'bike lane', ['downcase', ['get', 'Classification']]],
         '#FC6468',
-        ['in', 'multi', ['downcase', ['get', 'Type']]],
+        ['==', 'cycle track', ['downcase', ['get', 'Classification']]],
+        '#FFB900',
+        ['==', 'multi-use trail', ['downcase', ['get', 'Classification']]],
         '#0072B2',
-        ['any', ['in', 'marked', ['downcase', ['get', 'Type']]], ['in', 'shared pathway', ['downcase', ['get', 'Type']]],['in', 'connection', ['downcase', ['get', 'Type']]], ['in', 'shared roadway', ['downcase', ['get', 'Type']]], ['in', 'signed route', ['downcase', ['get', 'Type']]]],//marked on road bike route? on road connection?
+        ['==', 'sharrows', ['downcase', ['get', 'Classification']]],
         '#8B4DAB',
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'Type']]], ['in', 'dirt', ['downcase', ['get', 'Type']]]],
+        ['==', 'hiking/park trail', ['downcase', ['get', 'Classification']]],
         '#009E73',
-        ['in', 'paved shoulder', ['downcase', ['get', 'Type']]],
+        ['==', 'paved shoulder', ['downcase', ['get', 'Classification']]],
         '#C11F73',
-        'black' //default color if none of the above apply
+        'black'
       ],
       //'line-opacity': 0.7
       'line-opacity': [
@@ -528,19 +571,32 @@ map.on('load', () => {
       //note that 'downcase' is used to ignore the case of the entries in the field 'type' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
-        ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        // //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
+        // ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        // '#FC6468',
+        // ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        // '#FFB900',
+        // ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        // '#0072B2',
+        // ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        // '#8B4DAB',
+        // //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        // ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        // '#009E73',
+        // ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        // '#C11F73',
+        // 'black'
+        ['==', 'bike lane', ['downcase', ['get', 'Classification']]],
         '#FC6468',
-        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        ['==', 'cycle track', ['downcase', ['get', 'Classification']]],
         '#FFB900',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        ['==', 'multi-use trail', ['downcase', ['get', 'Classification']]],
         '#0072B2',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        ['==', 'sharrows', ['downcase', ['get', 'Classification']]],
         '#8B4DAB',
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        ['==', 'hiking/park trail', ['downcase', ['get', 'Classification']]],
         '#009E73',
-        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        ['==', 'paved shoulder', ['downcase', ['get', 'Classification']]],
         '#C11F73',
         'black'
       ],
@@ -619,26 +675,39 @@ map.on('load', () => {
       //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
-        ['in', 'bl', ['downcase', ['get', 'type']]], //'bike lane', Bike lane (BL)
+        // //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
+        // ['in', 'bl', ['downcase', ['get', 'type']]], //'bike lane', Bike lane (BL)
+        // '#FC6468',
+        // ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        // '#FFB900',
+        // ['any', ['in', 'mupoff', ['downcase', ['get', 'type']]], ['in', 'mupadj', ['downcase', ['get', 'type']]], ['in', 'bl-shared', ['downcase', ['get', 'type']]]], //'multi', Multiuse path off road (MUPOFF) OR Multiuse path adjacent to road	(MUPADJ)
+        // '#0072B2',
+        // ['in', 'shared', ['downcase', ['get', 'type']]], //'sharrows', Shared use - Sharrows painted on pavement (SHARED)
+        // '#8B4DAB',
+        // //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
+        // //['any', ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
+        // //'#8B4DAB',
+        // //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        // ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        // '#009E73',
+        // // ['in', 'bl-shared', ['downcase', ['get', 'type']]], // 'shared pathway', Mixed use - Bike lane and sharrows (BL-SHARED) 
+        // // '#ff69b4',
+        // ['in', 'ps', ['downcase', ['get', 'type']]], //'paved shoulder', Paved shoulder (PS)
+        // '#C11F73',
+        // 'black' //default color if none of the above apply
+        ['==', 'bike lane', ['downcase', ['get', 'Classification']]],
         '#FC6468',
-        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        ['==', 'cycle track', ['downcase', ['get', 'Classification']]],
         '#FFB900',
-        ['any', ['in', 'mupoff', ['downcase', ['get', 'type']]], ['in', 'mupadj', ['downcase', ['get', 'type']]], ['in', 'bl-shared', ['downcase', ['get', 'type']]]], //'multi', Multiuse path off road (MUPOFF) OR Multiuse path adjacent to road	(MUPADJ)
+        ['==', 'multi-use trail', ['downcase', ['get', 'Classification']]],
         '#0072B2',
-        ['in', 'shared', ['downcase', ['get', 'type']]], //'sharrows', Shared use - Sharrows painted on pavement (SHARED)
+        ['==', 'sharrows', ['downcase', ['get', 'Classification']]],
         '#8B4DAB',
-        //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
-        //['any', ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]],
-        //'#8B4DAB',
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        ['==', 'hiking/park trail', ['downcase', ['get', 'Classification']]],
         '#009E73',
-        // ['in', 'bl-shared', ['downcase', ['get', 'type']]], // 'shared pathway', Mixed use - Bike lane and sharrows (BL-SHARED) 
-        // '#ff69b4',
-        ['in', 'ps', ['downcase', ['get', 'type']]], //'paved shoulder', Paved shoulder (PS)
+        ['==', 'paved shoulder', ['downcase', ['get', 'Classification']]],
         '#C11F73',
-        'black' //default color if none of the above apply
+        'black'
       ],
       //'line-opacity': 0.7
       'line-opacity': [
@@ -720,19 +789,32 @@ map.on('load', () => {
       //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
-        ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        // //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
+        // ['in', 'bike lane', ['downcase', ['get', 'type']]],
+        // '#FC6468',
+        // ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        // '#FFB900',
+        // ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        // '#0072B2',
+        // ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]], ['in', 'shared facility', ['downcase', ['get', 'type']]]] ,
+        // '#8B4DAB',
+        // //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        // ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        // '#009E73',
+        // ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        // '#C11F73',
+        // 'black'
+        ['==', 'bike lane', ['downcase', ['get', 'classification']]],
         '#FC6468',
-        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        ['==', 'cycle track', ['downcase', ['get', 'classification']]],
         '#FFB900',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        ['==', 'multi-use trail', ['downcase', ['get', 'classification']]],
         '#0072B2',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]], ['in', 'shared facility', ['downcase', ['get', 'type']]]] ,
+        ['==', 'sharrows', ['downcase', ['get', 'classification']]],
         '#8B4DAB',
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        ['==', 'hiking/park trail', ['downcase', ['get', 'classification']]],
         '#009E73',
-        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        ['==', 'paved shoulder', ['downcase', ['get', 'classification']]],
         '#C11F73',
         'black'
       ],
@@ -812,19 +894,32 @@ map.on('load', () => {
       //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
-        ['==', 1, ['get', 'type']],
+        // //ex. if the word 'bike lane' is in the (lowercase) entry for 'Type', make the color red
+        // ['==', 1, ['get', 'type']],
+        // '#FC6468',
+        // ['==', 2, ['get', 'type']],
+        // '#0072B2',
+        // //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
+        // ['==', 3, ['get', 'type']],
+        // '#8B4DAB',
+        // ['==', 4, ['get', 'type']],
+        // '#C11F73',
+        // ['==', 6, ['get', 'type']],
+        // '#8B4DAB',
+        // 'black' //default color if none of the above apply
+        ['==', 'bike lane', ['downcase', ['get', 'Classification']]],
         '#FC6468',
-        ['==', 2, ['get', 'type']],
+        ['==', 'cycle track', ['downcase', ['get', 'Classification']]],
+        '#FFB900',
+        ['==', 'multi-use trail', ['downcase', ['get', 'Classification']]],
         '#0072B2',
-        //ex. if the word 'shared roadway' OR the word 'signed route' is in the (lowercase) entry for 'type', make the color purple (i think theyre the same thing or similar?)
-        ['==', 3, ['get', 'type']],
+        ['==', 'sharrows', ['downcase', ['get', 'Classification']]],
         '#8B4DAB',
-        ['==', 4, ['get', 'type']],
+        ['==', 'hiking/park trail', ['downcase', ['get', 'Classification']]],
+        '#009E73',
+        ['==', 'paved shoulder', ['downcase', ['get', 'Classification']]],
         '#C11F73',
-        ['==', 6, ['get', 'type']],
-        '#8B4DAB',
-        'black' //default color if none of the above apply
+        'black'
       ],
       //'line-opacity': 0.7
       'line-opacity': [
@@ -1175,19 +1270,32 @@ map.on('load', () => {
       //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
-        ['any', ['in', 'bike lane', ['downcase', ['get', 'type']]],['in', 'bicycle priority', ['downcase', ['get', 'type']]]],
+        // //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
+        // ['any', ['in', 'bike lane', ['downcase', ['get', 'type']]],['in', 'bicycle priority', ['downcase', ['get', 'type']]]],
+        // '#FC6468',
+        // ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        // '#FFB900',
+        // ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        // '#0072B2',
+        // ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]], ['in', 'shared facility', ['downcase', ['get', 'type']]]] ,
+        // '#8B4DAB',
+        // //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        // ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]], ['in', 'off-road', ['downcase', ['get', 'type']]]],
+        // '#009E73',
+        // ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        // '#C11F73',
+        // 'black'
+        ['==', 'bike lane', ['downcase', ['get', 'classification']]],
         '#FC6468',
-        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        ['==', 'cycle track', ['downcase', ['get', 'classification']]],
         '#FFB900',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        ['==', 'multi-use trail', ['downcase', ['get', 'classification']]],
         '#0072B2',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]], ['in', 'shared facility', ['downcase', ['get', 'type']]]] ,
+        ['==', 'sharrows', ['downcase', ['get', 'classification']]],
         '#8B4DAB',
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]], ['in', 'off-road', ['downcase', ['get', 'type']]]],
+        ['==', 'hiking/park trail', ['downcase', ['get', 'classification']]],
         '#009E73',
-        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        ['==', 'paved shoulder', ['downcase', ['get', 'classification']]],
         '#C11F73',
         'black'
       ],
@@ -1268,19 +1376,32 @@ map.on('load', () => {
       //note that 'downcase' is used to ignore the case of the entries in the field 'Type' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
-        //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
-        ['any', ['in', 'bike lane', ['downcase', ['get', 'type']]], ['in', 'bike route', ['downcase', ['get', 'type']]]],
+        // //ex. if the word 'bike lane' is in the (lowercase) entry for 'type', make the color red
+        // ['any', ['in', 'bike lane', ['downcase', ['get', 'type']]], ['in', 'bike route', ['downcase', ['get', 'type']]]],
+        // '#FC6468',
+        // ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        // '#FFB900',
+        // ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        // '#0072B2',
+        // ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
+        // '#8B4DAB',
+        // //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
+        // ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        // '#009E73',
+        // ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        // '#C11F73',
+        // 'black'
+        ['==', 'bike lane', ['downcase', ['get', 'classification']]],
         '#FC6468',
-        ['in', 'cycle track', ['downcase', ['get', 'type']]],
+        ['==', 'cycle track', ['downcase', ['get', 'classification']]],
         '#FFB900',
-        ['any', ['in', 'multi', ['downcase', ['get', 'type']]], ['in', 'shared pathway', ['downcase', ['get', 'type']]]],
+        ['==', 'multi-use trail', ['downcase', ['get', 'classification']]],
         '#0072B2',
-        ['any', ['in', 'sharrows', ['downcase', ['get', 'type']]], ['in', 'shared roadway', ['downcase', ['get', 'type']]], ['in', 'signed route', ['downcase', ['get', 'type']]]] ,
+        ['==', 'sharrows', ['downcase', ['get', 'classification']]],
         '#8B4DAB',
-        //ex. if the word 'hiking' OR the word 'park road' is in the (lowercase) entry for 'type', make the color '#5C4033' (i think theyre basically the same thing so i grouped them together)
-        ['any', ['in', 'hiking', ['downcase', ['get', 'type']]], ['in', 'park road', ['downcase', ['get', 'type']]]],
+        ['==', 'hiking/park trail', ['downcase', ['get', 'classification']]],
         '#009E73',
-        ['in', 'paved shoulder', ['downcase', ['get', 'type']]],
+        ['==', 'paved shoulder', ['downcase', ['get', 'classification']]],
         '#C11F73',
         'black'
       ],
@@ -1590,21 +1711,21 @@ map.on('load', () => {
   // });
 
 
-  // map.on('mouseenter', 'gta_bike_parking_unclustered', () => {
-  //   map.getCanvas().style.cursor = 'pointer';
-  // });
+  map.on('mouseenter', 'gta_bike_parking_unclustered', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
 
-  // map.on('mouseleave', 'gta_bike_parking_unclustered', () => {
-  //   map.getCanvas().style.cursor = '';
-  // });
+  map.on('mouseleave', 'gta_bike_parking_unclustered', () => {
+    map.getCanvas().style.cursor = '';
+  });
 
-  // map.on('click', 'gta_bike_parking_unclustered', (e) => {
-  //   new mapboxgl.Popup()
-  //     .setLngLat(e.lngLat)
-  //     .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" +  "<b>Covered?:</b> " + e.features[0].properties.covered + "<br>" + "<b>Fee:</b> " + e.features[0].properties.fee + "<br>" + "<b>Parking Type:</b> " + e.features[0].properties.parking_type + "<br>" +       
-  //     "<b>Capacity:</b> " + e.features[0].properties.capacity)
-  //       .addTo(map);
-  // });
+  map.on('click', 'gta_bike_parking_unclustered', (e) => {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" +  "<b>Covered?:</b> " + e.features[0].properties.covered + "<br>" + "<b>Fee:</b> " + e.features[0].properties.fee + "<br>" + "<b>Parking Type:</b> " + e.features[0].properties.parking_type + "<br>" +       
+      "<b>Capacity:</b> " + e.features[0].properties.capacity)
+        .addTo(map);
+  });
 
   map.addSource('traffic_source', {
     'type': 'vector',
@@ -1745,6 +1866,9 @@ document.getElementById('collapsible').addEventListener('click', () => {
     //change the instructions back to the default
     const instructions = document.getElementById('instructions');
     instructions.innerHTML = 'Click anywhere on map';
+    document.getElementById('slider').value=0
+    document.getElementById('radius_value').innerHTML=" " + "0km"
+  
   }
   //if the content was closed///
   else {
@@ -1753,6 +1877,7 @@ document.getElementById('collapsible').addEventListener('click', () => {
     //but don't display the slider yet
     slider_div = document.getElementById('slider_div');
     slider_div.style.display = 'none';
+    document.getElementById("bufferbutton").disabled = true;
   }
 });
 
@@ -1781,6 +1906,7 @@ map.on('click', (e) => {
     //Update the datasource to include clicked points
     map.getSource('inputgeojson').setData(geojson);
     lonlat_click = e.lngLat
+    document.getElementById("bufferbutton").disabled = false;
     //show slider
     //slider_div = document.getElementById('slider_div');
     //slider_div.style.display = 'block'
@@ -1795,17 +1921,38 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
     map.setLayoutProperty('toronto_bikeshare_unclustered', 'visibility', 'visible')
     map.setLayoutProperty('toronto_bikeshare_clustered', 'visibility', 'visible')
     map.setLayoutProperty('toronto_bikeshare_cluster_count', 'visibility', 'visible')
+    map.setLayoutProperty('toronto_bicycle_shop_unclustered', 'visibility', 'visible')
+    map.setLayoutProperty('toronto_bicycle_shop_clustered', 'visibility', 'visible')
+    map.setLayoutProperty('toronto_bicycle_shop_clustered_count', 'visibility', 'visible')
+    map.setLayoutProperty('toronto_bike_parking_unclustered', 'visibility', 'visible')
+    map.setLayoutProperty('toronto_bike_parking_clustered', 'visibility', 'visible')
+    map.setLayoutProperty('toronto_bike_parking_cluster_count', 'visibility', 'visible')
+    map.setLayoutProperty('gta_bike_parking_unclustered', 'visibility', 'visible')
+    map.setLayoutProperty('gta_bike_parking_clustered', 'visibility', 'visible')
+    map.setLayoutProperty('gta_bike_parking_cluster_count', 'visibility', 'visible')
+    map.setLayoutProperty('gta_bicycle_shop_unclustered', 'visibility', 'visible')
+    map.setLayoutProperty('gta_bicycle_shop_clustered', 'visibility', 'visible')
+    map.setLayoutProperty('gta_bicycle_shop_cluster_count', 'visibility', 'visible')
     document.getElementById('layercheck2').checked = true
+    document.getElementById('layercheck3').checked = true
+    document.getElementById('layercheck1').checked = true
     //show slider
     slider_div = document.getElementById('slider_div');
     slider_div.style.display = 'block'
     let lastExecution2 = 0
-    document.getElementById('slider').addEventListener('input', (e) => {
+    document.getElementById('slider').addEventListener('change', (e) => { //input
       //e.preventDefault();
       document.getElementById('radius_value').innerHTML=" " + e.target.value +"km"
-      if (e.target.value!=0 && ((lastExecution2 + 900) < Date.now())){ 
-      console.log((lastExecution2 + 800), Date.now())
-      lastExecution2 = Date.now()
+      if (isProcessing==true){
+        return 
+      }
+      isProcessing=true
+      if (e.target.value!=0 ){ //&& ((lastExecution2 + 900) < Date.now())
+      //console.log((lastExecution2 + 800), Date.now())
+      //lastExecution2 = Date.now()
+      document.getElementById("bufferbutton").disabled = true;
+      document.getElementById('slider').disabled=true;
+      document.getElementById('collapsible').disabled=true;
       const radius = e.target.value;
       //create the buffer for each point
     buffresult.features = []
@@ -1822,10 +1969,10 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
     //change instructions
     const instructions = document.getElementById('instructions');
     instructions.innerHTML = 'Click on any features below to zoom in ';
-    if (isProcessing==true){
-      return 
-    }
-    isProcessing=true
+    // if (isProcessing==true){
+    //   return 
+    // }
+    // isProcessing=true
     get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types)
     //get bike shops
 
@@ -1835,10 +1982,16 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
         buffresult.features = []
         map.getSource('buffgeojson').setData(buffresult);
         document.getElementById('nearby').innerHTML = ''
+        console.log("here2")
         divs_lons = []
         divs_lats = []
         divs_properties = []
         divs_types = []
+        document.getElementById("bufferbutton").disabled = false;
+        //const nearby_total = document.getElementById('nearby');
+        // nearby_total.removeChild(item_temp)
+        //console.log(nearby_total.children)
+        isProcessing = false
       }
     });
 
@@ -1848,6 +2001,9 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
   else {
     slider_div = document.getElementById('slider_div');
     slider_div.style.display = 'none'
+    document.getElementById('slider').value=0
+    document.getElementById('radius_value').innerHTML=" " + "0km"
+    document.getElementById("bufferbutton").disabled = true;
     instructions.innerHTML = 'Click anywhere on the map';
     document.getElementById('bufferbutton').innerHTML = "GO"
     geojson.features = []
@@ -1884,6 +2040,7 @@ function get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types) {
     const text_div = document.createElement('div');
     const text = document.createElement('span');
     text.innerHTML = 'Nearby Shops';
+    text.style.color = '#AC1C54';
     text.style.fontWeight = 'bold';
     //check whether any shops exist within the buffer - if they do, show the text 'Nearby Shops'
     if (turf.pointsWithinPolygon(shops, buffresult.features[0]).features.length > 0) {
@@ -1924,6 +2081,7 @@ function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types){
         //create text within it that says 'Nearby Parking'
         text_p.innerHTML = 'Nearby Parking'
         text_p.style.fontWeight = 'bold';
+        text_p.style.color='#84BCE4'
         //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
         if (turf.pointsWithinPolygon(parkings, buffresult.features[0]).features.length > 0) {
           text_div_p.appendChild(text_p)
@@ -1965,6 +2123,7 @@ function get_bikeways(divs_lons, divs_lats, divs_properties, divs_types){
         //create text within it that says 'Nearby Parking'
         text_b.innerHTML = 'Nearby Bikeways'
         text_b.style.fontWeight = 'bold';
+        text_b.style.color = '#767676'
         //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
         bikeways.features.forEach((feature) => {
           //console.log(feature.geometry.coordinates[0].length)
@@ -2057,6 +2216,7 @@ function get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types) {
   //create text within it that says 'Nearby Parking'
   text_s.innerHTML = 'Nearby BikeShare'
   text_s.style.fontWeight = 'bold';
+  text_s.style.color ='#147453'
   //check whether any shops exist within the buffer - if they do, show the text 'Nearby Parking'
   if (turf.pointsWithinPolygon(shares, buffresult.features[0]).features.length > 0) {
     text_div_s.appendChild(text_s)
@@ -2086,6 +2246,7 @@ function get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types) {
 }
 
 function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
+  console.log("hi")
   let lon_point = lonlat_click['lng']
   let lat_point = lonlat_click['lat']
   var today_point = new Date()
@@ -2123,7 +2284,10 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
       value_temp.innerHTML = temp_at_point.hourly.temperature_2m[Math.floor(hour_point / 3)] + '°C' //temp_at_point.hourly.temperature_2m.length - 1
       item_temp.appendChild(value_temp);
       nearby_w.appendChild(item_temp);
+      console.log("hello")
+      precip()
     });
+  function precip(){
   fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=precipitation&start_date=${date_point}&end_date=${date_point}`)
     .then(response => response.json())
     .then(response => {
@@ -2135,7 +2299,10 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
       value_prec.innerHTML = prec_at_point.hourly.precipitation[Math.floor(hour_point / 3)] + 'mm total precipitation in last hour' //prec_at_point.hourly.precipitation.length - 1
       item_prec.appendChild(value_prec);
       nearby_w.appendChild(item_prec);
+      snow()
     });
+  }
+  function snow(){
   fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=snowfall&start_date=${date_point}&end_date=${date_point}`)
     .then(response => response.json())
     .then(response => {
@@ -2147,9 +2314,11 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
       value_snow.innerHTML = snow_at_point.hourly.snowfall[Math.floor(hour_point / 3)] + 'mm snowfall in last hour' //snow_at_point.hourly.snowfall.length - 1
       item_snow.appendChild(value_snow);
       nearby_w.appendChild(item_snow);
+      wind()
     });
+  }
   //console.log(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=windspeed_10m&start_date=${date_point}&end_date=${date_point}`)
-  fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=windspeed_10m&start_date=${date_point}&end_date=${date_point}`)
+  function wind(){fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=windspeed_10m&start_date=${date_point}&end_date=${date_point}`)
     .then(response => response.json())
     .then(response => {
       wind_at_point = response;
@@ -2160,15 +2329,19 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
       value_wind.innerHTML = wind_at_point.hourly.windspeed_10m[Math.floor(hour_point / 3)] + 'km/h wind at 10m above ground' //wind_at_point.hourly.windspeed_10m.length - 1
       item_wind.appendChild(value_wind);
       nearby_w.appendChild(item_wind);
+      list_click(divs_lons, divs_lats, divs_properties, divs_types)
     });
-
-  list_click(divs_lons, divs_lats, divs_properties, divs_types)
+  }
 
 }
 
 
 function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
   isProcessing = false
+  document.getElementById("bufferbutton").disabled = false;
+  document.getElementById('slider').disabled=false;
+  document.getElementById('collapsible').disabled=false;
+  console.log("here")
   var elements = document.getElementsByClassName("divs");
   //console.log(elements.length)
   let popup_shop
@@ -2321,7 +2494,7 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
                 .addTo(map);
               }
               else if (properties1.region==='York'){
-                console.log(properties1.type)
+                console.log(properties1, properties1.type)
                 new mapboxgl.Popup()
               .setLngLat([lon1, lat1])
               .setHTML("<b>Name:</b> " + properties1.Name + "<br>" + "<b>Facility:</b> " + properties1.type + "<br>" + "<b>Classification:</b> " + properties1.classification +
@@ -2553,6 +2726,7 @@ function add_property(random_list, temperature_list, index_list, variable) {
               });   
             }
         //console.log(polygon.features)
+        document.getElementById('weather').disabled=false;
   }
 //   else if (variable === 'precipitation') {
 //     map.addLayer({
@@ -2613,11 +2787,11 @@ document.getElementById('returnbutton').addEventListener('click', () => {
 
 //Change map layer display based on check box using setlayoutproperty
 document.getElementById('layercheck1').addEventListener('change', (e) => {
-  map.setLayoutProperty(
-    'toronto_bicycle_shop',
-    'visibility',
-    e.target.checked ? 'visible' : 'none'
-  );
+  // map.setLayoutProperty(
+  //   'toronto_bicycle_shop',
+  //   'visibility',
+  //   e.target.checked ? 'visible' : 'none'
+  // );
   map.setLayoutProperty(
     'toronto_bicycle_shop_clustered',
     'visibility',
@@ -2633,11 +2807,11 @@ document.getElementById('layercheck1').addEventListener('change', (e) => {
     'visibility',
     e.target.checked ? 'visible' : 'none'
   );
-  map.setLayoutProperty(
-    'gta_bicycle_shop',
-    'visibility',
-    e.target.checked ? 'visible' : 'none'
-  );
+  // map.setLayoutProperty(
+  //   'gta_bicycle_shop',
+  //   'visibility',
+  //   e.target.checked ? 'visible' : 'none'
+  // );
   map.setLayoutProperty(
     'gta_bicycle_shop_clustered',
     'visibility',
@@ -2656,11 +2830,11 @@ document.getElementById('layercheck1').addEventListener('change', (e) => {
 });
 
 document.getElementById('layercheck2').addEventListener('change', (e) => {
-  map.setLayoutProperty(
-    'toronto_bikeshare_stations',
-    'visibility',
-    e.target.checked ? 'visible' : 'none'
-  );
+  // map.setLayoutProperty(
+  //   'toronto_bikeshare_stations',
+  //   'visibility',
+  //   e.target.checked ? 'visible' : 'none'
+  // );
   map.setLayoutProperty(
     'toronto_bikeshare_clustered',
     'visibility',
@@ -2679,11 +2853,11 @@ document.getElementById('layercheck2').addEventListener('change', (e) => {
 });
 
 document.getElementById('layercheck3').addEventListener('change', (e) => {
-  map.setLayoutProperty(
-    'toronto_bicycle_parking',
-    'visibility',
-    e.target.checked ? 'visible' : 'none'
-  );
+  // map.setLayoutProperty(
+  //   'toronto_bicycle_parking',
+  //   'visibility',
+  //   e.target.checked ? 'visible' : 'none'
+  // );
   map.setLayoutProperty(
     'toronto_bike_parking_clustered',
     'visibility',
@@ -2699,11 +2873,11 @@ document.getElementById('layercheck3').addEventListener('change', (e) => {
     'visibility',
     e.target.checked ? 'visible' : 'none'
   );
-  map.setLayoutProperty(
-    'gta_bike_parking',
-    'visibility',
-    e.target.checked ? 'visible' : 'none'
-  );
+  // map.setLayoutProperty(
+  //   'gta_bike_parking',
+  //   'visibility',
+  //   e.target.checked ? 'visible' : 'none'
+  // );
   map.setLayoutProperty(
     'gta_bike_parking_clustered',
     'visibility',
@@ -2781,6 +2955,7 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
   }
   legend_weather_title.innerHTML=''
   if (weathertype == 'Temperature') {
+    document.getElementById('weather').disabled=true;
     weather_api('temperature_2m');
     const legend_colorbar = document.getElementById('legend_colorbar');
     const colorbar = document.createElement('img');
@@ -2792,6 +2967,7 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
     legend_weather_title.innerHTML='Temperature at 2m above ground'
   } 
   else if (weathertype == 'Precipitation') {
+    document.getElementById('weather').disabled=true;
     weather_api('precipitation');
     const legend_colorbar = document.getElementById('legend_colorbar');
     // if (legend_colorbar.hasChildNodes()){
@@ -2806,6 +2982,7 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
     legend_weather_title.innerHTML='Total precipitation sum of preceding hour'
   }
   else if (weathertype == 'Snowfall') {
+    document.getElementById('weather').disabled=true;
     weather_api('snowfall');
     const legend_colorbar = document.getElementById('legend_colorbar');
     // if (legend_colorbar.hasChildNodes()){
@@ -2820,6 +2997,7 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
     legend_weather_title.innerHTML='Total snowfall sum of preceding hour'
   }
   else if (weathertype == 'Wind Speed') {
+    document.getElementById('weather').disabled=true;
     weather_api('windspeed_10m')
     const legend_colorbar = document.getElementById('legend_colorbar');
     // if (legend_colorbar.hasChildNodes()){
@@ -3075,39 +3253,39 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
         // );
         map.setFilter(
           'toronto_bikeways',
-          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+          ['==', ['downcase', ['get', 'Classification']], ['downcase', tobikelane]] //returns polygon with Classification value that matches dropdown selection
         );
         map.setFilter(
           'york_region_bikeways',
-          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+          ['==', ['downcase', ['get', 'Classification']], ['downcase', tobikelane]] //returns polygon with Classification value that matches dropdown selection
         );
         map.setFilter(
           'peel_bikeways',
-          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+          ['==', ['downcase', ['get', 'Classification']], ['downcase', tobikelane]] //returns polygon with Classification value that matches dropdown selection
         );
         map.setFilter(
           'durham_region_bikeways',
-          ['==', ['get', 'classification'], tobikelane] //returns polygon with Name value that matches dropdown selection ['==', ['get', 'Name'], tobikelane]
+          ['==', ['downcase', ['get', 'classification']], ['downcase', tobikelane]] //returns polygon with Name value that matches dropdown selection ['==', ['get', 'Name'], tobikelane]
         );
         map.setFilter(
           'ajax_bikeways',
-          ['==', ['get', 'classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+          ['==', ['downcase', ['get', 'classification']], ['downcase', tobikelane]] //returns polygon with Classification value that matches dropdown selection
         );
         map.setFilter(
           'whitby_bikeways',
-          ['==', ['get', 'classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+          ['==', ['downcase', ['get', 'classification']], ['downcase', tobikelane]] //returns polygon with Classification value that matches dropdown selection
         );
         map.setFilter(
           'milton_bikeways',
-          ['==', ['get', 'classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+          ['==', ['downcase', ['get', 'classification']], ['downcase', tobikelane]] //returns polygon with Classification value that matches dropdown selection
         );
         map.setFilter(
           'burlington_bikeways',
-          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+          ['==', ['downcase', ['get', 'Classification']], ['downcase', tobikelane]] //returns polygon with Classification value that matches dropdown selection
         );
         map.setFilter(
           'oakvill_bikeways',
-          ['==', ['get', 'Classification'], tobikelane] //returns polygon with Classification value that matches dropdown selection
+          ['==', ['downcase', ['get', 'Classification']], ['downcase', tobikelane]] //returns polygon with Classification value that matches dropdown selection
         );
     }
     else if (tobikelane == 'Traffic') {
