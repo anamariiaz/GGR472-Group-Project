@@ -1,6 +1,6 @@
 # GGR472-Group-Project
 
-This repository contains the code and data for this collaborative project on cycling networks in the Greater Toronto Area, which includes City of Toronto and the regional municipalities of Durham, Halton, Peel, and York.
+The repository contains the code and data for this collaborative project on cycling networks in the Greater Toronto Area, which includes City of Toronto and the regional municipalities of Durham, Halton, Peel, and York.
 
 GTAccess to Cycling hopes to inspire more people to start cycling in the GTA by providing a wide range of GTA cycling-related information and resources in one application, from introductory cycling terms to advanced planning tools for current and potential cyclists.
 
