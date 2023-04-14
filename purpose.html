@@ -33,27 +33,26 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <!-- specify that the web page should redirect to the local index.html file when "Home" is clicked in the navbar while on the "More Info" page -->
+            <!-- specify that the web page should redirect to the local index.html file when "Home" is clicked in the navbar while on the "Purpose" page -->
             <a class="nav-link" aria-current="page" href="index.html">Home</a>
           </li>
           <li class="nav-item">
-            <!-- specify that the web page should not redirect when "More Info" is clicked in the navbar while on the "More Info" page -->
-            <!-- specify that the "More Info" button of the navbar should be highlighted while on the "More Info" page  -->
+            <!-- specify that the web page should not redirect when "Purpose" is clicked in the navbar while on the "Purpose" page -->
+            <!-- specify that the "Purpose" button of the navbar should be highlighted while on the "Purpose" page  -->
             <a class="nav-link active" href="#">Purpose</a>
           </li>
           <li class="nav-item">
-            <!-- specify that the web page should redirect to the local index.html file when "Home" is clicked in the navbar while on the "More Info" page -->
+            <!-- specify that the web page should redirect to the local instructions.html file when "Instructions" is clicked in the navbar while on the "Purpose" page -->
             <a class="nav-link" aria-current="page" href="instructions.html">Instructions</a>
           </li>
           <li class="nav-item">
-            <!-- specify that the web page should redirect to the local index.html file when "Home" is clicked in the navbar while on the "More Info" page -->
+            <!-- specify that the web page should redirect to the local definitions.html file when "Definitions" is clicked in the navbar while on the "Purpose" page -->
             <a class="nav-link" aria-current="page" href="definitions.html">Definitions</a>
           </li>
           <li class="nav-item">
-            <!-- specify that the web page should redirect to the local more_info.html file when "More Info" is clicked in the navbar while on the "Home" page -->
+            <!-- specify that the web page should redirect to the local data.html file when "Data" is clicked in the navbar while on the "Purpose" page -->
             <a class="nav-link" href="data.html">Data</a>
           </li>
-
         </ul>
       </div>
     </div>
@@ -80,24 +79,27 @@
       <div class="col-8">
         <!-- define a new section within the column which has centered text within it -->
         <div class="text-left">
-          <!-- specify text to be displayed at a paragraph level with a link that opens a page about Toronto bikeway types in a new window-->
-          <p>
+          <!-- specify text to be displayed at various levels-->
           <h4><b>Objectives</b></h4>
           <p>
-            As cities continue to grow and the number of cars on the roads increases, urban mobility becomes an
-            increasingly important issue. Traffic congestion, air pollution, and increased greenhouse gas emissions are
-            some challenges posed by this growth in traffic. Active transportation, such as cycling, can be an effective
-            solution to these challenges while also promoting physical activity and healthy living. Moreover, the
-            COVID-19 pandemic has made cycling more popular, as many people see it as a safer and more socially
-            distanced mode of transportation.
+            As cities continue to grow and the number of cars on the roads increases, urban mobility becomes an increasingly important issue (Gonzalo-Orden et al., 2014). Congestion and air pollution through increased greenhouse gas emissions are some challenges posed by this growth in traffic (Tektelic, 2022). Moreover, the COVID-19 pandemic has made cycling more popular, as many people see it as a safer and more socially distanced mode of transportation (Büchel et al., 2022). Active, sustainable transportation, such as cycling, can be an effective solution to these challenges while also promoting physical activity and healthy living (Mueller et al., 2015).
           </p>
           <p>
-            Our project aims to inspire more people to start cycling in the city by developing a web application that
-            caters to a diverse audience. We hope to provide a wide range of cycling-related information and resources
-            in one location, from introductory safety information to advanced planning tools for current and potential
-            cyclists. The focus of our app is the Great Toronto Area (GTA), which is divided into five regions: Toronto,
-            Durham, Halton, Peel, and York regions.
+            Thus, to tackle this issue of sustainable mobility and build upon existing cycling maps, we have developed the web application <i>GTAccess to Cycling</i>. As implied by its name, the focus of the app is the GTA, which is divided into five regions: Toronto, Durham, Halton, Peel, and York regions. <i>GTAccess to Cycling</i> provides a wide range of GTA cycling-related information and resources in one location, from introductory urban bikeway distinctions to advanced planning tools, hence catering to a diverse audience of current and prospective cyclists. The app combines details present in otherwise independent sources into a fully interactive setting, highlighting existing bike shops and bike parking facilities, presenting and distinguishing amongst the most common bikeway types, and showcasing bike share stations with their live number of available bikes and docks. Further, it fills the gap that existing cycling maps have in condition information by incorporating real-time weather and traffic data, hence creating a more thorough resource for cyclists. Overall, <i>GTAccess to Cycling</i> aims to both encourage more people to embrace cycling as a mode of transportation in the GTA, and to promote safety and well-being while cycling in urban environments.
           </p>
+          <br>
+          <h4><b>References</b></h4>
+          <p>
+            Büchel, B., Marra, A. D., & Corman, F. (2022). COVID-19 as a window of opportunity for cycling: Evidence from the first wave. Transport Policy, 116, 144–156. https://doi.org/10.1016/j.tranpol.2021.12.003
+            <br>
+            <br>
+            Gonzalo-Orden, H., Linares, A., Velasco, L., Díez, J. M., & Rojo, M. (2014). Bikeways and cycling urban mobility. Procedia - Social and Behavioral Sciences, 160, 567-576. DOI:10.1016/j.sbspro.2014.12.170
+            <br>
+            <br>
+            Mueller, N., Rojas-Rueda, D., Cole-Hunter, T., de Nazelle, A., Dons, E., Gerike, R., Götschi, T., Int Panis, L., Kahlmeier, S., & Nieuwenhuijsen, M. (2015). Health Impact Assessment of Active Transportation: A systematic review. Preventive Medicine, 76, 103–114. https://doi.org/10.1016/j.ypmed.2015.04.010 
+            <br>
+            <br>
+            Tektelic. (2022). 5 Step Guide On Creating A Clean City Using IoT. Tektelic Communications. https://www.tektelic.com/expertise/5-steps-guide-on-creating-a-clean-city-using-iot/
           </p>
         </div>
       </div>
@@ -105,8 +107,7 @@
 
   </div>
 
-  <!-- provide links to the local script.js file and the external Bootstrap Javascript bundle (which allow the functionality of the page) -->
-  <!-- <script src="script.js"></script> -->
+  <!-- provide links to the external Bootstrap Javascript bundle (which allow the functionality of the page) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
     crossorigin="anonymous"></script>

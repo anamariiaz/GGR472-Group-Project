@@ -47,52 +47,21 @@ let buffresult = {
   "features": []
 };
 
-//initialize empty lists to hold nearby amenities' longitudes and latitudes from the planner tool (initialize them as empty)
-var divs_lons = []
-var divs_lats = []
-
-// var weather_test = [];
-// let polygon
-
 //specify events triggered by the loading of the "map" variable
 map.on('load', () => {
-  // //'getJSON' function for reading an external JSON file
-  // var getJSON = function (url, callback) {
-  //   var xhr = new XMLHttpRequest();
-  //   xhr.open('GET', url, true);
-  //   xhr.responseType = 'json';
-  //   xhr.onload = function () {
-  //     var status = xhr.status;
-  //     if (status === 200) {
-  //       callback(null, xhr.response);
-  //     } else {
-  //       callback(status, xhr.response);
-  //     }
-  //   };
-  //   xhr.send();
-  // };
-  // //apply 'getJSON' function to our external JSON file from BikeShare API: if it reads the file successfully, trigger 'updateMap' function, otherwise give an error
-  // getJSON('https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_information',
-  //   function (err, data) {
-  //     if (err !== null) {
-  //       alert('Something went wrong: ' + err);
-  //     } else {
-  //       updateMap(data)
-  //     }
-  //   });
 
   //retrieve external JSON file for BikeShare stations from Toronto BikeShare API
   fetch('https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_information')
-      .then(response => response.json())
-      .then(response => {
-        data = response; //assign variable "data" to BikeShare stations JSON file from Toronto BikeShare API
-        updateMap(data) //call updateMap function only when JSON file is done being fetched (since fetch is asynchronous)
-      });
+  .then(response => response.json())
+  .then(response => {
+    data = response; //assign variable "data" to BikeShare stations JSON file from Toronto BikeShare API
+    updateMap(data) //call updateMap function only when JSON file is done being fetched (since fetch is asynchronous)
+  });
   
   //create 'updateMap' function for taking the coordinates out of the BikeShare stations JSON file, using them to manually create a GeoJSON file, and then plotting the station points of this created GeoJSON file 
   function updateMap(data) {
 
-    test = []; //assign 'test' to empty global list
+    test = []; //assign global 'test' variable to empty list
     //loop through all of the BikeShare stations
     for (let step = 0; step < data.data.stations.length; step++) {
       let longitude = data.data.stations[step].lon
@@ -101,11 +70,11 @@ map.on('load', () => {
       let station_id = data.data.stations[step].station_id
       let address = data.data.stations[step].address
       let post_code = data.data.stations[step].post_code
-      //append each BikeShare station's coordinates, and properties (name, id, address, and postal code) - specified in a geojson format - to the list "test"
+      //append each BikeShare station's coordinates and properties (name, id, address, and postal code) - specified in a geojson 'Feature' format - to the list "test"
       test.push(JSON.parse(`{"type": "Feature", "geometry": {"coordinates": [${longitude},${latitude}], "type": "Point"}, "properties": {"name":"${name}", "station_id":"${station_id}", "address":"${address}", "post_code":"${post_code}"}}`));
     };
 
-    //add a geojson file source "toronto_bikeshare_stations" for Toronto BikeShare stations as a manually created GeoJSON file which uses the "test" list
+    //add a geojson file source "toronto_bikeshare_stations" for Toronto BikeShare stations that is manually created using the "test" list
     map.addSource('toronto_bikeshare_stations', {
       type: 'geojson',
       data: {
@@ -127,7 +96,7 @@ map.on('load', () => {
       }
     );
 
-    //add and style a layer of circles "toronto_bikeshare_clustered" from the defined "toroto_bikeshare_stations" source for the clustered bikeshare stations
+    //add and style a layer of circles "toronto_bikeshare_clustered" from the defined "toronto_bikeshare_stations" source for the clustered bikeshare stations
     map.addLayer({
       'id': 'toronto_bikeshare_clustered',
       'type': 'circle',
@@ -189,6 +158,7 @@ map.on('load', () => {
         'icon-ignore-placement': true
       }
     });
+
   }
 
   //change cursor to a pointer when mouse hovers over 'toronto_bikeshare_unclustered' layer
@@ -210,30 +180,30 @@ map.on('load', () => {
     let post_code=e.features[0].properties.post_code
     //retrieve external JSON file for BikeShare station status information from Toronto BikeShare API
     fetch('https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_status')
-      .then(response => response.json())
-      .then(response => {
-        bikeshare_status = response; //assign variable "bikeshare_status" to BikeShare station status information JSON file from Toronto BikeShare API
-        //loop through all of the BikeShare stations in the BikeShare station status information JSON file
-        bikeshare_status.data.stations.forEach((station) => {
-          //enter conditional if the id of the BikeShare station in the BikeShare station status information JSON file matches the id of the clicked bikeshare station
-          if (station.station_id === station_id) {
-            //if the postal code is not undefined, declare and add to map a popup at the longitude-latitude location of click which contains the postal code
-            if (post_code!="undefined"){
-              new mapboxgl.Popup()
-              .setLngLat(e.lngLat)
-              .setHTML("<b>Name:</b> " + name + "<br>" + "<b>Address:</b> " + address + "<br>" + "<b>Postal Code:</b> " + post_code + "<br>" + "<b>No. Available Bikes:</b> " + station.num_bikes_available + "<br>" + "<b>No. Available Docks:</b> " + station.num_docks_available)
-              .addTo(map);
-            }
-            //if the postal code is undefined, declare and add to map a popup at the longitude-latitude location of click which does not contain the postal code
-            else if (post_code=="undefined") {
-              new mapboxgl.Popup()
-              .setLngLat(e.lngLat)
-              .setHTML("<b>Name:</b> " + name + "<br>" + "<b>Address:</b> " + address + "<br>" + "<b>No. Available Bikes:</b> " + station.num_bikes_available + "<br>" + "<b>No. Available Docks:</b> " + station.num_docks_available)
-              .addTo(map);
-            }
+    .then(response => response.json())
+    .then(response => {
+      bikeshare_status = response; //assign variable "bikeshare_status" to BikeShare station status information JSON file from Toronto BikeShare API
+      //loop through all of the BikeShare stations in the BikeShare station status information JSON file
+      bikeshare_status.data.stations.forEach((station) => {
+        //enter conditional if the id of the BikeShare station in the BikeShare station status information JSON file matches the id of the clicked bikeshare station
+        if (station.station_id === station_id) {
+          //if the postal code is not undefined, declare and add to map a popup at the longitude-latitude location of click which contains the postal code
+          if (post_code!="undefined"){
+            new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML("<b>Name:</b> " + name + "<br>" + "<b>Address:</b> " + address + "<br>" + "<b>Postal Code:</b> " + post_code + "<br>" + "<b>No. Available Bikes:</b> " + station.num_bikes_available + "<br>" + "<b>No. Available Docks:</b> " + station.num_docks_available)
+            .addTo(map);
           }
-        });
+          //if the postal code is undefined, declare and add to map a popup at the longitude-latitude location of click which does not contain the postal code
+          else if (post_code=="undefined") {
+            new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML("<b>Name:</b> " + name + "<br>" + "<b>Address:</b> " + address + "<br>" + "<b>No. Available Bikes:</b> " + station.num_bikes_available + "<br>" + "<b>No. Available Docks:</b> " + station.num_docks_available)
+            .addTo(map);
+          }
+        }
       });
+    });
   });
 
   //add a geojson file source "toronto_cycling_network" for Toronto bikeways
@@ -295,7 +265,7 @@ map.on('load', () => {
     .setLngLat(e.lngLat)
     .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Facility 1:</b> " + e.features[0].properties.type +  "<br>" + "<b>Classification:</b> " + e.features[0].properties.Classification
     + "<br>" + "<b>Facility 2:</b> " + e.features[0].properties.secondary_type) 
-      .addTo(map);
+    .addTo(map);
   });
 
   let toronto_bikeID = null; //assign initial value of 'toronto_bikeID' variable as null
@@ -444,7 +414,7 @@ map.on('load', () => {
     'source': 'peel_region_cycling_network',
     'paint': {
       'line-width': 3,
-     //specify the color of the lines based on the text contained within the "Classification" data field (i.e. based on the bikeway type)
+      //specify the color of the lines based on the text contained within the "Classification" data field (i.e. based on the bikeway type)
       //note that 'downcase' is used to ignore the case of the entries in the field 'Classification' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
@@ -578,7 +548,7 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'durham_region_bikeways' layer
+  //specify events triggered by clicking on the 'durham_region_bikeways' layer
   map.on('click', 'durham_region_bikeways', (e) => {
     //declare and add to map a popup at the longitude-latitude location of click
     new mapboxgl.Popup()
@@ -627,6 +597,7 @@ map.on('load', () => {
     type: 'geojson',
     data: 'https://anamariiaz.github.io/GGR472-Group-Project-Sources/burlington_cycling_network.geojson', 'generateId': true 
   });
+
   //add and style a layer of lines "burlington_bikeways" from the defined "burlington_cycling_network" source
   map.addLayer({
     'id': 'burlington_bikeways',
@@ -634,7 +605,7 @@ map.on('load', () => {
     'source': 'burlington_cycling_network',
     'paint': {
       'line-width': 3,
-     //specify the color of the lines based on the text contained within the "Classification" data field (i.e. based on the bikeway type)
+      //specify the color of the lines based on the text contained within the "Classification" data field (i.e. based on the bikeway type)
       //note that 'downcase' is used to ignore the case of the entries in the field 'Classification' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
@@ -672,7 +643,7 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'burlington_bikeways' layer
+  //specify events triggered by clicking on the 'burlington_bikeways' layer
   map.on('click', 'burlington_bikeways', (e) => {
     //declare and add to map a popup at the longitude-latitude location of click
     new mapboxgl.Popup()
@@ -729,8 +700,8 @@ map.on('load', () => {
     'source': 'milton_cycling_network',
     'paint': {
       'line-width': 3,
-     //specify the color of the lines based on the text contained within the "Classification" data field (i.e. based on the bikeway type)
-      //note that 'downcase' is used to ignore the case of the entries in the field 'Classification' (some entries are uppercase so we make them lowercase)
+      //specify the color of the lines based on the text contained within the "classification" data field (i.e. based on the bikeway type)
+      //note that 'downcase' is used to ignore the case of the entries in the field 'classification' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
         ['==', 'bike lane', ['downcase', ['get', 'classification']]],
@@ -767,13 +738,13 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'milton_bikeways' layer
+  //specify events triggered by clicking on the 'milton_bikeways' layer
   map.on('click', 'milton_bikeways', (e) => {
     //declare and add to map a popup at the longitude-latitude location of click
     new mapboxgl.Popup()
     .setLngLat(e.lngLat)
     .setHTML("<b>Facility:</b> " +  e.features[0].properties.type + "<br>" + "<b>Classification:</b> " + e.features[0].properties.classification + "<br>" + "<b>Surface:</b> "  + e.features[0].properties.surface)
-      .addTo(map);
+    .addTo(map);
   });
 
   let milton_bikeID = null; //assign initial value of 'milton_bikeID' variable as null
@@ -824,7 +795,7 @@ map.on('load', () => {
     'source': 'oakville_cycling_network',
     'paint': {
       'line-width': 3,
-     //specify the color of the lines based on the text contained within the "Classification" data field (i.e. based on the bikeway type)
+      //specify the color of the lines based on the text contained within the "Classification" data field (i.e. based on the bikeway type)
       //note that 'downcase' is used to ignore the case of the entries in the field 'Classification' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
@@ -862,13 +833,13 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'oakvill_bikeways' layer
+  //specify events triggered by clicking on the 'oakvill_bikeways' layer
   map.on('click', 'oakvill_bikeways', (e) => {
     //declare and add to map a popup at the longitude-latitude location of click
     new mapboxgl.Popup()
     .setLngLat(e.lngLat)
     .setHTML("<b>Facility:</b> " + e.features[0].properties.type + "<br>" + "<b>Classification:</b> "  + e.features[0].properties.Classification + "<br>" + "<b>Surface:</b> "  + e.features[0].properties.surface)
-      .addTo(map);
+    .addTo(map);
   });
 
   let oakville_bikeID = null; //assign initial value of 'oakville_bikeID' variable as null
@@ -996,7 +967,7 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'toronto_bike_parking_unclustered' layer
+  //specify events triggered by clicking on the 'toronto_bike_parking_unclustered' layer
   map.on('click', 'toronto_bike_parking_unclustered', (e) => {
     //declare and add to map a popup at the longitude-latitude location of click
     new mapboxgl.Popup()
@@ -1004,10 +975,8 @@ map.on('load', () => {
     .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Address:</b> " + e.features[0].properties.address + "<br>" + "<b>Postal Code:</b> "
     + e.features[0].properties.postal_code + "<br>" + "<b>Ward:</b> " + e.features[0].properties.ward + "<br>" + "<b>City:</b>  " + e.features[0].properties.city + "<br>" + "<b>Parking Type:</b>  " + e.features[0].properties.parking_type + "<br>" +       
     "<b>Capacity:</b> " + e.features[0].properties.bike_capacity)
-      .addTo(map);
-  });
-
-  
+    .addTo(map);
+  }); 
   
   //add a geojson file source "toronto_bicycle_shops" for Toronto bike shops
   map.addSource('toronto_bicycle_shops', {
@@ -1055,7 +1024,7 @@ map.on('load', () => {
     }
   });
 
-  //add and style a layer of symbols "toronto_bicycle_shops_cluster_count" from the defined "toronto_bicycle_shops" source for the text on top of the clustered bike shops
+  //add and style a layer of symbols "toronto_bicycle_shops_clustered_count" from the defined "toronto_bicycle_shops" source for the text on top of the clustered bike shops
   map.addLayer({
     id: 'toronto_bicycle_shop_clustered_count',
     type: 'symbol',
@@ -1102,7 +1071,7 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'toronto_bicycle_shop_unclustered' layer
+  //specify events triggered by clicking on the 'toronto_bicycle_shop_unclustered' layer
   map.on('click', 'toronto_bicycle_shop_unclustered', (e) => {
     //declare and add to map a popup at the longitude-latitude location of click
     new mapboxgl.Popup()
@@ -1110,7 +1079,7 @@ map.on('load', () => {
     .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Address:</b> " + e.features[0].properties.address + "<br>" + "<b>Postal Code:</b> "
     + e.features[0].properties.postal_code + "<br>" + "<b>Ward:</b> " + e.features[0].properties.ward + "<br>" +  "<b>Unit No:</b>  " + e.features[0].properties.unit + "<br>" + "<b>City:</b>  " + e.features[0].properties.city + "<br>" + "<b>Phone:</b>  " + e.features[0].properties.phone + "<br>" +       
     "<b>Email:</b> " + e.features[0].properties.email + "<br>" + "<b>Rentals?:</b> " + e.features[0].properties.rental)
-      .addTo(map);
+    .addTo(map);
   });
 
   //add a geojson file source "ajax_cycling_network" for Ajax bikeways
@@ -1165,13 +1134,13 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'ajax_bikeways' layer
+  //specify events triggered by clicking on the 'ajax_bikeways' layer
   map.on('click', 'ajax_bikeways', (e) => {
     //declare and add to map a popup at the longitude-latitude location of click
     new mapboxgl.Popup()
     .setLngLat(e.lngLat)
     .setHTML("<b>Facility:</b> " + e.features[0].properties.type + "<br>" + "<b>Classification:</b> " + e.features[0].properties.classification + "<br>" + "<b>Street:</b> " + (e.features[0].properties.location).substring(0, (e.features[0].properties.location).length-9))
-      .addTo(map);
+    .addTo(map);
   });
 
   let ajax_bikeID = null; //assign initial value of 'ajax_bikeID' variable as null
@@ -1223,7 +1192,7 @@ map.on('load', () => {
     'source': 'whitby_cycling_network',
     'paint': {
       'line-width': 3,
-    //specify the color of the lines based on the text contained within the "classification" data field (i.e. based on the bikeway type)
+      //specify the color of the lines based on the text contained within the "classification" data field (i.e. based on the bikeway type)
       //note that 'downcase' is used to ignore the case of the entries in the field 'classification' (some entries are uppercase so we make them lowercase)
       'line-color': [
         'case',
@@ -1261,13 +1230,13 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'whitby_bikeways' layer
+  //specify events triggered by clicking on the 'whitby_bikeways' layer
   map.on('click', 'whitby_bikeways', (e) => {
     //declare and add to map a popup at the longitude-latitude location of click
     new mapboxgl.Popup()
     .setLngLat(e.lngLat)
     .setHTML("<b>Facility:</b> " + e.features[0].properties.type + "<br>" + "<b>Classification:</b> " + e.features[0].properties.classification + "<br>" + "<b>Street Name:</b> " + e.features[0].properties['road name'])
-      .addTo(map);
+    .addTo(map);
   });
 
   let whitby_bikeID = null; //assign initial value of 'whitby_bikeID' variable as null
@@ -1304,7 +1273,6 @@ map.on('load', () => {
     }
     whitby_bikeID = null;
   }); 
-
 
   //add a geojson file source "gta_bicycle_shops" for GTA (outside Toronto) bike shops
   map.addSource('gta_bicycle_shops', {
@@ -1390,18 +1358,18 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'gta_bicycle_shop_unclustered' layer
+  //specify events triggered by clicking on the 'gta_bicycle_shop_unclustered' layer
   map.on('click', 'gta_bicycle_shop_unclustered', (e) => {
-     //if the street number or street is not available, declare and add to map a popup at the longitude-latitude location of click which does not contain address
+    //if the street number or street is not available, declare and add to map a popup at the longitude-latitude location of click which does not contain address
     if (e.features[0].properties.address_number=='Not Available' | e.features[0].properties.address_street=='Not Available'){
       new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" + "<b>Address:</b> " + "Not Available" + "<br>" + "<b>Postal Code:</b> "
       + e.features[0].properties.postal_code + "<br>" + "<b>Unit No:</b>  " + e.features[0].properties.unit + "<br>" + "<b>City:</b>  " + e.features[0].properties.city + "<br>" + "<b>Phone:</b>  " + e.features[0].properties.phone + "<br>" +       
       "<b>Email:</b> " + e.features[0].properties.email + "<br>" + "<b>Website:</b> " + e.features[0].properties.website + "<br>" + "<b>Facebook:</b> " + e.features[0].properties.facebook + "<br>" + "<b>Opening Hours:</b> " + e.features[0].properties.opening_hours)
-        .addTo(map);
+      .addTo(map);
     }
-    //if the street number and street are not available, declare and add to map a popup at the longitude-latitude location of click which contains address
+    //if the street number and street are available, declare and add to map a popup at the longitude-latitude location of click which contains address
     else if (e.features[0].properties.address_number!='Not Available' && e.features[0].properties.address_street!='Not Available'){
       new mapboxgl.Popup()
       .setLngLat(e.lngLat)
@@ -1411,7 +1379,6 @@ map.on('load', () => {
       .addTo(map);
     }
   });
-
 
    //add a geojson file source "gta_bicycle_parking" for GTA (outside Toronto) bike parking stations
   map.addSource('gta_bicycle_parking', {
@@ -1494,14 +1461,14 @@ map.on('load', () => {
     map.getCanvas().style.cursor = '';
   });
 
-  //specify events triggered by moving mouse over the 'gta_bike_parking_unclustered' layer
+  //specify events triggered by clicking on the 'gta_bike_parking_unclustered' layer
   map.on('click', 'gta_bike_parking_unclustered', (e) => {
     //declare and add to map a popup at the longitude-latitude location of click
     new mapboxgl.Popup()
     .setLngLat(e.lngLat)
     .setHTML("<b>Name:</b> " + e.features[0].properties.name + "<br>" +  "<b>Covered?:</b> " + e.features[0].properties.covered + "<br>" + "<b>Fee:</b> " + e.features[0].properties.fee + "<br>" + "<b>Parking Type:</b> " + e.features[0].properties.parking_type + "<br>" +       
     "<b>Capacity:</b> " + e.features[0].properties.capacity)
-      .addTo(map);
+    .addTo(map);
   });
 
   //add a vector file source "traffic_source" for traffic data from Mapbox traffic API
@@ -1542,7 +1509,7 @@ map.on('load', () => {
     data: geojson
   });
 
-//add and style a layer of circles "input-pnts" from the defined "inputgeojson" source for the user-clicked points on the map through the planner tool
+  //add and style a layer of circles "input-pnts" from the defined "inputgeojson" source for the user-clicked points on the map through the planner tool
   map.addLayer({
     'id': 'input-pnts',
     'type': 'circle',
@@ -1577,7 +1544,7 @@ map.on('load', () => {
 document.getElementById('collapsible').addEventListener('click', () => {
   //assign 'content' variable to the the div containing the 'Plan Your Trip!' content
   var content = document.getElementById('content');
-  //enter conditional if this content div was already open...
+  //enter conditional if the 'Plan Your Trip!' content div was already open
   if (content.style.display === "block") {
     //close content div
     content.style.display = "none";
@@ -1610,11 +1577,11 @@ document.getElementById('collapsible').addEventListener('click', () => {
     document.getElementById('slider').value=0
     document.getElementById('radius_value').innerHTML=" " + "0km"
   }
-  //enter conditional if this content div was closed...
+  //enter conditional if the 'Plan Your Trip!' content div was closed
   else {
     //open content div 
     content.style.display = "block";
-    //don't display the slider yet (not until user selects point)
+    //don't display the slider yet (not until user selects a point)
     slider_div = document.getElementById('slider_div');
     slider_div.style.display = 'none';
     //disable the buffer button (so that user can't click 'GO' without selecting a point first)
@@ -1625,7 +1592,7 @@ document.getElementById('collapsible').addEventListener('click', () => {
 let lastExecution = 0
 //specify events triggered by clicking anywhere on the map
 map.on('click', (e) => {
-  //enter conditional if the 'Plan your Trip!' menu is open and a point has been clicked by a user a single time (a timeout is used to ensure no accidental double clicks occur)
+  //enter conditional if the 'Plan your Trip!' menu is open, no buffer has been created yet and a point has been clicked by a user a single time (a timeout is used to ensure no accidental double clicks occur)
   if (content.style.display === "block" && document.getElementById('bufferbutton').textContent === "GO" && ((lastExecution + 500) < Date.now())) {
     lastExecution = Date.now() //reinitialize date for timeout feature
     //assign 'clickedpoint' to a geojson-formatted feature of the user-clicked point on map
@@ -1638,7 +1605,7 @@ map.on('click', (e) => {
     };
     //reinitialize 'geojson' FeatureCollection to be empty (i.e. erase any prior user-clicked point) in case there was already another point in it
     geojson.features = []
-    //add clicked point to previously empty 'geojson' FeatureCollection variable
+    //add clicked point to empty 'geojson' FeatureCollection 
     geojson.features.push(clickedpoint);
     //update the instructions in the planner 
     const instructions = document.getElementById('instructions');
@@ -1652,9 +1619,9 @@ map.on('click', (e) => {
   }
 });
 
-//specify events triggered by clicking the 'GO' button in the 'Plan Your Trip!' menu
+//specify events triggered by clicking the 'GO/CLOSE' button in the 'Plan Your Trip!' menu
 document.getElementById('bufferbutton').addEventListener('click', () => {
-  //enter conditional if buffer button's text was previously 'GO' (i.e. if the buffer has not been created yet) and the length of 'geojson' FeatureCollection is >0 (i.e. if a point has been selected)
+  //enter conditional if 'GO' is clicked and the length of 'geojson' FeatureCollection is >0 (i.e. if a point has been selected)
   if (document.getElementById('bufferbutton').textContent === "GO" && geojson.features.length > 0) {
     //change the buffer button text to 'CLOSE' 
     document.getElementById('bufferbutton').innerHTML = "CLOSE"
@@ -1684,9 +1651,8 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
     //display slider
     slider_div = document.getElementById('slider_div');
     slider_div.style.display = 'block'
-    //let lastExecution2 = 0
     //specify events triggered by changing the slider in the 'Plan Your Trip!' menu
-    document.getElementById('slider').addEventListener('change', (e) => { //input
+    document.getElementById('slider').addEventListener('change', (e) => { 
       //update the slider text to specify the selected radius value in km
       document.getElementById('radius_value').innerHTML=" " + e.target.value +"km"
       //if isProcessing is set to true (i.e. if the code below has already run after selection of a new slider value), don't run it again (this is to avoid double input from the slider)
@@ -1702,7 +1668,7 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
         document.getElementById('collapsible').disabled=true;
         //assign 'radius' variable to the user-selected radius
         const radius = e.target.value;
-        //reinitialize 'buffresult' FeatureCollection to be empty (i.e. erase any prior buffer) in case there was already buffer created
+        //reinitialize 'buffresult' FeatureCollection to be empty (i.e. erase any prior buffer) in case there was already a buffer within it
         buffresult.features = []
         //clear any prior nearby features listed in the planner
         document.getElementById('nearby').innerHTML=''
@@ -1743,7 +1709,7 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
       }
     });
   }
-  //enter conditional if buffer button's text isn't 'GO' (i.e. if 'CLOSE' has been selected on the buffer button to close the planning for a prior selected point) 
+  //enter conditional if 'CLOSE' is clicked (i.e. if a point and buffer have already been selected/created and user wishes to clear them)
   else {
     //remove the slider
     slider_div = document.getElementById('slider_div');
@@ -1760,7 +1726,7 @@ document.getElementById('bufferbutton').addEventListener('click', () => {
     //reinitialize 'geojson' FeatureCollection to be empty (i.e. erase any prior user-clicked point) and update the 'inputgeojson' source that uses 'geojson'
     geojson.features = []
     map.getSource('inputgeojson').setData(geojson);
-     //reinitialize 'buffresult' FeatureCollection to be empty (i.e. erase any prior user-clicked point) and update the 'buffgeojson' source that uses 'buffresult'
+    //reinitialize 'buffresult' FeatureCollection to be empty (i.e. erase any prior user-clicked point) and update the 'buffgeojson' source that uses 'buffresult'
     buffresult.features = []
     map.getSource('buffgeojson').setData(buffresult);
     //clear any prior nearby features listed in the planner
@@ -1787,7 +1753,7 @@ function get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types) {
   .then(response => response.json())
   .then(response => {
     shops = response; //assign variable "shops" to geojson file of all bike shops 
-    //retrieve the div for information about nearby amenities in the planner
+    //assign 'nearby' variable to the div for information about nearby amenities in the planner
     const nearby = document.getElementById('nearby');
     //assign 'text_div' variable to a created 'section'
     const text_div = document.createElement('div');
@@ -1819,7 +1785,7 @@ function get_bikeshops(divs_lons, divs_lats, divs_properties, divs_types) {
       item.appendChild(value);
       nearby.appendChild(item);
     });
-    //call get_bikeparking function 
+    //call get_bikeparking function only when all the above is done being run (since fetch is asynchronous)
     get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types)
   });
 }
@@ -1831,7 +1797,7 @@ function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types){
   .then(response => response.json())
   .then(response => {
     parkings = response; //assign variable "parkings" to geojson file of all bike parkings 
-    //retrieve the div for information about nearby amenities in the planner
+    //assign 'nearby_p' to the the div for information about nearby amenities in the planner
     const nearby_p = document.getElementById('nearby');
     //assign 'text_div_p' variable to a created 'section'
     const text_div_p = document.createElement('div');
@@ -1870,7 +1836,7 @@ function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types){
       item_p.appendChild(value_p);
       nearby_p.appendChild(item_p);
     });
-    //call get_bikeways function 
+    //call get_bikeways function only when all the above is done being run (since fetch is asynchronous)
     get_bikeways(divs_lons, divs_lats, divs_properties, divs_types)
   });
 }
@@ -1878,11 +1844,11 @@ function get_bikeparking(divs_lons, divs_lats, divs_properties, divs_types){
 //create get_bikeways function for finding all nearby bikeways and listing them in the planner 
 function get_bikeways(divs_lons, divs_lats, divs_properties, divs_types){
   //retrieve external geojson file for all bikeways in GTA
-  fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/all_bikeways.geojson') //toronto
+  fetch('https://anamariiaz.github.io/GGR472-Group-Project-Sources/all_bikeways.geojson') 
   .then(response => response.json())
   .then(response => {
     bikeways = response; //assign variable "bikeways" to geojson file of all bikeways 
-    //retrieve the div for information about nearby amenities in the planner
+    //assign 'nearby_b' variable to the div for information about nearby amenities in the planner
     const nearby_b = document.getElementById('nearby');
     //assign 'text_div_b' variable to a created 'section'
     const text_div_b = document.createElement('div');
@@ -1908,12 +1874,12 @@ function get_bikeways(divs_lons, divs_lats, divs_properties, divs_types){
         //assign 'item_b' variable to a created 'section' with class 'divs' (which specifies its location and style in the css file)
         const item_b = document.createElement('div');
         item_b.className = 'divs'
-          //add the longitude (of their starting point), latitude (of their starting point), properties, and type of the bikeway amenity to lists of nearby features
+        //add the longitude (of the starting point), latitude (of the starting point), properties, and type of the bikeway amenity to lists of nearby features
         divs_lons.push(feature.geometry.coordinates[0][0][0])
         divs_lats.push(feature.geometry.coordinates[0][0][1])
         divs_types.push("bikeway")
         divs_properties.push(feature.properties)
-          //assign 'value_b' variable to a created 'span' (i.e. space into which content can be inserted)
+        //assign 'value_b' variable to a created 'span' (i.e. space into which content can be inserted)
         const value_b = document.createElement('span');
         //if the name is available, insert name of the bikeway into 'value_b' span
         if (feature.properties.Name!=null && feature.properties.Name != 'None' && feature.properties.Name != 'Not Available') {
@@ -1928,19 +1894,19 @@ function get_bikeways(divs_lons, divs_lats, divs_properties, divs_types){
         nearby_b.appendChild(item_b);
       }
     });
-    //call get_bikeshare function 
+    //call get_bikeshare function only when all the above is done being run (since fetch is asynchronous)
     get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types)
   });
 }
 
 //create get_bikeshare function for finding all nearby bikeshares and listing them in the planner 
 function get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types) {
-  //assign variable "shares" to geojson file of all bikeshare stations (using FeatureCollection 'test' defined on map load)
+  //assign variable "shares" to geojson file of all bikeshare stations (using feature list 'test' defined on map load)
   shares = {
     "type": "FeatureCollection",
     "features": test 
   }; 
-  //retrieve the div for information about nearby amenities in the planner
+  //assign 'nearby_s' to the div for information about nearby amenities in the planner
   const nearby_s = document.getElementById('nearby');
   //assign 'text_div_s' variable to a created 'section'
   const text_div_s = document.createElement('div');
@@ -1975,7 +1941,7 @@ function get_bikeshare(divs_lons, divs_lats, divs_properties, divs_types) {
     else {
       value_s.innerHTML = `BikeShare ${feature.properties.station_id}`;
     }
-    //add 'value_p' span to the created section 'item_s', and add 'item_s' section into planner (i.e. display name/id of nearby amenity in planner)
+    //add 'value_s' span to the created section 'item_s', and add 'item_s' section into planner (i.e. display name/id of nearby amenity in planner)
     item_s.appendChild(value_s);
     nearby_s.appendChild(item_s);
   });
@@ -1988,7 +1954,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
   //assign 'lon_point' and 'lat_point' variables to longitude and latitude of clicked point
   let lon_point = lonlat_click['lng']
   let lat_point = lonlat_click['lat']
-  //assign 'today_point' to current date 
+  //assign 'today_point' variable to current date 
   var today_point = new Date()
   //assign 'month_point' and 'day_point' variables to current month and date (formatted)
   if ((today_point.getMonth()+1)<10) {
@@ -2007,7 +1973,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
   var date_point = today_point.getFullYear() +'-'+month_point+'-'+day_point 
   //assign 'hour_point' variable to current hour
   var hour_point = today_point.getHours()
-  //retrieve the div for information about nearby amenities/weather in the planner
+  //assign 'nearby_w' variable to the div for information about nearby amenities/weather in the planner
   const nearby_w = document.getElementById('nearby');
   //assign 'text_div_w' variable to a created 'section'
   const text_div_w = document.createElement('div');
@@ -2033,7 +1999,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
     //add 'value_temp' span to the created section 'item_temp', and add 'item_temp' section into planner (i.e. display temperature in planner)
     item_temp.appendChild(value_temp);
     nearby_w.appendChild(item_temp);
-    //call precip function 
+    //call precip function only when all the above is done being run (since fetch is asynchronous) 
     precip()
   });
   //create precip function for finding total precipitation sum at clicked point and listing it in the planner
@@ -2042,8 +2008,8 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
     fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=precipitation&start_date=${date_point}&end_date=${date_point}`)
     .then(response => response.json())
     .then(response => {
-      prec_at_point = response; //assign variable "precip_at_point" to JSON file of total precipitation at clicked point during current day
-      //retrieve the div for information about nearby amenities/weather in the planner
+      prec_at_point = response; //assign variable "precip_at_point" to JSON file of total precipitation sum at clicked point during current day
+      //assign 'nearby_w' variable to the div for information about nearby amenities/weather in the planner
       const nearby_w = document.getElementById('nearby');
       //assign 'item_prec' variable to a created 'section'
       const item_prec = document.createElement('div');
@@ -2054,7 +2020,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
       //add 'value_prec' span to the created section 'item_prec', and add 'item_prec' section into planner (i.e. display total precipitation in planner)
       item_prec.appendChild(value_prec);
       nearby_w.appendChild(item_prec);
-      //call snow function
+      //call snow function only when all the above is done being run (since fetch is asynchronous)
       snow()
     });
   }
@@ -2065,7 +2031,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
     .then(response => response.json())
     .then(response => {
       snow_at_point = response; //assign variable "snow_at_point" to JSON file of snow at clicked point during current day
-      //retrieve the div for information about nearby amenities/weather in the planner
+      //assign 'nearby_w' variable to the div for information about nearby amenities/weather in the planner
       const nearby_w = document.getElementById('nearby');
       //assign 'item_snow' variable to a created 'section'
       const item_snow = document.createElement('div');
@@ -2076,7 +2042,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
       //add 'value_prec' span to the created section 'item_snow', and add 'item_snow' section into planner (i.e. display snow in planner)
       item_snow.appendChild(value_snow);
       nearby_w.appendChild(item_snow);
-      //call wind function
+      //call wind function only when all the above is done being run (since fetch is asynchronous)
       wind()
     });
   }
@@ -2086,8 +2052,8 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
     fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat_point}&longitude=${lon_point}&hourly=windspeed_10m&start_date=${date_point}&end_date=${date_point}`)
     .then(response => response.json())
     .then(response => {
-      wind_at_point = response; //assign variable "wind_at_point" to JSON file of wind speed at clicked point during current day
-      //retrieve the div for information about nearby amenities/weather in the planner
+      wind_at_point = response; //assign variable "wind_at_point" to JSON file of wind speed at 10m above clicked point during current day
+      //assign 'nearby_w' variable to the div for information about nearby amenities/weather in the planner
       const nearby_w = document.getElementById('nearby');
       //assign 'item_wind' variable to a created 'section'
       const item_wind = document.createElement('div');
@@ -2098,7 +2064,7 @@ function get_weather(divs_lons, divs_lats, divs_properties, divs_types) {
       //add 'value_wind' span to the created section 'item_wind', and add 'item_wind' section into planner (i.e. display wind speed in planner)
       item_wind.appendChild(value_wind);
       nearby_w.appendChild(item_wind);
-      //call list_click function
+      //call list_click function only when all the above is done being run (since fetch is asynchronous)
       list_click(divs_lons, divs_lats, divs_properties, divs_types)
     });
   }
@@ -2124,12 +2090,12 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
       let features1 = divs_types[i]
 
       lastExecution3 = 0
-      //specify events triggered by clicking on an any nearby amenities in planner
+      //specify events triggered by clicking on any nearby amenities in planner
       elements[i].addEventListener('click', () => {
-        //(a timeout is used to ensure no accidental double popups show up)
+        //(a timeout is used to ensure no accidental double clicks occur)
         if ((lastExecution3+600)<Date.now()){
           lastExecution3=Date.now() //reinitialize date for timeout feature
-          //fly back to original view
+          //fly to location of clicked amenity
           map.flyTo({
             center: [lon1, lat1],
             zoom: 16,
@@ -2147,7 +2113,6 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
               "<b>Email:</b> " + properties1.email + "<br>" + "<b>Rentals?:</b> " + properties1.rental)
               .addTo(map);
             }
-
             //if the clicked nearby shop is not in Toronto and the address street or number is not available, declare and add to map a popup at the longitude-latitude location of shop with information available for GTA (outside Toronto) shops (that does not include address)
             else if (properties1.city!='Toronto' && (properties1.address_number=='Not Available' | properties1.address_street=='Not Available')){
               new mapboxgl.Popup()
@@ -2164,7 +2129,7 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
                 .setHTML("<b>Name:</b> " + properties1.name + "<br>" + "<b>Address:</b> " + properties1.address_number + " " + properties1.address_street + "<br>" + "<b>Postal Code:</b> "
                 + properties1.postal_code + "<br>" + "<b>Unit No:</b>  " + properties1.unit + "<br>" + "<b>City:</b>  " + properties1.city + "<br>" + "<b>Phone:</b>  " + properties1.phone + "<br>" +       
                 "<b>Email:</b> " + properties1.email + "<br>" + "<b>Website:</b> " + properties1.website + "<br>" + "<b>Facebook:</b> " + properties1.facebook + "<br>" + "<b>Opening Hours:</b> " + properties1.opening_hours)
-                  .addTo(map);
+                .addTo(map);
             }   
           }
           //enter conditional if the clicked nearby amenity is a parking
@@ -2184,7 +2149,7 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
               .setLngLat([lon1, lat1])
               .setHTML("<b>Name:</b> " + properties1.name + "<br>" +  "<b>Covered?:</b> " + properties1.covered + "<br>" + "<b>Fee:</b> " + properties1.fee + "<br>" + "<b>Parking Type:</b> " + properties1.parking_type + "<br>" +       
               "<b>Capacity:</b> " + properties1.capacity) 
-                .addTo(map);
+              .addTo(map);
             }
           }
           //enter conditional if the clicked nearby amenity is a share
@@ -2218,12 +2183,12 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
                     .addTo(map);
                   }
                 }
-              })
+              });
             });     
           }
           //enter conditional if the clicked nearby amenity is a bikeway
           else if (features1==="bikeway"){
-            //declare and add to map a popup at the longitude-latitude location of bikeway beginning with information available for the GTA area it is located in
+            //declare and add to map a popup at the longitude-latitude start location of bikeway with information available for the GTA area it is located in
             if (properties1.region==='Whitby'){
               new mapboxgl.Popup()
               .setLngLat([lon1, lat1])
@@ -2290,6 +2255,7 @@ function list_click(divs_lons, divs_lats, divs_properties, divs_types) {
 
 //create weather_api function for extracting latitude and longitude coordinates of all GTA municipality centroids (at which weather will be computed)
 function weather_api(variable) {
+  //initialize variables to empty lists
   let random_list = []
   let temperature_list = []
   let index_list = []
@@ -2305,7 +2271,7 @@ function weather_api(variable) {
       var lon = all_centroids.features[i].geometry.coordinates[0];
       //assign 'today' to current date 
       var today = new Date()
-        //assign 'month' and 'day' variables to current month and date (formatted)
+      //assign 'month' and 'day' variables to current month and date (formatted)
       if ((today.getMonth()+1)<10) {
         month='0'+(today.getMonth()+1)
       }
@@ -2322,36 +2288,36 @@ function weather_api(variable) {
       var date = today.getFullYear() +'-'+month+'-'+day 
       //assign 'hour' variable to current hour
       var hour = today.getHours()
-      //call weat function
+      //call weat function for each centroid being looped through - only when all the above is done being run (since fetch is asynchronous)
       weat(i, lat, lon, date, hour, random_list, temperature_list, index_list, variable)
     };
   });
 }
 
-//create weather_api function for finding weather conditions of all GTA municipalities (when clicked from the dropdown menu)
+//create weather_api function for finding weather conditions (selected from the weather dropdown menu) at GTA municipality centroids 
 function weat(i, lat, lon, date, hour, random_list, temperature_list, index_list, variable) {
-  //retrieve external JSON file of user-selected weather condition from dropdown menu (temperature, total precipitation, snow, wind speed) at each centroid being looped through during current day from Open-Meteo API
+  //retrieve external JSON file of user-selected weather condition from dropdown menu (temperature, total precipitation, snow, wind speed) at centroid being looped through during current day from Open-Meteo API
   fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=${variable}&start_date=${date}&end_date=${date}`)
   .then(response => response.json())
   .then(response => {
-    weather = response; //assign variable "wearger" to JSON file of selected weather condition at each centroid being looped through during current day
-    //call polygon1 function
+    weather = response; //assign variable "weather" to JSON file of selected weather condition at centroid being looped through during current day
+    //call polygon1 function only when all the above is done being run (since fetch is asynchronous)
     polygon1(i, lat, lon, date, hour, weather, random_list, temperature_list, index_list, variable)
   });
 }
 
 //create polygon1 function for matching up centroids to respective GTA municipality polygons
 function polygon1(i, lat, lon, date, hour, weather, random_list, temperature_list, index_list, variable) {
-    //retrieve geojson file for polygons of all GTA municipalities
-    fetch('https://ireo00.github.io/472-Resources/all_boundaries.geojson')
-    .then(response => response.json())
-    .then(response => {
+  //retrieve geojson file for polygons of all GTA municipalities
+  fetch('https://ireo00.github.io/472-Resources/all_boundaries.geojson')
+  .then(response => response.json())
+  .then(response => {
     polygon = response; //assign variable "polygon" to GTA municipality polygons geojson file 
     //loop through all GTA municipality polygons
     for (let count = 0; count < polygon.features.length; count++) {
       //enter conditional if the current looped through centroid falls into the current looped through municipality polygon
       if (turf.pointsWithinPolygon(all_centroids.features[i], polygon.features[count]).features.length > 0) {
-        //add desired weather at current looped through centroid to 'temperature_list', add index of municipality polygon containing respective centroid to 'index_list'
+        //add retrieved weather condition at current looped through centroid to 'temperature_list', add index of municipality polygon containing respective centroid to 'index_list'
         let polygon_coordinates = polygon.features[count].geometry.coordinates[0][0]
         let temperature = weather.hourly[variable][Math.floor(hour / 3)] 
         polygon.features[count].properties.TEMP = temperature
@@ -2359,7 +2325,7 @@ function polygon1(i, lat, lon, date, hour, weather, random_list, temperature_lis
         index_list.push(count)
         //add index of current looped through centroid to 'random_list'
         random_list.push(i)
-        //if the current looped through centroid is the last one in the file, call add_property function
+        //if the current looped through centroid is the last one in the file, call add_property function - only when all the above is done being run (since fetch is asynchronous)
         if (random_list.length == all_centroids.features.length) {
           add_property(random_list, temperature_list, index_list, variable)
         }
@@ -2368,7 +2334,7 @@ function polygon1(i, lat, lon, date, hour, weather, random_list, temperature_lis
   });
 }
 
-//create add_property function for matching up centroids to respective GTA municipality polygons
+//create add_property function for determining weather of GTA municipality polygons
 function add_property(random_list, temperature_list, index_list, variable) {
   //retrieve geojson file for polygons of all GTA municipalities
   fetch('https://ireo00.github.io/472-Resources/all_boundaries.geojson')
@@ -2379,7 +2345,7 @@ function add_property(random_list, temperature_list, index_list, variable) {
     for (j = 0; j < polygon2.features.length; j++) {
       //create a new property 'TEMP' for each municipality polygon and assign it to weather condition at its corresponding centroid
       polygon2.features[j].properties.TEMP = temperature_list[index_list.indexOf(j)]
-      //once the last polygon in 'polygon2' is looped through, call work function
+      //once the last polygon in 'polygon2' is looped through, call work function - only when all the above is done being run (since fetch is asynchronous)
       if (j == polygon2.features.length - 1) {
         work(variable)
       }
@@ -2396,6 +2362,7 @@ function work(variable){
     data: polygon2,
     'generateId': true,
   });
+
   //add and style a layer of polygons "weather_polygons" using a continuous colorscale with different specified stops depending on user-selected variable
   if (variable==='temperature_2m'){
     map.addLayer({
@@ -2527,7 +2494,7 @@ document.getElementById('layercheck2').addEventListener('change', (e) => {
   );
 });
 
-//specify events triggered by changing the checkbox value of the checkbox HTML element with id "layercheck2" (for the bike parkings)
+//specify events triggered by changing the checkbox value of the checkbox HTML element with id "layercheck3" (for the bike parkings)
 document.getElementById('layercheck3').addEventListener('change', (e) => {
   //change the visibility of the clustered, unclustered, and cluster count layers for the Toronto and GTA bike parkings
   map.setLayoutProperty(
@@ -2580,7 +2547,7 @@ value_shops.innerHTML = 'Bike Shops'
 item_shops.appendChild(key_shops);  
 //add 'value_shops' span to the created section 'item_shops'
 item_shops.appendChild(value_shops);  
-//add 'item_shops' section into the HTML element assigned to 'label_shops' variable
+//add 'item_shops' section into the HTML element assigned to 'label_shops' variable (i.e. add text and icon to the bike shops checkbox)
 label_shops.appendChild(item_shops);
 
 //assign 'label_parking' variable to HTML element with 'label_parking' id
@@ -2601,7 +2568,7 @@ value_parking.innerHTML = 'Bike Parkings'
 item_parking.appendChild(key_parking);  
 //add 'value_parking' span to the created section 'item_parking'
 item_parking.appendChild(value_parking); 
-//add 'item_parking' section into the HTML element assigned to 'label_parking' variable
+//add 'item_parking' section into the HTML element assigned to 'label_parking' variable (i.e. add text and icon to the bike parkings checkbox)
 label_parking.appendChild(item_parking);
 
 //assign 'label_bikeshare' variable to HTML element with 'label_bikeshare' id
@@ -2622,7 +2589,7 @@ value_bikeshare.innerHTML = 'Toronto Bikeshare'
 item_bikeshare.appendChild(key_bikeshare); 
 //add 'value_bikeshare' span to the created section 'item_bikeshare'
 item_bikeshare.appendChild(value_bikeshare); 
-//add 'item_bikeshare' section into the HTML element assigned to 'label_bikeshare' variable
+//add 'item_bikeshare' section into the HTML element assigned to 'label_bikeshare' variable (i.e. add text and icon to the bike shares checkbox)
 label_bikeshare.appendChild(item_bikeshare);
 
 
@@ -2679,9 +2646,9 @@ document.getElementById("weathertype").addEventListener('change', (e) => {
   else if (weathertype == 'Snowfall') {
     //disable the weather dropdown (until choropleth is fully loaded)
     document.getElementById('weather').disabled=true;
-    //call weather_api function (which will trigger a sequence of functions to plot snowfall)
+    //call weather_api function (which will trigger a sequence of functions to plot snow)
     weather_api('snowfall');
-     //add an image of the colorbar in the legend and specify legend title
+    //add an image of the colorbar in the legend and specify legend title
     const legend_colorbar = document.getElementById('legend_colorbar');
     const colorbar = document.createElement('img');
     colorbar.src="https://anamariiaz.github.io/GGR472-Group-Project-Sources/snowfall_colorbar.png";
@@ -2724,7 +2691,7 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
   }
   //enter conditional if 'Show All' is selected in the dropdown
   if (tobikelane == 'All') {
-    //call bikeways_legend function
+    //call bikeways_legend function to create the legend
     bikeways_legend()
     //update legend title
     const legend_bikeways_title = document.getElementById('legend_bikeways_title');
@@ -2781,54 +2748,54 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
       'visibility',
       'none'
     );
-    // //filter 
-    //   map.setFilter(
-    //       'toronto_bikeways',
-    //       ['has', 'Classification'] //returns all lines from layer that have a value in type field (type!!)
-    //   );
-    //   map.setFilter(
-    //     'york_region_bikeways',
-    //     ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    //   );
-  
-    //   map.setFilter(
-    //     'peel_bikeways',
-    //     ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    //   );
-  
-    //   map.setFilter(
-    //     'durham_region_bikeways',
-    //     ['has', 'classification'] //returns all lines from layer that have a value in Name field ['has', 'Name']
-    //   );
-  
-    //   map.setFilter(
-    //     'ajax_bikeways',
-    //     ['has', 'classification'] //returns all lines from layer that have a value in Classification field
-    //   );
-  
-    //   map.setFilter(
-    //     'whitby_bikeways',
-    //     ['has', 'classification'] //returns all lines from layer that have a value in Classification field
-    //   );
-  
-    //   map.setFilter(
-    //     'milton_bikeways',
-    //     ['has', 'classification'] //returns all lines from layer that have a value in Classification field
-    //   );
-  
-    //   map.setFilter(
-    //     'burlington_bikeways',
-    //     ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    //   );
-  
-    //   map.setFilter(
-    //     'oakvill_bikeways',
-    //     ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
-    //   );
+    //reset filter to include all bikeways
+    map.setFilter(
+        'toronto_bikeways',
+        ['has', 'Classification'] //returns all lines from layer that have a value in type field (type!!)
+    );
+    map.setFilter(
+      'york_region_bikeways',
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
+    );
+
+    map.setFilter(
+      'peel_bikeways',
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
+    );
+
+    map.setFilter(
+      'durham_region_bikeways',
+      ['has', 'classification'] //returns all lines from layer that have a value in classification field
+    );
+
+    map.setFilter(
+      'ajax_bikeways',
+      ['has', 'classification'] //returns all lines from layer that have a value in classification field
+    );
+
+    map.setFilter(
+      'whitby_bikeways',
+      ['has', 'classification'] //returns all lines from layer that have a value in classification field
+    );
+
+    map.setFilter(
+      'milton_bikeways',
+      ['has', 'classification'] //returns all lines from layer that have a value in classification field
+    );
+
+    map.setFilter(
+      'burlington_bikeways',
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
+    );
+
+    map.setFilter(
+      'oakvill_bikeways',
+      ['has', 'Classification'] //returns all lines from layer that have a value in Classification field
+    );
   } 
   //enter conditional if a single bikeway type is selected in dropdown
   else if (tobikelane != 'All' && tobikelane != 'Traffic') {
-    //call bikeways_legend function
+    //call bikeways_legend function to create the legend
     bikeways_legend()
     //update legend title
     const legend_bikeways_title = document.getElementById('legend_bikeways_title');
@@ -2925,7 +2892,7 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
   }
   //enter conditional if 'Traffic' is selected in the dropdown
   else if (tobikelane == 'Traffic') {
-    //call traffic_legend function
+    //call traffic_legend function to create legend
     traffic_legend()
     //update legend title
     const legend_bikeways_title = document.getElementById('legend_bikeways_title');
@@ -2983,67 +2950,9 @@ document.getElementById("tobikelanetype").addEventListener('change', (e) => {
       'none'
     );
   }
-
-
-
-  
-  
-  // else if (tobikelane == 'Traffic') {
-  //   map.setLayoutProperty(
-  //     'traffic',
-  //     'visibility',
-  //     'visible'
-  //   );
-
-  //   map.setLayoutProperty(
-  //     'toronto_bikeways',
-  //     'visibility',
-  //     'none'
-  //   );
-  //   map.setLayoutProperty(
-  //     'york_region_bikeways',
-  //     'visibility',
-  //     'none'
-  //   );
-  //   map.setLayoutProperty(
-  //     'peel_bikeways',
-  //     'visibility',
-  //     'none'
-  //   );
-  //   map.setLayoutProperty(
-  //     'durham_region_bikeways',
-  //     'visibility',
-  //     'none'
-  //   );
-  //   map.setLayoutProperty(
-  //     'ajax_bikeways',
-  //     'visibility',
-  //     'none'
-  //   );
-  //   map.setLayoutProperty(
-  //     'whitby_bikeways',
-  //     'visibility',
-  //     'none'
-  //   );
-  //   map.setLayoutProperty(
-  //     'milton_bikeways',
-  //     'visibility',
-  //     'none'
-  //   );
-  //   map.setLayoutProperty(
-  //     'burlington_bikeways',
-  //     'visibility',
-  //     'none'
-  //   );
-  //   map.setLayoutProperty(
-  //     'oakvill_bikeways',
-  //     'visibility',
-  //     'none'
-  //   );
-  // }
 });
 
-//show legend for bikeways/traffic
+//create section for legend of bikeways/traffic on initial load
 legend_content.style.display='block'
 //initialize legend title as 'Bikeways' and set its initial state as open (such that it can be collapsed)
 const legend_bikeways_title = document.getElementById('legend_bikeways_title');
@@ -3053,7 +2962,7 @@ if (legend_collapsible.hasChildNodes()==false){
   legend_collapsible.appendChild(document.createTextNode("Collapse Legend"))
 }
 
-//call bikways_legend function
+//call bikways_legend function to populate the legend 
 bikeways_legend()
 
 //create bikeways_legend function for legend of GTA bikeways
@@ -3067,7 +2976,6 @@ function bikeways_legend(){
     'Paved Shoulder',
     'Hiking/Park Trail'
   ];
-
   //assign variable 'legendcolours' to a list of colours for the bikeways legend
   const legendcolours = [
     '#FC6468',
@@ -3077,7 +2985,6 @@ function bikeways_legend(){
     '#C11F73',
     '#009E73'
   ];
-
   //assign 'legend' variable to HTML element with 'legend_discrete' id and set title
   const legend_discrete = document.getElementById('legend_discrete');
   const legend_bikeways_title = document.getElementById('legend_bikeways_title');
@@ -3116,7 +3023,6 @@ function traffic_legend(){
     'Heavy', 
     'Severe'
   ];
-
   //assign variable 'legendcolours' to a list of colours for the traffic legend
   const legendcolours = [
     'green',
@@ -3124,15 +3030,14 @@ function traffic_legend(){
     'orange',
     'red'
   ];
-
   //assign 'legend' variable to HTML element with 'legend_discrete' id and set title
   const legend_discrete = document.getElementById('legend_discrete');
   
-    //loop through the legend labels in the 'legendlabels' variable
+  //loop through the legend labels in the 'legendlabels' variable
   legendlabels.forEach((label, i) => {
     //assign 'color' variable to the corresponding color of the 'legendcolours' variable
     const color = legendcolours[i];
-     //assign 'item' variable to a created 'section'
+    //assign 'item' variable to a created 'section'
     const item = document.createElement('div'); 
     //assign 'key' variable to a created 'span' (i.e. space into which content can be inserted)
     const key = document.createElement('span'); 
@@ -3146,8 +3051,8 @@ function traffic_legend(){
     value.innerHTML = `${label}`; 
     //add 'key' span to the created section 'item'
     item.appendChild(key); 
-     //add 'value' span to the created section 'item'
-     item.appendChild(value); 
+    //add 'value' span to the created section 'item'
+    item.appendChild(value); 
     //add 'item' section into the HTML element assigned to 'legend' variable
     legend_discrete.appendChild(item); 
   });
